@@ -10,7 +10,7 @@ const Navbar = () => {
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="w-screen flex flex-wrap items-center justify-around max-lg:justify-between p-4">
         <Link to={"/"}>
-          <span className="self-center text-3xl font-bold whitespace-nowrap dark:text-white">
+          <span className="self-center text-xl lg:text-3xl font-bold whitespace-nowrap dark:text-white">
             Cartopia
           </span>
         </Link>
