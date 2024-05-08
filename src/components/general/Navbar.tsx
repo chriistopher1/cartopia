@@ -3,7 +3,7 @@ import { FaSearch, FaHeart, FaUser } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
 
-const mobileViewCss = "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea]";
+const mobileViewCss = "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea] font-semibold";
 
 const Navbar = () => {
   return (
@@ -46,12 +46,12 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="max-lg:hidden lg:flex gap-5">
-          <Link to={""}>Home</Link>
-          <Link to={""}>Shop</Link>
-          <Link to={""}>About</Link>
-          <Link to={""}>Blog</Link>
-          <Link to={""}>Contact</Link>
-          <Link to={""}>Pages</Link>
+          <Link to={""} className="font-semibold">Home</Link>
+          <Link to={""} className="font-semibold">Shop</Link>
+          <Link to={""} className="font-semibold">About</Link>
+          <Link to={""} className="font-semibold">Blog</Link>
+          <Link to={""} className="font-semibold">Contact</Link>
+          <Link to={""} className="font-semibold">Pages</Link>
         </div>
         <div className="max-lg:hidden lg:flex items-center gap-5">
           <Link to={""} className="flex items-center gap-2 text-[#63a5ea]">

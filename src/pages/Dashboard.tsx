@@ -1,10 +1,11 @@
-const Dashboard = () => {
+import Banner from "../components/dashboard/Banner";
 
+const Dashboard = () => {
   return (
     <div>
-        Dashboard
+      <Banner />
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
