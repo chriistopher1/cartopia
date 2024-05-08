@@ -22,9 +22,9 @@ const Navbar = () => {
           aria-expanded="false"
         >
           <span className="sr-only">Open main menu</span>
-          <IoMenu />
+          <IoMenu className="text-4xl"/>
         </button>
-        <div id="navbar-default" className="flex flex-col gap-2 py-5 items-center w-full lg:hidden ">
+        <div id="navbar-default" className="hidden flex flex-col gap-2 py-5 items-center w-full lg:hidden">
           <Link to={""} className={`${mobileViewCss}`}>Home</Link>
           <Link to={""} className={`${mobileViewCss}`}>Shop</Link>
           <Link to={""} className={`${mobileViewCss}`}>About</Link>

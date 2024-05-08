@@ -17,12 +17,12 @@
   color-scheme: light dark;
   color: black;
   background-color: #d9d9d9;
-/* 
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-decoration: none; */
+  text-decoration: none;
 }
 
 body {
