@@ -3,12 +3,12 @@ import { FaSearch, FaHeart, FaUser } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
 
-const mobileViewCss = "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea] font-semibold";
+const mobileViewCss = "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea] font-semibold text-xl";
 
 const Navbar = () => {
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
-      <div className="w-full flex flex-wrap items-center justify-around max-lg:justify-between p-4">
+      <div className="w-full flex flex-wrap items-center justify-around max-lg:justify-between p-4 py-8">
         <Link to={"/"}>
           <span className="self-center text-xl lg:text-3xl font-bold whitespace-nowrap dark:text-white">
             Cartopia
@@ -46,26 +46,26 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="max-lg:hidden lg:flex gap-5">
-          <Link to={""} className="font-semibold">Home</Link>
-          <Link to={""} className="font-semibold">Shop</Link>
-          <Link to={""} className="font-semibold">About</Link>
-          <Link to={""} className="font-semibold">Blog</Link>
-          <Link to={""} className="font-semibold">Contact</Link>
-          <Link to={""} className="font-semibold">Pages</Link>
+          <Link to={""} className="font-semibold text-lg">Home</Link>
+          <Link to={""} className="font-semibold text-lg">Shop</Link>
+          <Link to={""} className="font-semibold text-lg">About</Link>
+          <Link to={""} className="font-semibold text-lg">Blog</Link>
+          <Link to={""} className="font-semibold text-lg">Contact</Link>
+          <Link to={""} className="font-semibold text-lg">Pages</Link>
         </div>
         <div className="max-lg:hidden lg:flex items-center gap-5">
           <Link to={""} className="flex items-center gap-2 text-[#63a5ea]">
-            <FaUser />
+            <FaUser className="text-xl"/>
             <span>Login/Register</span>
           </Link>
           <Link to={""} className="text-[#63a5ea]">
-            <FaSearch />
+            <FaSearch className="text-xl"/>
           </Link>
           <Link to={""} className="text-[#63a5ea]">
-            <FaCartShopping />
+            <FaCartShopping className="text-xl"/>
           </Link>
           <Link to={""} className="text-[#63a5ea]">
-            <FaHeart />
+            <FaHeart className="text-xl"/>
           </Link>
         </div>
       </div>

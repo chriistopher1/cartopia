@@ -3,7 +3,7 @@ import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 const Banner = () => {
   return (
     <div id="default-carousel" className="relative w-full" data-carousel="slide">
-      <div className="relative h-24 overflow-hidden md:h-96">
+      <div className="relative h-24 overflow-hidden md:h-52 lg:h-96">
         {/* Item 1 */}
         <div className="hidden duration-700 ease-in-out" data-carousel-item>
           <img src="/assets/dashboard/banner1.jpg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 " alt="..." />
