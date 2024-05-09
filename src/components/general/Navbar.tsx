@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaHeart, FaUser } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
 import { useUserContext } from "../../context/AuthProvider";
 import { useEffect, useState } from "react";
 import { IUser } from "../../types";
+import { useSignOutAccount } from "../../lib/tanstack/queries";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const mobileViewCss =
   "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea] font-semibold text-xl";
@@ -14,11 +16,21 @@ const Navbar = () => {
 
   const { user } = useUserContext();
 
+  const navigate = useNavigate();
+
+  const { mutateAsync: signOut, isPending } = useSignOutAccount();
+
   useEffect(() => {
     setCurrentUser(user);
   }, [user]);
 
-  // console.log(currentUser)
+  const isHaveUser = () => (currentUser?.accountId != "" ? true : false);
+
+  const handleSignOut = () => {
+    signOut();
+    navigate("/login");
+  };
+
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="w-full flex flex-wrap items-center justify-around max-lg:justify-between p-4 py-8">
@@ -65,14 +77,14 @@ const Navbar = () => {
           >
             <img
               src={currentUser?.imageUrl}
-              className={`${currentUser == null ? "hidden" : ""} w-8 h-8`}
+              className={`${isHaveUser() ? "" : "hidden"} w-8 h-8 rounded-2xl`}
             />
-            <FaUser className={`${currentUser == null ? "" : "hidden"}`} />
-            <span className={`${currentUser == null ? "" : "hidden"}`}>
-              Login/Register
-            </span>
-            <span className={`${currentUser == null ? "hidden" : "="}`}>
+            <span className={`${isHaveUser() ? "" : "hidden"}`}>
               {currentUser?.name}
+            </span>
+            <FaUser className={`${isHaveUser() ? "hidden" : ""}`} />
+            <span className={`${isHaveUser() ? "hidden" : ""}`}>
+              Login/Register
             </span>
           </Link>
           <Link to={""} className={`flex justify-center ${mobileViewCss}`}>
@@ -84,6 +96,15 @@ const Navbar = () => {
           <Link to={""} className={`flex justify-center ${mobileViewCss}`}>
             <FaHeart />
           </Link>
+          <button
+            className={`${mobileViewCss} ${isHaveUser() ? "" : "hidden"}`}
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </button>
+          <AiOutlineLoading3Quarters
+            className={`${isPending ? "inline animate-spin" : "hidden"} mr-2`}
+          />
         </div>
         <div className="max-lg:hidden lg:flex gap-5">
           <Link to={""} className="font-semibold text-lg">
@@ -112,14 +133,14 @@ const Navbar = () => {
           >
             <img
               src={currentUser?.imageUrl}
-              className={`${currentUser == null ? "hidden" : ""} w-8 h-8`}
+              className={`${isHaveUser() ? "" : "hidden"} w-8 h-8`}
             />
-            <FaUser className={`${currentUser == null ? "" : "hidden"}`} />
-            <span className={`${currentUser == null ? "" : "hidden"}`}>
-              Login/Register
-            </span>
-            <span className={`${currentUser == null ? "hidden" : "="}`}>
+            <span className={`${isHaveUser() ? "" : "hidden"}`}>
               {currentUser?.name}
+            </span>
+            <FaUser className={`${isHaveUser() ? "hidden" : ""}`} />
+            <span className={`${isHaveUser() ? "hidden" : ""}`}>
+              Login/Register
             </span>
           </Link>
           <Link to={""} className="text-[#63a5ea]">
@@ -131,6 +152,15 @@ const Navbar = () => {
           <Link to={""} className="text-[#63a5ea]">
             <FaHeart className="text-xl" />
           </Link>
+          <button
+            className={`text-[#63a5ea] ${isHaveUser() ? "" : "hidden"}`}
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </button>
+          <AiOutlineLoading3Quarters
+            className={`${isPending ? "inline animate-spin" : "hidden"} mr-2`}
+          />
         </div>
       </div>
     </nav>

@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from "react";
-import {
-  useSignInAccount,
-  useSignOutAccount,
-} from "../../lib/tanstack/queries";
+import React, { useState } from "react";
+import { useSignInAccount } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import {
-  getCurrentUserData,
-} from "../../lib/firebase/fireauthentication";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { mutateAsync, isPending } = useSignInAccount();
+  const navigate = useNavigate();
 
-  const { mutateAsync: mutateLogout, isPending: pendingLogout } =
-    useSignOutAccount();
+  const { mutateAsync, isPending } = useSignInAccount();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -27,14 +21,6 @@ const Login = () => {
     }));
   };
 
-  const handleSignOut = async () => {
-    try {
-      await mutateLogout();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
@@ -45,7 +31,9 @@ const Login = () => {
         console.log("Error");
         return;
       }
-
+      setTimeout(() => {
+        navigate("/");
+      }, 400);
       console.log("Sign-in successful!");
     } catch (error) {
       console.error("Sign-in error:", error);
@@ -103,7 +91,6 @@ const Login = () => {
             <span>Login</span>
           </button>
         </form>
-        <button onClick={handleSignOut}>Sign Out</button>
       </div>
     </div>
   );
