@@ -11,7 +11,7 @@ const CategoryCard = (category: singleCategory) => {
   return (
     <div className="relative grow">
       <img src={category.url || ""} alt={category.name} className="w-auto h-full" />
-      <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-xs md:text-2xl">
+      <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-xs md:text-lg lg:text-2xl">
         {capitalizeFirstLetter(category.name)}
       </p>
     </div>

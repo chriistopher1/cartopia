@@ -3,18 +3,18 @@ import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 const Banner = () => {
   return (
     <div id="default-carousel" className="relative w-full" data-carousel="slide">
-      <div className="relative h-56 overflow-hidden md:h-96">
+      <div className="relative h-24 overflow-hidden md:h-96">
         {/* Item 1 */}
         <div className="hidden duration-700 ease-in-out" data-carousel-item>
-          <img src="/assets/dashboard/1.jpg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 " alt="..." />
+          <img src="/assets/dashboard/banner1.jpg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 " alt="..." />
         </div>
         {/* Item 2 */}
         <div className="hidden duration-700 ease-in-out" data-carousel-item>
-          <img src="/assets/dashboard/2.jpg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 " alt="..." />
+          <img src="/assets/dashboard/banner2.jpg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 " alt="..." />
         </div>
         {/* Item 3 */}
         <div className="hidden duration-700 ease-in-out" data-carousel-item>
-          <img src="/assets/dashboard/3.jpg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 " alt="..." />
+          <img src="/assets/dashboard/banner3.jpg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 " alt="..." />
         </div>
       </div>
       {/* Slider indicators */}
