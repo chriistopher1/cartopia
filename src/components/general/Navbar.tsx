@@ -59,7 +59,7 @@ const Navbar = () => {
           <Link to={""} className={`${mobileViewCss}`}>
             Shop
           </Link>
-          <Link to={""} className={`${mobileViewCss}`}>
+          <Link to={"/about"} className={`${mobileViewCss}`}>
             About
           </Link>
           <Link to={""} className={`${mobileViewCss}`}>
@@ -113,7 +113,7 @@ const Navbar = () => {
           <Link to={""} className="font-semibold text-lg">
             Shop
           </Link>
-          <Link to={""} className="font-semibold text-lg">
+          <Link to={"/about"} className="font-semibold text-lg">
             About
           </Link>
           <Link to={""} className="font-semibold text-lg">
