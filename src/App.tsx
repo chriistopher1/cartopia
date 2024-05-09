@@ -1,31 +1,19 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { Routes, Route } from "react-router-dom";
 
-import RootLayout from "./pages/layout/RootLayout"
+import RootLayout from "./pages/layout/RootLayout";
 
-import Dashboard from "./pages/Dashboard"
-import About from "./pages/About"
+import Dashboard from "./pages/Dashboard";
+import About from "./pages/About";
 
 function App() {
-
   return (
-    <BrowserRouter >
-
-      <Routes>
+    <Routes>
       <Route element={<RootLayout />}>
-        <Route
-          path="/"
-          element={<Dashboard />}
-        />
-        <Route
-          path="/about"
-          element={<About />}
-        />
-        
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/about" element={<About />} />
       </Route>
-      </Routes>
-    
-    </BrowserRouter>
-  )
+    </Routes>
+  );
 }
 
-export default App
+export default App;
