@@ -13,7 +13,7 @@ const Category = () => {
       <h2 className="border-b-2 border-black mb-5 text-lg md:text-2xl font-bold pb-4">Category</h2>
       <div className="flex gap-2 md:gap-5">
         {name.map((categoryName, index) => (
-          <CategoryCard name={categoryName} url={url[index]}/>
+          <CategoryCard key={index} name={categoryName} url={url[index]}/>
         ))}
 
       </div>

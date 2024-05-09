@@ -2,10 +2,23 @@ import { Link } from "react-router-dom";
 import { FaSearch, FaHeart, FaUser } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
+import { useUserContext } from "../../context/AuthProvider";
+import { useEffect, useState } from "react";
+import { IUser } from "../../types";
 
-const mobileViewCss = "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea] font-semibold text-xl";
+const mobileViewCss =
+  "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea] font-semibold text-xl";
 
 const Navbar = () => {
+  const [currentUser, setCurrentUser] = useState<IUser | null>(null);
+
+  const { user } = useUserContext();
+
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
+
+  // console.log(currentUser)
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="w-full flex flex-wrap items-center justify-around max-lg:justify-between p-4 py-8">
@@ -22,18 +35,45 @@ const Navbar = () => {
           aria-expanded="false"
         >
           <span className="sr-only">Open main menu</span>
-          <IoMenu className="text-4xl"/>
+          <IoMenu className="text-4xl" />
         </button>
-        <div id="navbar-default" className="hidden flex flex-col gap-2 py-5 items-center w-full lg:hidden">
-          <Link to={""} className={`${mobileViewCss}`}>Home</Link>
-          <Link to={""} className={`${mobileViewCss}`}>Shop</Link>
-          <Link to={""} className={`${mobileViewCss}`}>About</Link>
-          <Link to={""} className={`${mobileViewCss}`}>Blog</Link>
-          <Link to={""} className={`${mobileViewCss}`}>Contact</Link>
-          <Link to={""} className={`${mobileViewCss}`}>Pages</Link>
-          <Link to={""} className={`flex justify-center items-center gap-2 ${mobileViewCss} `}>
-            <FaUser />
-            <span>Login/Register</span>
+        <div
+          id="navbar-default"
+          className="hidden flex flex-col gap-2 py-5 items-center w-full lg:hidden"
+        >
+          <Link to={""} className={`${mobileViewCss}`}>
+            Home
+          </Link>
+          <Link to={""} className={`${mobileViewCss}`}>
+            Shop
+          </Link>
+          <Link to={""} className={`${mobileViewCss}`}>
+            About
+          </Link>
+          <Link to={""} className={`${mobileViewCss}`}>
+            Blog
+          </Link>
+          <Link to={""} className={`${mobileViewCss}`}>
+            Contact
+          </Link>
+          <Link to={""} className={`${mobileViewCss}`}>
+            Pages
+          </Link>
+          <Link
+            to={"/login"}
+            className={`flex justify-center items-center gap-2 ${mobileViewCss} `}
+          >
+            <img
+              src={currentUser?.imageUrl}
+              className={`${currentUser == null ? "hidden" : ""} w-8 h-8`}
+            />
+            <FaUser className={`${currentUser == null ? "" : "hidden"}`} />
+            <span className={`${currentUser == null ? "" : "hidden"}`}>
+              Login/Register
+            </span>
+            <span className={`${currentUser == null ? "hidden" : "="}`}>
+              {currentUser?.name}
+            </span>
           </Link>
           <Link to={""} className={`flex justify-center ${mobileViewCss}`}>
             <FaSearch />
@@ -46,26 +86,50 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="max-lg:hidden lg:flex gap-5">
-          <Link to={""} className="font-semibold text-lg">Home</Link>
-          <Link to={""} className="font-semibold text-lg">Shop</Link>
-          <Link to={""} className="font-semibold text-lg">About</Link>
-          <Link to={""} className="font-semibold text-lg">Blog</Link>
-          <Link to={""} className="font-semibold text-lg">Contact</Link>
-          <Link to={""} className="font-semibold text-lg">Pages</Link>
+          <Link to={""} className="font-semibold text-lg">
+            Home
+          </Link>
+          <Link to={""} className="font-semibold text-lg">
+            Shop
+          </Link>
+          <Link to={""} className="font-semibold text-lg">
+            About
+          </Link>
+          <Link to={""} className="font-semibold text-lg">
+            Blog
+          </Link>
+          <Link to={""} className="font-semibold text-lg">
+            Contact
+          </Link>
+          <Link to={""} className="font-semibold text-lg">
+            Pages
+          </Link>
         </div>
         <div className="max-lg:hidden lg:flex items-center gap-5">
-          <Link to={""} className="flex items-center gap-2 text-[#63a5ea]">
-            <FaUser className="text-xl"/>
-            <span>Login/Register</span>
+          <Link
+            to={"/login"}
+            className="flex items-center gap-2 text-[#63a5ea]"
+          >
+            <img
+              src={currentUser?.imageUrl}
+              className={`${currentUser == null ? "hidden" : ""} w-8 h-8`}
+            />
+            <FaUser className={`${currentUser == null ? "" : "hidden"}`} />
+            <span className={`${currentUser == null ? "" : "hidden"}`}>
+              Login/Register
+            </span>
+            <span className={`${currentUser == null ? "hidden" : "="}`}>
+              {currentUser?.name}
+            </span>
           </Link>
           <Link to={""} className="text-[#63a5ea]">
-            <FaSearch className="text-xl"/>
+            <FaSearch className="text-xl" />
           </Link>
           <Link to={""} className="text-[#63a5ea]">
-            <FaCartShopping className="text-xl"/>
+            <FaCartShopping className="text-xl" />
           </Link>
           <Link to={""} className="text-[#63a5ea]">
-            <FaHeart className="text-xl"/>
+            <FaHeart className="text-xl" />
           </Link>
         </div>
       </div>

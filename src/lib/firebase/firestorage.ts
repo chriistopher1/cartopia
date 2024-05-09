@@ -17,24 +17,28 @@ const getImgFullUrl = async (path: string): Promise<string | null> => {
   }
 };
 
-export const getInitialAsset = async (): Promise<CategoryArray> => {
-  const listAllAsset = await listAll(listRef);
+export const getInitialAsset = async (): Promise<CategoryArray | undefined> => {
+  try {
+    const listAllAsset = await listAll(listRef);
 
-  var categoryArray: CategoryArray = {
-    name: [],
-    url: [],
-  };
+    var categoryArray: CategoryArray = {
+      name: [],
+      url: [],
+    };
 
-  await Promise.all(
-    listAllAsset.items.map(async (img) => {
-      const imgName = img.name.split(".")[0];
-      const imgPath = img.fullPath.toString();
-      const imgFullUrl = await getImgFullUrl(imgPath);
-      categoryArray.name.push(imgName);
-      categoryArray.url.push(imgFullUrl);
-    })
-  );
+    await Promise.all(
+      listAllAsset.items.map(async (img) => {
+        const imgName = img.name.split(".")[0];
+        const imgPath = img.fullPath.toString();
+        const imgFullUrl = await getImgFullUrl(imgPath);
+        categoryArray.name.push(imgName);
+        categoryArray.url.push(imgFullUrl);
+      })
+    );
 
-  //   console.log(categoryArray)
-  return categoryArray;
+    //   console.log(categoryArray)
+    return categoryArray;
+  } catch (error) {
+    console.log(error);
+  }
 };
