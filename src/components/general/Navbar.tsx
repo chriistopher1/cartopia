@@ -28,7 +28,9 @@ const Navbar = () => {
 
   const handleSignOut = () => {
     signOut();
-    navigate("/login");
+    setTimeout(() => {
+      navigate("/login");
+    }, 400);
   };
 
   return (

@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSignInAccount } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, redirect } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useUserContext } from "../../context/AuthProvider";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -29,11 +32,10 @@ const Login = () => {
 
       if (checkUser == null) {
         console.log("Error");
+        toast.error("Invalid credentials.");
         return;
       }
-      setTimeout(() => {
-        navigate("/");
-      }, 400);
+      navigate("/")
       console.log("Sign-in successful!");
     } catch (error) {
       console.error("Sign-in error:", error);
@@ -41,7 +43,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex flex-col relative justify-center items-center h-screen">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold mb-4">Login</h2>
         <form onSubmit={handleSubmit}>
@@ -91,6 +93,15 @@ const Login = () => {
             <span>Login</span>
           </button>
         </form>
+        <span>
+          Don't have an account?{" "}
+          <Link
+            to={"/register"}
+            className="font-semibold underline text-[#63a5ea]"
+          >
+            Click here
+          </Link>
+        </span>
       </div>
     </div>
   );

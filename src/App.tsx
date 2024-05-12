@@ -8,6 +8,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ProtectedLayout from "./pages/protected/ProtectedLayout";
 import ProtectedIndex from "./pages/protected/ProtectedIndex";
+import AuthLayout from "./pages/auth/AuthLayout";
 
 function App() {
   return (
@@ -16,8 +17,10 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/about" element={<About />} />
       </Route>
-      <Route path="login" element={<Login />} />
-      <Route path="register" element={<Register />} />
+      <Route element={<AuthLayout />}>
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+      </Route>
 
       <Route element={<ProtectedLayout />}>
         <Route path="/protected" element={<ProtectedIndex />} />

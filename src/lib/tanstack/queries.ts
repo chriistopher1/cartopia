@@ -10,11 +10,13 @@ import { getInitialAsset } from "../firebase/firestorage";
 import { getUserDataByUid } from "../firebase/firestore";
 
 //User
-export const useCreateUserAuth = () => {
+export const useSignUpAccount = () => {
   return useMutation({
-    mutationFn: (user: IUser) => registerAccount(user),
+    mutationFn: (user: { email: string; password: string, name: string, username: string }) =>
+      registerAccount(user),
   });
 };
+
 export const useSignInAccount = () => {
   return useMutation({
     mutationFn: (user: { email: string; password: string }) =>
