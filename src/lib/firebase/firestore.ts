@@ -9,7 +9,7 @@ export async function registerUserData(newUser : IUser){
 
   try {
     const docRef = await addDoc(collection(db, "user_table"), newUser);
-    console.log("Document written with ID: ", docRef.id);
+    // console.log("Document written with ID: ", docRef.id);
     return docRef.id;
   } catch (e) {
     console.error("Error adding document: ", e);

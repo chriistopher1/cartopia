@@ -64,10 +64,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     
     checkAuthUser()
-
+    console.log(user);
   }, [navigate]);
-
-  // if(isLoading) return <div>Loading...</div>
 
   const value = {
     user,

@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { useSignInAccount } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { Link, useNavigate, redirect } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useUserContext } from "../../context/AuthProvider";
 
 const Login = () => {
-  const navigate = useNavigate();
 
   const { mutateAsync, isPending } = useSignInAccount();
 
@@ -27,6 +25,12 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
+
+    if(formData.email == "" || formData.password == "" ){
+      toast.error("All fields are required.");
+      return;
+    }
+
     try {
       const checkUser = await mutateAsync(formData);
 
@@ -35,7 +39,7 @@ const Login = () => {
         toast.error("Invalid credentials.");
         return;
       }
-      navigate("/")
+      window.location.href = '/'
       console.log("Sign-in successful!");
     } catch (error) {
       console.error("Sign-in error:", error);

@@ -6,9 +6,9 @@ import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import ProtectedLayout from "./pages/protected/ProtectedLayout";
+import ProtectedLayout from "./pages/layout/ProtectedLayout";
 import ProtectedIndex from "./pages/protected/ProtectedIndex";
-import AuthLayout from "./pages/auth/AuthLayout";
+import AuthLayout from "./pages/layout/AuthLayout";
 
 function App() {
   return (

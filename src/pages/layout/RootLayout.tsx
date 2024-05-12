@@ -5,7 +5,6 @@ import { useUserContext } from "../../context/AuthProvider";
 import { useEffect } from "react";
 
 const RootLayout = () => {
-  const { isLoading } = useUserContext()
 
   return (
     <div>

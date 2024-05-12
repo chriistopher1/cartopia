@@ -75,7 +75,7 @@ export async function signInAccount(user: { email: string; password: string }) {
 
     const userCredential = signInUser.user;
 
-    console.log("anjing : ", currentUser);
+    // console.log("anjing : ", currentUser);
 
     return userCredential;
   } catch (error) {

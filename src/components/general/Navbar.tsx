@@ -29,9 +29,11 @@ const Navbar = () => {
   const handleSignOut = () => {
     signOut();
     setTimeout(() => {
-      navigate("/login");
-    }, 400);
+      window.location.href = "/login"
+    }, 500);
   };
+
+
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">

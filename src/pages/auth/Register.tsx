@@ -32,6 +32,16 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
+
+    //validation
+    if(formData.email == "" || formData.name == "" || formData.username == "" || formData.password == "" ){
+      toast.error("All fields are required.");
+      return;
+    }
+
+
+
+    //sign up new user data
     try {
       const signUpNewUser = signUp(formData);
 
@@ -39,18 +49,19 @@ const Register = () => {
         toast.error("Register error, please try again.");
         return;
       }
-
-      // const checkUser = signIn({
-      //   email: formData.email,
-      //   password: formData.password,
-      // });
-
-      // if (checkUser == null) {
-      //   console.log("Error");
-      //   toast.error("Invalid credentials.");
-      //   return;
-      // }
-      navigate("/login");
+      setTimeout(() => {
+        toast.success("Login using your credential", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        navigate("/");
+      }, 700);
 
       console.log("Sign-in successful!");
     } catch (error) {
