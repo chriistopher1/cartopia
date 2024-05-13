@@ -40,14 +40,14 @@ export async function registerAccount(user: {
       user.password
     );
 
-    const newUser: IUser = {
+    const newUser = {
       accountId: newUserSession.user.uid,
       email: user.email,
       name: user.name,
       username: user.username,
       imageUrl:
         "https://firebasestorage.googleapis.com/v0/b/cartopia-68776.appspot.com/o/user_assets%2Fdefault_profile%2Fdefault-profile-pic.jpg?alt=media&token=87535156-38fa-418e-bb7b-c173c138af1e",
-      cart: [],
+      cart : [],
       saved: []
     };
 

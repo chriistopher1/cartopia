@@ -55,9 +55,9 @@ const Navbar = () => {
           id="navbar-default"
           className="hidden flex flex-col gap-2 py-5 items-center w-full lg:hidden"
         >
-          <Link to={""} className={`${mobileViewCss}`}>
+          <a href={"/"} className={`${mobileViewCss}`}>
             Home
-          </Link>
+          </a>
           <Link to={"/shop"} className={`${mobileViewCss}`}>
             Shop
           </Link>
@@ -92,12 +92,12 @@ const Navbar = () => {
           <Link to={""} className={`flex justify-center ${mobileViewCss}`}>
             <FaSearch />
           </Link>
-          <Link to={""} className={`flex justify-center ${mobileViewCss}`}>
+          <a href={"/cart"} className={`flex justify-center ${mobileViewCss}`}>
             <FaCartShopping />
-          </Link>
-          <Link to={""} className={`flex justify-center ${mobileViewCss}`}>
+          </a>
+          <a href={"/saved"} className={`flex justify-center ${mobileViewCss}`}>
             <FaHeart />
-          </Link>
+          </a>
           <button
             className={`${mobileViewCss} ${isHaveUser() ? "" : "hidden"}`}
             onClick={handleSignOut}
@@ -109,9 +109,9 @@ const Navbar = () => {
           />
         </div>
         <div className="max-lg:hidden lg:flex gap-5">
-          <Link to={"/"} className="font-semibold text-lg">
+          <a href="/" className="font-semibold text-lg">
             Home
-          </Link>
+          </a>
           <Link to={"/shop"} className="font-semibold text-lg">
             Shop
           </Link>
@@ -148,12 +148,12 @@ const Navbar = () => {
           <Link to={""} className="text-[#63a5ea]">
             <FaSearch className="text-xl" />
           </Link>
-          <Link to={""} className="text-[#63a5ea]">
+          <a href={"/cart"} className="text-[#63a5ea]">
             <FaCartShopping className="text-xl" />
-          </Link>
-          <Link to={""} className="text-[#63a5ea]">
+          </a>
+          <a href={"/saved"} className="text-[#63a5ea]">
             <FaHeart className="text-xl" />
-          </Link>
+          </a>
           <button
             className={`text-[#63a5ea] ${isHaveUser() ? "" : "hidden"}`}
             onClick={handleSignOut}

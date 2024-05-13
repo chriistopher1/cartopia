@@ -48,7 +48,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col relative justify-center items-center h-screen">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+      <div className="bg-gray-200 border-2 border-gray-400 p-8 rounded-lg shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold mb-4">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -60,7 +60,7 @@ const Login = () => {
               id="email"
               name="email"
               placeholder="Enter your email"
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 bg-white"
               value={formData.email}
               onChange={handleInputChange}
               autoComplete="off"

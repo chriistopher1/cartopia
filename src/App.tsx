@@ -7,11 +7,12 @@ import About from "./pages/root/About";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ProtectedLayout from "./pages/layout/ProtectedLayout";
-import ProtectedIndex from "./pages/protected/ProtectedIndex";
 import AuthLayout from "./pages/layout/AuthLayout";
 import Shop from "./pages/root/Shop";
 import Blog from "./pages/root/Blog";
 import Contact from "./pages/root/Contact";
+import Cart from "./pages/protected/Cart";
+import Saved from "./pages/protected/Saved";
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
       </Route>
 
       <Route element={<ProtectedLayout />}>
-        <Route path="/protected" element={<ProtectedIndex />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/saved" element={<Saved />} />
       </Route>
     </Routes>
   );

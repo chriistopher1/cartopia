@@ -1,17 +1,35 @@
 import { useEffect } from "react";
 import { useUserContext } from "../../context/AuthProvider";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import Footer from "../../components/general/Footer";
+import Navbar from "../../components/general/Navbar";
 
 const ProtectedLayout = () => {
-  const { checkAuthUser } = useUserContext();
+  const { checkAuthUser, isLoading } = useUserContext();
+
+  const navigate = useNavigate()
 
   useEffect(() => {
-    console.log("haloooo")
-    checkAuthUser();
+
+    const checkCurrentUser = async () => {
+
+      const checkUser = await checkAuthUser();
+  
+      if(!checkUser) navigate("/login")
+
+    }
+
+    checkCurrentUser();
+
   }, []);
+
   return (
     <div>
+      <Navbar />
+
       <Outlet />
+
+      <Footer />
     </div>
   );
 };

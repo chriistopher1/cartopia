@@ -5,8 +5,7 @@ import { IUser } from "../../types";
 
 const db = getFirestore(firebaseApp);
 
-export async function registerUserData(newUser : IUser){
-
+export async function registerUserData(newUser: IUser) {
   try {
     const docRef = await addDoc(collection(db, "user_table"), newUser);
     console.log("Document written with ID: ", docRef.id);
@@ -15,8 +14,6 @@ export async function registerUserData(newUser : IUser){
     console.error("Error adding document: ", e);
     return null;
   }
-  
-
 }
 
 export async function getUserDataByUid(uid: string) {
@@ -26,22 +23,22 @@ export async function getUserDataByUid(uid: string) {
     username: "",
     email: "",
     imageUrl: "",
-    cart: [], 
-    saved: []
   };
 
   try {
-
-    const q = query(collection(db, "user_table"), where("accountId", "==", uid));
+    const q = query(
+      collection(db, "user_table"),
+      where("accountId", "==", uid)
+    );
 
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
-      userData.accountId = doc.data().accountId
-      userData.name = doc.data().name
-      userData.username = doc.data().username
-      userData.email = doc.data().email
-      userData.imageUrl = doc.data().imageUrl
+      userData.accountId = doc.data().accountId;
+      userData.name = doc.data().name;
+      userData.username = doc.data().username;
+      userData.email = doc.data().email;
+      userData.imageUrl = doc.data().imageUrl;
     });
 
     // console.log("query anjing  : ", userData)

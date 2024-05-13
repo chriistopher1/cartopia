@@ -3,8 +3,9 @@ import { firebaseApp } from "./config";
 import { CategoryArray } from "../../types";
 
 const storage = getStorage(firebaseApp);
-const listRef = ref(storage, "initial_assets/category");
+const categoryRef = ref(storage, "initial_assets/category");
 
+// get full image url
 const getImgFullUrl = async (path: string): Promise<string | null> => {
   try {
     const downloadUrl = await getDownloadURL(ref(storage, path));
@@ -17,9 +18,10 @@ const getImgFullUrl = async (path: string): Promise<string | null> => {
   }
 };
 
-export const getInitialAsset = async (): Promise<CategoryArray | undefined> => {
+// get all category
+export const getCategoryAsset = async (): Promise<CategoryArray | undefined> => {
   try {
-    const listAllAsset = await listAll(listRef);
+    const listAllAsset = await listAll(categoryRef);
 
     var categoryArray: CategoryArray = {
       name: [],

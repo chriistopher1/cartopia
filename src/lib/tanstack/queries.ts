@@ -6,7 +6,7 @@ import {
   signOutAccount,
 } from "../firebase/fireauthentication";
 import { QUERY_KEYS } from "./queryKeys";
-import { getInitialAsset } from "../firebase/firestorage";
+import { getCategoryAsset } from "../firebase/firestorage";
 import { getUserDataByUid } from "../firebase/firestore";
 
 //User
@@ -38,10 +38,10 @@ export const useGetUserDataByUid = (uid: string) => {
   });
 };
 
-//Initial Asset
-export const useGetInitialAsset = () => {
+// Asset
+export const useGetCategoryAsset = () => {
   return useQuery({
-    queryKey: [QUERY_KEYS.GET_INITIAL_ASSET],
-    queryFn: getInitialAsset,
+    queryKey: [QUERY_KEYS.GET_CATEGORY_ASSET],
+    queryFn: getCategoryAsset,
   });
 };

@@ -8,5 +8,5 @@ export enum QUERY_KEYS {
     GET_USER_DATA_BY_UID = "getUserDataByUid",
 
     // INITIAL ASSET
-    GET_INITIAL_ASSET = "getInitialAsset"
+    GET_CATEGORY_ASSET = "getCategoryAsset"
   }
