@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { CategoryArray, InitialContextType } from "../types";
-import { getInitialAsset } from "../lib/firebase/firestorage";
+import {  InitialContextType } from "../types";
 import { useGetInitialAsset } from "../lib/tanstack/queries";
 
 const InitialContext = createContext<InitialContextType | undefined>(undefined);

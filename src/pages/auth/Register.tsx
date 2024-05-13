@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useSignUpAccount, useSignInAccount } from "../../lib/tanstack/queries";
+import { useSignUpAccount, useSignInAccount, useSignOutAccount } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { signOut } from "firebase/auth";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,8 +12,7 @@ const Register = () => {
   const { mutateAsync: signUp, isPending: isLoadingSignUp } =
     useSignUpAccount();
 
-  const { mutateAsync: signIn, isPending: isLoadingSignIn } =
-    useSignInAccount();
+  const { mutateAsync: signOut, isPending: isLoadingSignOut } = useSignOutAccount()
 
   const [formData, setFormData] = useState({
     name: "",
@@ -34,12 +34,15 @@ const Register = () => {
     console.log(formData);
 
     //validation
-    if(formData.email == "" || formData.name == "" || formData.username == "" || formData.password == "" ){
+    if (
+      formData.email == "" ||
+      formData.name == "" ||
+      formData.username == "" ||
+      formData.password == ""
+    ) {
       toast.error("All fields are required.");
       return;
     }
-
-
 
     //sign up new user data
     try {
@@ -60,8 +63,9 @@ const Register = () => {
           progress: undefined,
           theme: "light",
         });
-        navigate("/");
-      }, 700);
+
+        navigate("/login")
+      }, 800);
 
       console.log("Sign-in successful!");
     } catch (error) {
@@ -143,15 +147,15 @@ const Register = () => {
           <button
             type="submit"
             className={`w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 flex items-center gap-5 justify-center ${
-              isLoadingSignIn || isLoadingSignUp
+              isLoadingSignOut || isLoadingSignUp
                 ? "opacity-50 cursor-not-allowed"
                 : ""
             }`}
-            disabled={isLoadingSignIn || isLoadingSignUp}
+            disabled={isLoadingSignOut || isLoadingSignUp}
           >
             <AiOutlineLoading3Quarters
               className={`${
-                isLoadingSignIn || isLoadingSignUp
+                isLoadingSignOut || isLoadingSignUp
                   ? "inline animate-spin"
                   : "hidden"
               } mr-2`}

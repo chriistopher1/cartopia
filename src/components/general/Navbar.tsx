@@ -16,8 +16,6 @@ const Navbar = () => {
 
   const { user } = useUserContext();
 
-  const navigate = useNavigate();
-
   const { mutateAsync: signOut, isPending } = useSignOutAccount();
 
   useEffect(() => {
@@ -60,16 +58,16 @@ const Navbar = () => {
           <Link to={""} className={`${mobileViewCss}`}>
             Home
           </Link>
-          <Link to={""} className={`${mobileViewCss}`}>
+          <Link to={"/shop"} className={`${mobileViewCss}`}>
             Shop
           </Link>
           <Link to={"/about"} className={`${mobileViewCss}`}>
             About
           </Link>
-          <Link to={""} className={`${mobileViewCss}`}>
+          <Link to={"/blog"} className={`${mobileViewCss}`}>
             Blog
           </Link>
-          <Link to={""} className={`${mobileViewCss}`}>
+          <Link to={"/contact"} className={`${mobileViewCss}`}>
             Contact
           </Link>
           <Link to={""} className={`${mobileViewCss}`}>
@@ -111,19 +109,19 @@ const Navbar = () => {
           />
         </div>
         <div className="max-lg:hidden lg:flex gap-5">
-          <Link to={""} className="font-semibold text-lg">
+          <Link to={"/"} className="font-semibold text-lg">
             Home
           </Link>
-          <Link to={""} className="font-semibold text-lg">
+          <Link to={"/shop"} className="font-semibold text-lg">
             Shop
           </Link>
           <Link to={"/about"} className="font-semibold text-lg">
             About
           </Link>
-          <Link to={""} className="font-semibold text-lg">
+          <Link to={"/blog"} className="font-semibold text-lg">
             Blog
           </Link>
-          <Link to={""} className="font-semibold text-lg">
+          <Link to={"/contact"} className="font-semibold text-lg">
             Contact
           </Link>
           <Link to={""} className="font-semibold text-lg">

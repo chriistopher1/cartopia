@@ -4,6 +4,8 @@ export type IUser = {
   username: string | undefined;
   email: string | undefined;
   imageUrl: string | undefined;
+  cart : string[] | undefined;
+  saved: string[] | undefined
 };
 
 export type CategoryArray = {
