@@ -7,7 +7,7 @@ import {
 } from "../firebase/fireauthentication";
 import { QUERY_KEYS } from "./queryKeys";
 import { getCategoryAsset } from "../firebase/firestorage";
-import { getUserDataByUid } from "../firebase/firestore";
+import { getAllProduct, getUserCartList, getUserDataByUid } from "../firebase/firestore";
 
 //User
 export const useSignUpAccount = () => {
@@ -38,10 +38,25 @@ export const useGetUserDataByUid = (uid: string) => {
   });
 };
 
+export const useGetUserCartList = (uid: string | undefined ) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_CART_LIST, uid],
+    queryFn: () => getUserCartList(uid),
+  });
+};
+
+
 // Asset
 export const useGetCategoryAsset = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_CATEGORY_ASSET],
     queryFn: getCategoryAsset,
+  });
+};
+
+export const useGetAllProduct = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_ALL_PRODUCT],
+    queryFn: getAllProduct,
   });
 };

@@ -5,7 +5,7 @@ import Footer from "../../components/general/Footer";
 import Navbar from "../../components/general/Navbar";
 
 const ProtectedLayout = () => {
-  const { checkAuthUser, isLoading } = useUserContext();
+  const { user, checkAuthUser, isLoading } = useUserContext();
 
   const navigate = useNavigate()
 

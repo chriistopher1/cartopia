@@ -62,7 +62,7 @@ const About = () => {
         className="w-8/12 md:w-5/12 mx-auto my-16 h-auto rounded-lg"
       />
 
-      <div className="flex flex-col justify-center items-center pb-12">
+      <div className="flex flex-col justify-center items-center pb-12 mx-5">
         <div className="text-center py-8 mb-12 w-2/3 md:w-1/3">
           <h3 className="font-bold text-2xl md:text-3xl mb-2">Meet Our Team</h3>
           <h5 className="text-gray-700">

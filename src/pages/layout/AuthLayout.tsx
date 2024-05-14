@@ -13,7 +13,7 @@ const AuthLayout = () => {
 
   return (
     <>
-      <Outlet />
+      <Outlet/>
     </>
   );
 };
