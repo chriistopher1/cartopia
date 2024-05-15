@@ -16,7 +16,7 @@ const Register = () => {
 
   const [formData, setFormData] = useState({
     name: "",
-    username: "",
+    phone: "",
     email: "",
     password: "",
   });
@@ -37,7 +37,7 @@ const Register = () => {
     if (
       formData.email == "" ||
       formData.name == "" ||
-      formData.username == "" ||
+      formData.phone == "" ||
       formData.password == ""
     ) {
       toast.error("All fields are required.");
@@ -95,18 +95,18 @@ const Register = () => {
           </div>
           <div className="mb-4">
             <label
-              htmlFor="username"
+              htmlFor="phone"
               className="block text-sm font-semibold mb-1"
             >
-              Username
+              Phone
             </label>
             <input
               type="text"
-              id="username"
-              name="username"
-              placeholder="Enter your username"
+              id="phone"
+              name="phone"
+              placeholder="Enter your phone"
               className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
-              value={formData.username}
+              value={formData.phone}
               onChange={handleInputChange}
               autoComplete="off"
             />

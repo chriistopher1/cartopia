@@ -31,7 +31,7 @@ export async function registerAccount(user: {
   email: string;
   password: string;
   name: string;
-  username: string;
+  phone: string;
 }) {
   try {
     const newUserSession = await createUserWithEmailAndPassword(
@@ -44,11 +44,17 @@ export async function registerAccount(user: {
       accountId: newUserSession.user.uid,
       email: user.email,
       name: user.name,
-      username: user.username,
       imageUrl:
         "https://firebasestorage.googleapis.com/v0/b/cartopia-68776.appspot.com/o/user_assets%2Fdefault_profile%2Fdefault-profile-pic.jpg?alt=media&token=87535156-38fa-418e-bb7b-c173c138af1e",
       cart : [],
-      saved: []
+      saved: [],
+      address : "",
+      phone: user.phone,
+      seller: {
+        id: "",
+        name : "",
+        address: ""
+      }
     };
 
     const insertNewUserToFirestore = await registerUserData(newUser);

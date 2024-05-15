@@ -1,5 +1,12 @@
 import { firebaseApp } from "./config";
-import { addDoc, doc, getDoc, getFirestore, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  doc,
+  getDoc,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
 import { collection, getDocs } from "firebase/firestore";
 import { IUser, Product } from "../../types";
 
@@ -22,9 +29,16 @@ export async function getUserDataByUid(uid: string) {
   var userData: IUser = {
     accountId: "",
     name: "",
-    username: "",
+    phone: "",
     email: "",
     imageUrl: "",
+    address: "",
+
+    seller: {
+      id: "",
+      name: "",
+      address: "",
+    },
   };
 
   try {
@@ -38,9 +52,14 @@ export async function getUserDataByUid(uid: string) {
     querySnapshot.forEach((doc) => {
       userData.accountId = doc.data().accountId;
       userData.name = doc.data().name;
-      userData.username = doc.data().username;
+      userData.phone = doc.data().phone;
       userData.email = doc.data().email;
       userData.imageUrl = doc.data().imageUrl;
+
+      userData.address = doc.data().address;
+      userData.seller.id = doc.data().seller.id;
+      userData.seller.name = doc.data().seller.name;
+      userData.seller.address = doc.data().seller.address;
     });
 
     // console.log("query anjing  : ", userData)
@@ -52,7 +71,7 @@ export async function getUserDataByUid(uid: string) {
 }
 
 // get one product info
-export async function getProductInfo(pid: string) : Promise<Product | null> {
+export async function getProductInfo(pid: string): Promise<Product | null> {
   const productInfo: Product = {
     category: "",
     description: "",
@@ -61,15 +80,16 @@ export async function getProductInfo(pid: string) : Promise<Product | null> {
     price: 0,
     review: 0,
     stock: 0,
+    id: "",
+    sellerId: ""
   };
 
   try {
-    const productRef = doc(db, 'product_table', pid);
+    const productRef = doc(db, "product_table", pid);
 
     const productDoc = await getDoc(productRef);
 
-    if(productDoc.exists()){
-
+    if (productDoc.exists()) {
       const productData = productDoc.data();
       productInfo.category = productData.category;
       productInfo.description = productData.description;
@@ -78,7 +98,6 @@ export async function getProductInfo(pid: string) : Promise<Product | null> {
       productInfo.price = productData.price;
       productInfo.review = productData.review;
       productInfo.stock = productData.stock;
-
     }
 
     return productInfo;
@@ -105,7 +124,7 @@ export async function getUserCartList(uid: string | undefined) {
 
     const cartListProduct: (Product | null)[] = [];
 
-    const promises : any[] = []; 
+    const promises: any[] = [];
 
     querySnapshot.forEach((doc) => {
       const docInfo = doc.data().cart;
@@ -116,13 +135,13 @@ export async function getUserCartList(uid: string | undefined) {
       });
     });
 
-    const resolvedPromises = await Promise.all(promises); 
+    const resolvedPromises = await Promise.all(promises);
 
-    cartListProduct.push(...resolvedPromises); 
+    cartListProduct.push(...resolvedPromises);
 
     // console.log("firestore : ", cartListProduct);
     // console.log("firestore 1 : ", cartListProduct.length);
-    return cartListProduct; 
+    return cartListProduct;
   } catch (error) {
     console.log("error fetching user cart list:", error);
     throw error; // Throw the error to be handled by React Query
@@ -130,13 +149,9 @@ export async function getUserCartList(uid: string | undefined) {
 }
 
 //get all product (temporary)
-export async function getAllProduct(){
-
+export async function getAllProduct() {
   try {
-    
-    const q = query(
-      collection(db, "product_table")
-    );
+    const q = query(collection(db, "product_table"));
 
     const querySnapshot = await getDocs(q);
 
@@ -146,22 +161,22 @@ export async function getAllProduct(){
       // cartListProduct.push(doc.data())
       // console.log("all product : ", doc.data())
       allProduct.push({
-        category : doc.data().category,
-        description : doc.data().description,
-        imageUrl : doc.data().imageUrl,
-        name : doc.data().name,
-        price : doc.data().price,
+        category: doc.data().category,
+        description: doc.data().description,
+        imageUrl: doc.data().imageUrl,
+        name: doc.data().name,
+        price: doc.data().price,
         review: doc.data().review,
-        stock: doc.data().stock
-      })
+        stock: doc.data().stock,
+        id : doc.data().id,
+        sellerId : doc.data().sellerId
+      });
     });
 
     // console.log("firestore : ", cartListProduct);
     // console.log("firestore 1 : ", cartListProduct.length);
-    return allProduct; 
-
+    return allProduct;
   } catch (error) {
-    console.log("error on fetching all product")
+    console.log("error on fetching all product");
   }
-
 }

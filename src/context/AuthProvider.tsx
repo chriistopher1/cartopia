@@ -7,9 +7,15 @@ import { getCurrentUserData } from "../lib/firebase/fireauthentication";
 export const INITIAL_USER = {
   accountId: "",
   name: "",
-  username: "",
   email: "",
   imageUrl: "",
+  address: "",
+  phone: "",
+  seller:{
+    id: "",
+    name: "",
+    address : ""
+  }
 };
 
 const INITIAL_STATE = {
@@ -45,9 +51,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser({
           accountId: currentAuthenticatedUser.accountId,
           name: currentAuthenticatedUser.name,
-          username: currentAuthenticatedUser.username,
           imageUrl: currentAuthenticatedUser.imageUrl,
-          email: currentAuthenticatedUser.email
+          email: currentAuthenticatedUser.email,
+          address: currentAuthenticatedUser.address,
+          phone: currentAuthenticatedUser.phone,
+          seller:{
+            id: currentAuthenticatedUser.seller.id,
+            name: currentAuthenticatedUser.seller.name,
+            address : currentAuthenticatedUser.seller.address
+          }
         });
 
         return true;
@@ -64,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     
     checkAuthUser()
-    console.log(user);
+    // console.log(user);
   }, [navigate]);
 
   const value = {

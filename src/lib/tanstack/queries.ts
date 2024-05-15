@@ -12,7 +12,7 @@ import { getAllProduct, getUserCartList, getUserDataByUid } from "../firebase/fi
 //User
 export const useSignUpAccount = () => {
   return useMutation({
-    mutationFn: (user: { email: string; password: string, name: string, username: string }) =>
+    mutationFn: (user: { email: string; password: string, name: string, phone: string }) =>
       registerAccount(user),
   });
 };
