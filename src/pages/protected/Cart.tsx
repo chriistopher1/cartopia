@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGetUserCartList } from '../../lib/tanstack/queries';
 import { useUserContext } from '../../context/AuthProvider';
-import { IUser, Product } from '../../types';
+import { IUser } from '../../types';
 
 const Cart = () => {
   const { user } = useUserContext();
@@ -15,7 +15,7 @@ const Cart = () => {
 
   return (
     <div>
-      <div>{userCartList && userCartList[0]?.name}</div>
+      {/* <div>{userCartList && userCartList.item[0]}</div> */}
       <div>Halo</div>
     </div>
   );

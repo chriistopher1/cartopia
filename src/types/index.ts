@@ -10,6 +10,8 @@ export type IUser = {
     name: string | undefined;
     address: string | undefined;
   };
+  cart: string | undefined
+  saved: string | undefined
 };
 
 export type CategoryArray = {
@@ -17,7 +19,7 @@ export type CategoryArray = {
   url: (string | null)[];
 };
 
-export type Product = {
+export type IProduct = {
   id: string | undefined;
   name: string | undefined;
   description: string | undefined;
@@ -27,4 +29,21 @@ export type Product = {
   stock: number | undefined;
   review: number | undefined;
   sellerId: string | undefined;
+};
+
+export type IProductCart = {
+  product: IProduct | undefined;
+  quantity: number | undefined;
+};
+
+export type ICart = {
+  id: string | undefined;
+  userId: string | undefined;
+  item: IProductCart[] | undefined;
+};
+
+export type ISaved = {
+  id : string | undefined
+  userId: string | undefined
+  item: IProductCart[] | undefined;
 };

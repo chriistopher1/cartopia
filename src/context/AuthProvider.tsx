@@ -15,7 +15,9 @@ export const INITIAL_USER = {
     id: "",
     name: "",
     address : ""
-  }
+  },
+  cart: "", 
+  saved : ""
 };
 
 const INITIAL_STATE = {
@@ -59,7 +61,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             id: currentAuthenticatedUser.seller.id,
             name: currentAuthenticatedUser.seller.name,
             address : currentAuthenticatedUser.seller.address
-          }
+          },
+          cart : currentAuthenticatedUser.cart,
+          saved : currentAuthenticatedUser.saved
+          
         });
 
         return true;

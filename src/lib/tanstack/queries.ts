@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { IUser } from "../../types";
+import { IProductCart, IUser } from "../../types";
 import {
   registerAccount,
   signInAccount,
@@ -7,7 +7,7 @@ import {
 } from "../firebase/fireauthentication";
 import { QUERY_KEYS } from "./queryKeys";
 import { getCategoryAsset } from "../firebase/firestorage";
-import { getAllProduct, getUserCartList, getUserDataByUid } from "../firebase/firestore";
+import { addItemToCart, addItemToSaved, getAllProduct, getUserCartList, getUserDataByUid, getUserSavedList } from "../firebase/firestore";
 
 //User
 export const useSignUpAccount = () => {
@@ -45,6 +45,13 @@ export const useGetUserCartList = (uid: string | undefined ) => {
   });
 };
 
+export const useGetUserSavedList = (uid: string | undefined ) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_SAVED_LIST, uid],
+    queryFn: () => getUserSavedList(uid),
+  });
+};
+
 
 // Asset
 export const useGetCategoryAsset = () => {
@@ -58,5 +65,22 @@ export const useGetAllProduct = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_ALL_PRODUCT],
     queryFn: getAllProduct,
+  });
+};
+
+
+// Cart
+export const useAddItemToCart = () => {
+  return useMutation({
+    mutationFn: (newInstance : {newProduct : IProductCart, uid:string | undefined}) =>
+      addItemToCart(newInstance),
+  });
+};
+
+//Saved
+export const useAddItemToSaved = () => {
+  return useMutation({
+    mutationFn: (newInstance : {newProduct : IProductCart, uid:string | undefined}) =>
+      addItemToSaved(newInstance),
   });
 };

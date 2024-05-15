@@ -6,7 +6,7 @@ const Recommend = () => {
 
   if (isPending) return <div>Loading...</div>;
 
-  console.log(allProduct);
+  // console.log(allProduct);
 
   return (
     <div className="mx-4 md:mx-24 mb-5">

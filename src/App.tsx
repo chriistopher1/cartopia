@@ -13,6 +13,7 @@ import Blog from "./pages/root/Blog";
 import Contact from "./pages/root/Contact";
 import Cart from "./pages/protected/Cart";
 import Saved from "./pages/protected/Saved";
+import Product from "./pages/root/Product";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/product/:id" element={<Product />} />
       </Route>
 
       <Route element={<AuthLayout />}>
