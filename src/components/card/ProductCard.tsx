@@ -8,13 +8,13 @@ import { formatToIDR } from "../../constant";
 const ProductCard = (product: IProduct) => {
   return (
     <Link
-      className="flex flex-col items-center w-40 sm:w-44 md:w-52 lg:w-80 shadow-lg grow shadow-gray-500 cursor-pointer"
+      className="flex flex-col items-center w-44 sm:w-44 md:w-60 lg:w-72 shadow-lg shadow-gray-500 cursor-pointer"
       to={`product/${product.id}`}
       state={{ product }}
     >
       <img src={product.imageUrl} className="w-full h-auto" />
       <div className="flex flex-col items-center p-5 sm:p-7 md:p-9 lg:p-12">
-        <h2 className="font-bold text-xs sm:text-md md:text-lg">
+        <h2 className="font-bold text-xs sm:text-md md:text-lg truncate">
           {product.name}
         </h2>
         <h3 className="font-semibold text-xs sm:text-md md:text-lg">
