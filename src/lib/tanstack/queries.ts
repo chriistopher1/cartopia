@@ -15,6 +15,7 @@ import {
   getUserDataByUid,
   getUserSavedList,
   removeItemFromCart,
+  removeItemFromSaved,
 } from "../firebase/firestore";
 
 
@@ -114,5 +115,21 @@ export const useAddItemToSaved = () => {
       newProduct: IProductCart;
       uid: string | undefined;
     }) => addItemToSaved(newInstance),
+  });
+};
+
+export const useRemoveItemFromSaved = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      uid: string | undefined;
+      idToBeDeleted: string | undefined;
+    }) => removeItemFromSaved(newInstance.uid, newInstance.idToBeDeleted),
+    onSuccess: () => {
+      // Invalidate the cart list query to trigger a refetch
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_SAVED_LIST],
+      });
+    },
   });
 };

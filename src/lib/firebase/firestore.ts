@@ -389,3 +389,48 @@ export async function removeItemFromCart(
     return false;
   }
 }
+
+
+// remove item from saved
+export async function removeItemFromSaved(
+  uid: string | undefined,
+  idToBeDeleted: string | undefined
+): Promise<boolean> {
+  try {
+    const userSavedList: ICart | undefined = await getUserSavedList(uid);
+
+    if (!userSavedList || !userSavedList.item) {
+      console.log("Cart is empty or does not exist.");
+      return false;
+    }
+
+    // Remove the item with the given id
+    const updatedItems = userSavedList.item.filter(
+      (savedItem) => savedItem.product?.id !== idToBeDeleted
+    );
+
+    const q = query(collection(db, "saved_table"), where("userId", "==", uid));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const userCartRef = doc(db, "saved_table", querySnapshot.docs[0].id);
+      const userCartDoc = await getDoc(userCartRef);
+
+      if (userCartDoc.exists()) {
+        await updateDoc(userCartRef, { item: updatedItems });
+
+        console.log("Successfully removed item from saved.");
+        return true;
+      } else {
+        console.log("Cart document does not exist.");
+        return false;
+      }
+    } else {
+      console.log("Cart document does not exist.");
+      return false;
+    }
+  } catch (error) {
+    console.log("error on removing item from cart");
+    return false;
+  }
+}
