@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IProduct, IProductCart } from "../../types";
 import { useEffect, useState } from "react";
 import { FaHeart, FaStar } from "react-icons/fa";
-import { formatToIDR } from "../../constant";
+import { checkIfItemInTheList, formatToIDR } from "../../constant";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoCartOutline, IoHeartOutline } from "react-icons/io5";
 import { useUserContext } from "../../context/AuthProvider";
@@ -15,19 +15,7 @@ import {
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-const checkIfItemInTheList = (
-  currentProduct: IProduct,
-  itemList: IProductCart[] | undefined
-): boolean => {
-  if (itemList == undefined) return false;
-  for (let index = 0; index < itemList.length; index++) {
-    const element = itemList[index];
 
-    if (element.product?.id == currentProduct.id) return true;
-  }
-
-  return false;
-};
 
 const Product = () => {
   const navigate = useNavigate();
@@ -158,7 +146,7 @@ const Product = () => {
     });
 
     if (isAddedToCart) {
-      toast.success("Success on adding item to cart", {
+      toast.success("Success on adding item to saved", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -170,7 +158,7 @@ const Product = () => {
       });
       setIsAddedToSavedList(true);
     } else {
-      toast.error("Error on adding item to cart", {
+      toast.error("Error on adding item to saved", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,

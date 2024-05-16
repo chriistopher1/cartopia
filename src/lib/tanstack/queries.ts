@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IProductCart, IUser } from "../../types";
 import {
   registerAccount,
@@ -7,13 +7,27 @@ import {
 } from "../firebase/fireauthentication";
 import { QUERY_KEYS } from "./queryKeys";
 import { getCategoryAsset } from "../firebase/firestorage";
-import { addItemToCart, addItemToSaved, getAllProduct, getUserCartList, getUserDataByUid, getUserSavedList } from "../firebase/firestore";
+import {
+  addItemToCart,
+  addItemToSaved,
+  getAllProduct,
+  getUserCartList,
+  getUserDataByUid,
+  getUserSavedList,
+  removeItemFromCart,
+} from "../firebase/firestore";
+
+
 
 //User
 export const useSignUpAccount = () => {
   return useMutation({
-    mutationFn: (user: { email: string; password: string, name: string, phone: string }) =>
-      registerAccount(user),
+    mutationFn: (user: {
+      email: string;
+      password: string;
+      name: string;
+      phone: string;
+    }) => registerAccount(user),
   });
 };
 
@@ -38,20 +52,19 @@ export const useGetUserDataByUid = (uid: string) => {
   });
 };
 
-export const useGetUserCartList = (uid: string | undefined ) => {
+export const useGetUserCartList = (uid: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_USER_CART_LIST, uid],
     queryFn: () => getUserCartList(uid),
   });
 };
 
-export const useGetUserSavedList = (uid: string | undefined ) => {
+export const useGetUserSavedList = (uid: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_USER_SAVED_LIST, uid],
     queryFn: () => getUserSavedList(uid),
   });
 };
-
 
 // Asset
 export const useGetCategoryAsset = () => {
@@ -68,19 +81,38 @@ export const useGetAllProduct = () => {
   });
 };
 
-
 // Cart
 export const useAddItemToCart = () => {
   return useMutation({
-    mutationFn: (newInstance : {newProduct : IProductCart, uid:string | undefined}) =>
-      addItemToCart(newInstance),
+    mutationFn: (newInstance: {
+      newProduct: IProductCart;
+      uid: string | undefined;
+    }) => addItemToCart(newInstance),
+  });
+};
+
+export const useRemoveItemFromCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      uid: string | undefined;
+      idToBeDeleted: string | undefined;
+    }) => removeItemFromCart(newInstance.uid, newInstance.idToBeDeleted),
+    onSuccess: () => {
+      // Invalidate the cart list query to trigger a refetch
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_CART_LIST],
+      });
+    },
   });
 };
 
 //Saved
 export const useAddItemToSaved = () => {
   return useMutation({
-    mutationFn: (newInstance : {newProduct : IProductCart, uid:string | undefined}) =>
-      addItemToSaved(newInstance),
+    mutationFn: (newInstance: {
+      newProduct: IProductCart;
+      uid: string | undefined;
+    }) => addItemToSaved(newInstance),
   });
 };

@@ -119,28 +119,24 @@ export async function getProductInfo(pid: string): Promise<IProduct | null> {
 export async function getUserCartList(uid: string | undefined) {
   if (uid == undefined) {
     console.log("no uid");
-    return ; // Return an empty array or null here if there's no UID
+    return; // Return an empty array or null here if there's no UID
   }
 
   try {
-    const q = query(
-      collection(db, "cart_table"),
-      where("userId", "==", uid)
-    );
+    const q = query(collection(db, "cart_table"), where("userId", "==", uid));
 
     const querySnapshot = await getDocs(q);
 
     const cartListProduct: ICart = {
-      id: "", 
+      id: "",
       item: [],
-      userId: ""
+      userId: "",
     };
 
     querySnapshot.forEach((doc) => {
-      cartListProduct.id = doc.data().id
-      cartListProduct.item = doc.data().item
-      cartListProduct.userId = doc.data().userId
-
+      cartListProduct.id = doc.data().id;
+      cartListProduct.item = doc.data().item;
+      cartListProduct.userId = doc.data().userId;
     });
 
     return cartListProduct;
@@ -154,28 +150,24 @@ export async function getUserCartList(uid: string | undefined) {
 export async function getUserSavedList(uid: string | undefined) {
   if (uid == undefined) {
     console.log("no uid");
-    return ; // Return an empty array or null here if there's no UID
+    return; // Return an empty array or null here if there's no UID
   }
 
   try {
-    const q = query(
-      collection(db, "saved_table"),
-      where("userId", "==", uid)
-    );
+    const q = query(collection(db, "saved_table"), where("userId", "==", uid));
 
     const querySnapshot = await getDocs(q);
 
     const savedListProduct: ICart = {
-      id: "", 
+      id: "",
       item: [],
-      userId: ""
+      userId: "",
     };
 
     querySnapshot.forEach((doc) => {
-      savedListProduct.id = doc.data().id
-      savedListProduct.item = doc.data().item
-      savedListProduct.userId = doc.data().userId
-
+      savedListProduct.id = doc.data().id;
+      savedListProduct.item = doc.data().item;
+      savedListProduct.userId = doc.data().userId;
     });
 
     return savedListProduct;
@@ -257,25 +249,34 @@ export async function makeNewSaved(uid: string) {
 }
 
 // add item to cart
-export async function addItemToCart(newInstance: { newProduct: IProductCart, uid: string | undefined }) {
+export async function addItemToCart(newInstance: {
+  newProduct: IProductCart;
+  uid: string | undefined;
+}) {
   try {
-    const q = query(collection(db, "cart_table"), where("userId", "==", newInstance.uid));
+    const q = query(
+      collection(db, "cart_table"),
+      where("userId", "==", newInstance.uid)
+    );
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       // If the cart document exists, update the item array
 
-      const userCartRef = doc(db, 'cart_table', querySnapshot.docs[0].id);
+      const userCartRef = doc(db, "cart_table", querySnapshot.docs[0].id);
       const userCartDoc = await getDoc(userCartRef);
 
       if (userCartDoc.exists()) {
         const userData = userCartDoc.data();
         const currentItemArray = userData?.item || [];
 
-        const updatedItemArray = [...currentItemArray, {
-          product: newInstance.newProduct.product,
-          quantity: newInstance.newProduct.quantity
-        }];
+        const updatedItemArray = [
+          ...currentItemArray,
+          {
+            product: newInstance.newProduct.product,
+            quantity: newInstance.newProduct.quantity,
+          },
+        ];
 
         await updateDoc(userCartRef, { item: updatedItemArray });
 
@@ -297,25 +298,34 @@ export async function addItemToCart(newInstance: { newProduct: IProductCart, uid
 }
 
 // add item to saved
-export async function addItemToSaved(newInstance: { newProduct: IProductCart, uid: string | undefined }) {
+export async function addItemToSaved(newInstance: {
+  newProduct: IProductCart;
+  uid: string | undefined;
+}) {
   try {
-    const q = query(collection(db, "saved_table"), where("userId", "==", newInstance.uid));
+    const q = query(
+      collection(db, "saved_table"),
+      where("userId", "==", newInstance.uid)
+    );
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       // If the saved document exists, update the item array
 
-      const userSavedRef = doc(db, 'saved_table', querySnapshot.docs[0].id);
+      const userSavedRef = doc(db, "saved_table", querySnapshot.docs[0].id);
       const userSavedDoc = await getDoc(userSavedRef);
 
       if (userSavedDoc.exists()) {
         const userData = userSavedDoc.data();
         const currentItemArray = userData?.item || [];
 
-        const updatedItemArray = [...currentItemArray, {
-          product: newInstance.newProduct.product,
-          quantity: newInstance.newProduct.quantity
-        }];
+        const updatedItemArray = [
+          ...currentItemArray,
+          {
+            product: newInstance.newProduct.product,
+            quantity: newInstance.newProduct.quantity,
+          },
+        ];
 
         await updateDoc(userSavedRef, { item: updatedItemArray });
 
@@ -336,3 +346,46 @@ export async function addItemToSaved(newInstance: { newProduct: IProductCart, ui
   }
 }
 
+// remove item from cart
+export async function removeItemFromCart(
+  uid: string | undefined,
+  idToBeDeleted: string | undefined
+): Promise<boolean> {
+  try {
+    const userCartList: ICart | undefined = await getUserCartList(uid);
+
+    if (!userCartList || !userCartList.item) {
+      console.log("Cart is empty or does not exist.");
+      return false;
+    }
+
+    // Remove the item with the given id
+    const updatedItems = userCartList.item.filter(
+      (cartItem) => cartItem.product?.id !== idToBeDeleted
+    );
+
+    const q = query(collection(db, "cart_table"), where("userId", "==", uid));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const userCartRef = doc(db, "cart_table", querySnapshot.docs[0].id);
+      const userCartDoc = await getDoc(userCartRef);
+
+      if (userCartDoc.exists()) {
+        await updateDoc(userCartRef, { item: updatedItems });
+
+        console.log("Successfully removed item from cart.");
+        return true;
+      } else {
+        console.log("Cart document does not exist.");
+        return false;
+      }
+    } else {
+      console.log("Cart document does not exist.");
+      return false;
+    }
+  } catch (error) {
+    console.log("error on removing item from cart");
+    return false;
+  }
+}
