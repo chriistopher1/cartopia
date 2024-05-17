@@ -27,7 +27,7 @@ const ProductCard = (product: IProduct) => {
           <FaStar className="text-yellow-400 text-xs sm:text-md md:text-lg" />
           <FaStar className="text-yellow-400 text-xs sm:text-md md:text-lg" />
           <span className="text-xs sm:text-md md:text-lg">
-            ({product.review})
+            ({product.sold})
           </span>
         </h3>
       </div>

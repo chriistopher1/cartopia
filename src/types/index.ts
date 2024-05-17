@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export type IUser = {
   accountId: string | undefined;
   name: string | undefined;
@@ -27,8 +29,9 @@ export type IProduct = {
   imageUrl: string | undefined;
   category: string | undefined;
   stock: number | undefined;
-  review: number | undefined;
+  sold: number | undefined;
   sellerId: string | undefined;
+  reviewId: string | undefined
 };
 
 export type IProductCart = {
@@ -47,3 +50,17 @@ export type ISaved = {
   userId: string | undefined
   item: IProductCart[] | undefined;
 };
+
+export type IReviewItem = {
+  createdAt: Timestamp | undefined
+  rating : number | undefined
+  user: IUser | undefined
+  imageUrl : string | undefined
+  description : string | undefined
+}
+
+export type IReview = {
+  id: string | undefined
+  item : IReviewItem[] | undefined
+  productId : string | undefined
+}

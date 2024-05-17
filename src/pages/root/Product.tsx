@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { IProduct, IProductCart } from "../../types";
+import { IProduct } from "../../types";
 import { useEffect, useState } from "react";
 import { FaHeart, FaStar } from "react-icons/fa";
 import { checkIfItemInTheList, formatToIDR } from "../../constant";
@@ -14,6 +14,7 @@ import {
 } from "../../lib/tanstack/queries";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import Review from "../../components/product/Review";
 
 
 
@@ -39,6 +40,8 @@ const Product = () => {
     useGetUserCartList(user.accountId);
   const { data: userSavedList, isPending: isGettingUserSavedList } =
     useGetUserSavedList(user.accountId);
+
+
 
   useEffect(() => {
     if (product == undefined || id != product.id) navigate(-1);
@@ -187,7 +190,7 @@ const Product = () => {
             <FaStar className="text-yellow-400 text-lg sm:text-xl md:text-2xl" />
             <FaStar className="text-yellow-400 text-lg sm:text-xl md:text-2xl" />
             <span className="text-lg sm:text-xl md:text-2xl pl-2">
-              ({product.review})
+              ({product.sold})
             </span>
           </h3>
           <h4 className="font-semibold text-lg sm:text-xl md:text-2xl">
@@ -252,17 +255,7 @@ const Product = () => {
           </div>
         </div>
       </div>
-      <div className="w-full flex justify-center items-center gap-5 md:gap-16 border-b mb-12 border-gray-500">
-        <h4 className="font-semibold text-sm sm:text-lg md:text-xl text-gray-500">
-          Description
-        </h4>
-        <h4 className="font-semibold text-sm sm:text-lg md:text-xl text-gray-500">
-          Additional Information
-        </h4>
-        <h4 className="font-semibold text-sm sm:text-lg md:text-xl text-gray-500">
-          Review ({product.review})
-        </h4>
-      </div>
+     <Review productId={product.id}/>
     </div>
   );
 };

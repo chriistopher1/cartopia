@@ -23,10 +23,11 @@ const Recommend = () => {
               imageUrl={product?.imageUrl}
               name={product?.name}
               price={product?.price}
-              review={product?.review}
+              sold={product?.sold}
               stock={product?.stock}
               id={product?.id}
               sellerId={product?.sellerId}
+              reviewId={product?.reviewId}
             />
           ))}
       </div>

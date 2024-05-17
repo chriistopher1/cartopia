@@ -9,7 +9,7 @@ import {
   where,
 } from "firebase/firestore";
 import { collection, getDocs } from "firebase/firestore";
-import { ICart, IProduct, IProductCart, ISaved, IUser } from "../../types";
+import { ICart, IProduct, IProductCart, IReview, ISaved, IUser } from "../../types";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -86,10 +86,11 @@ export async function getProductInfo(pid: string): Promise<IProduct | null> {
     imageUrl: "",
     name: "",
     price: 0,
-    review: 0,
+    sold: 0,
     stock: 0,
     id: "",
     sellerId: "",
+    reviewId: "",
   };
 
   try {
@@ -104,7 +105,7 @@ export async function getProductInfo(pid: string): Promise<IProduct | null> {
       productInfo.imageUrl = productData.imageUrl;
       productInfo.name = productData.name;
       productInfo.price = productData.price;
-      productInfo.review = productData.review;
+      productInfo.sold = productData.sold;
       productInfo.stock = productData.stock;
     }
 
@@ -195,10 +196,11 @@ export async function getAllProduct() {
         imageUrl: doc.data().imageUrl,
         name: doc.data().name,
         price: doc.data().price,
-        review: doc.data().review,
+        sold: doc.data().sold,
         stock: doc.data().stock,
         id: doc.data().id,
         sellerId: doc.data().sellerId,
+        reviewId: doc.data().reviewId,
       });
     });
 
@@ -390,7 +392,6 @@ export async function removeItemFromCart(
   }
 }
 
-
 // remove item from saved
 export async function removeItemFromSaved(
   uid: string | undefined,
@@ -432,5 +433,38 @@ export async function removeItemFromSaved(
   } catch (error) {
     console.log("error on removing item from cart");
     return false;
+  }
+}
+
+// get product review
+export async function getProductReview(productId: string | undefined) : Promise<IReview | null>{
+
+  const productReview : IReview = {
+    id: "",
+    item: [], 
+    productId: ""
+  }
+
+  try {
+    const q = query(
+      collection(db, "review_table"),
+      where("productId", "==", productId)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if(querySnapshot.empty) return null;
+
+    querySnapshot.forEach((doc) => {
+      productReview.id = doc.data().id
+      productReview.item = doc.data().item
+      productReview.productId = doc.data().productId
+    });
+
+    return productReview;
+
+  } catch (error) {
+    console.log("error fetching on product review");
+    return null;
   }
 }

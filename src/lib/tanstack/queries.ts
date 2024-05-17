@@ -11,6 +11,7 @@ import {
   addItemToCart,
   addItemToSaved,
   getAllProduct,
+  getProductReview,
   getUserCartList,
   getUserDataByUid,
   getUserSavedList,
@@ -131,5 +132,13 @@ export const useRemoveItemFromSaved = () => {
         queryKey: [QUERY_KEYS.GET_USER_SAVED_LIST],
       });
     },
+  });
+};
+
+// Review
+export const useGetProductReview = (productId: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_PRODUCT_REVIEW, productId],
+    queryFn: () => getProductReview(productId),
   });
 };
