@@ -1,5 +1,6 @@
 import { firebaseApp } from "./config";
 import {
+  DocumentData,
   addDoc,
   doc,
   getDoc,
@@ -9,7 +10,14 @@ import {
   where,
 } from "firebase/firestore";
 import { collection, getDocs } from "firebase/firestore";
-import { ICart, IProduct, IProductCart, IReview, ISaved, IUser } from "../../types";
+import {
+  ICart,
+  IProduct,
+  IProductCart,
+  IReview,
+  ISaved,
+  IUser,
+} from "../../types";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -437,13 +445,14 @@ export async function removeItemFromSaved(
 }
 
 // get product review
-export async function getProductReview(productId: string | undefined) : Promise<IReview | null>{
-
-  const productReview : IReview = {
+export async function getProductReview(
+  productId: string | undefined
+): Promise<IReview | null> {
+  const productReview: IReview = {
     id: "",
-    item: [], 
-    productId: ""
-  }
+    item: [],
+    productId: "",
+  };
 
   try {
     const q = query(
@@ -453,18 +462,56 @@ export async function getProductReview(productId: string | undefined) : Promise<
 
     const querySnapshot = await getDocs(q);
 
-    if(querySnapshot.empty) return null;
+    if (querySnapshot.empty) return null;
 
     querySnapshot.forEach((doc) => {
-      productReview.id = doc.data().id
-      productReview.item = doc.data().item
-      productReview.productId = doc.data().productId
+      productReview.id = doc.data().id;
+      productReview.item = doc.data().item;
+      productReview.productId = doc.data().productId;
     });
 
     return productReview;
-
   } catch (error) {
     console.log("error fetching on product review");
     return null;
   }
 }
+
+// get related products based on user search
+export async function findRelatedProduct(search: string | undefined) {
+  const relatedProduct: IProduct[] = [];
+
+  const searchTerms = search ? search.split(" ") : [];
+
+  try {
+    const searchTerms = search?.split(" ").filter(term => term.trim() !== '');
+
+    // Construct a query with array-contains-any
+    const q = query(
+      collection(db, "product_table"),
+      where("name", "array-contains-any", searchTerms)
+    );
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      relatedProduct.push({
+        category: doc.data().category,
+        description: doc.data().description,
+        imageUrl: doc.data().imageUrl,
+        name: doc.data().name,
+        price: doc.data().price,
+        sold: doc.data().sold,
+        stock: doc.data().stock,
+        id: doc.data().id,
+        sellerId: doc.data().sellerId,
+        reviewId: doc.data().reviewId,
+      });
+    });
+    return relatedProduct;
+  } catch (error) {
+    console.log("error on finding related product from user query");
+  }
+}
+
+// update user profile
+// export async function

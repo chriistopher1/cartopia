@@ -10,6 +10,7 @@ import { getCategoryAsset } from "../firebase/firestorage";
 import {
   addItemToCart,
   addItemToSaved,
+  findRelatedProduct,
   getAllProduct,
   getProductReview,
   getUserCartList,
@@ -140,5 +141,13 @@ export const useGetProductReview = (productId: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_PRODUCT_REVIEW, productId],
     queryFn: () => getProductReview(productId),
+  });
+};
+
+// Product
+export const useFindRelatedProduct = (search: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.FIND_RELATED_PRODUCT, search],
+    queryFn: () => findRelatedProduct(search),
   });
 };

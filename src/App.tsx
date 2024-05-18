@@ -14,6 +14,7 @@ import Contact from "./pages/root/Contact";
 import Cart from "./pages/protected/Cart";
 import Saved from "./pages/protected/Saved";
 import Product from "./pages/root/Product";
+import Profile from "./pages/protected/Profile";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
       <Route element={<ProtectedLayout />}>
         <Route path="/cart" element={<Cart />} />
         <Route path="/saved" element={<Saved />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );

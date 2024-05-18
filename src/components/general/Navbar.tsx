@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaSearch, FaHeart, FaUser } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { IUser } from "../../types";
 import { useSignOutAccount } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import SearchButton from "../button/SearchButton";
 
 const mobileViewCss =
   "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea] font-semibold text-xl";
@@ -27,11 +28,9 @@ const Navbar = () => {
   const handleSignOut = () => {
     signOut();
     setTimeout(() => {
-      window.location.href = "/login"
+      window.location.href = "/login";
     }, 500);
   };
-
-
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
@@ -89,9 +88,7 @@ const Navbar = () => {
               Login/Register
             </span>
           </Link>
-          <Link to={""} className={`flex justify-center ${mobileViewCss}`}>
-            <FaSearch />
-          </Link>
+          <SearchButton />
           <a href={"/cart"} className={`flex justify-center ${mobileViewCss}`}>
             <FaCartShopping />
           </a>
@@ -130,7 +127,7 @@ const Navbar = () => {
         </div>
         <div className="max-lg:hidden lg:flex items-center gap-5">
           <Link
-            to={"/login"}
+            to={isHaveUser() ? "/profile":"/login"}
             className="flex items-center gap-2 text-[#63a5ea]"
           >
             <img
@@ -145,9 +142,7 @@ const Navbar = () => {
               Login/Register
             </span>
           </Link>
-          <Link to={""} className="text-[#63a5ea]">
-            <FaSearch className="text-xl" />
-          </Link>
+          <SearchButton />
           <a href={"/cart"} className="text-[#63a5ea]">
             <FaCartShopping className="text-xl" />
           </a>

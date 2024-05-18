@@ -17,5 +17,6 @@ export enum QUERY_KEYS {
     ADD_ITEM_TO_CART = "addItemToCart",
 
     // PRODUCT
-    GET_PRODUCT_REVIEW = "getProductReview"
+    GET_PRODUCT_REVIEW = "getProductReview",
+    FIND_RELATED_PRODUCT = "findRelatedProduct"
   }
