@@ -10,14 +10,17 @@ import { getCategoryAsset } from "../firebase/firestorage";
 import {
   addItemToCart,
   addItemToSaved,
+  addNewProduct,
   findRelatedProduct,
   getAllProduct,
+  getAllSellerProduct,
   getProductReview,
   getUserCartList,
   getUserDataByUid,
   getUserSavedList,
   removeItemFromCart,
   removeItemFromSaved,
+  sellerRegister,
 } from "../firebase/firestore";
 
 
@@ -151,3 +154,43 @@ export const useFindRelatedProduct = (search: string | undefined) => {
     queryFn: () => findRelatedProduct(search),
   });
 };
+
+// Seller
+export const useSellerRegister = () => {
+  return useMutation({
+    mutationFn: (newInstance: {
+      shopName : string | undefined
+      address: string | undefined;
+      uid: string | undefined;
+    }) => sellerRegister(newInstance),
+  });
+};
+
+// Product
+export const useGetAllSellerProduct = (sellerId: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_ALL_SELLER_PRODUCT, sellerId],
+    queryFn: () => getAllSellerProduct(sellerId),
+  });
+};
+
+export const useAddNewProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance : {
+      category: string | undefined,
+        description: string | undefined,
+        imageUrl: string | undefined,
+        name: string | undefined,
+        price: number | undefined,
+        stock: number | undefined,
+        sellerId: string | undefined,
+    }) => addNewProduct(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_ALL_SELLER_PRODUCT, QUERY_KEYS.GET_ALL_PRODUCT],
+      });
+    },
+  });
+};
+

@@ -15,6 +15,12 @@ import Cart from "./pages/protected/Cart";
 import Saved from "./pages/protected/Saved";
 import Product from "./pages/root/Product";
 import Profile from "./pages/protected/Profile";
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import SellerLayout from "./pages/layout/SellerLayout";
+import SellerRegister from "./pages/seller/SellerRegister";
+import SellerDeleteProduct from "./pages/seller/SellerDeleteProduct";
+import SellerUpdateProduct from "./pages/seller/SellerUpdateProduct";
+import SellerAddProduct from "./pages/seller/SellerAddProduct";
 
 function App() {
   return (
@@ -29,8 +35,8 @@ function App() {
       </Route>
 
       <Route element={<AuthLayout />}>
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Route>
 
       <Route element={<ProtectedLayout />}>
@@ -38,6 +44,16 @@ function App() {
         <Route path="/saved" element={<Saved />} />
         <Route path="/profile" element={<Profile />} />
       </Route>
+
+      <Route element={<SellerLayout />}>
+        <Route path="/seller/dashboard" element={<SellerDashboard />}></Route>
+        <Route path="/seller/add-product" element={<SellerAddProduct />}></Route>
+        <Route path="/seller/update-product" element={<SellerUpdateProduct />}></Route>
+        <Route path="/seller/delete-product" element={<SellerDeleteProduct />}></Route>
+      </Route>
+
+      <Route path="/seller/register" element={<SellerRegister />}></Route>
+
     </Routes>
   );
 }

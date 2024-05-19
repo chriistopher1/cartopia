@@ -18,7 +18,7 @@ export type IUser = {
 
 export type CategoryArray = {
   name: string[];
-  url: (string | null)[];
+  url: (string | undefined)[];
 };
 
 export type IProduct = {

@@ -20,6 +20,7 @@ import {
 } from "../../types";
 
 import { v4 as uuidv4 } from "uuid";
+import { addNewProductImage } from "./firestorage";
 
 const db = getFirestore(firebaseApp);
 
@@ -484,7 +485,7 @@ export async function findRelatedProduct(search: string | undefined) {
   const searchTerms = search ? search.split(" ") : [];
 
   try {
-    const searchTerms = search?.split(" ").filter(term => term.trim() !== '');
+    const searchTerms = search?.split(" ").filter((term) => term.trim() !== "");
 
     // Construct a query with array-contains-any
     const q = query(
@@ -513,5 +514,134 @@ export async function findRelatedProduct(search: string | undefined) {
   }
 }
 
-// update user profile
-// export async function
+// add new product review
+export async function makeNewProductReview(newProductId : string | undefined){
+
+  const newReview : IReview = {
+    id: "",
+    item : [],
+    productId: newProductId
+  }
+
+  try {
+    
+    const newReviewId = uuidv4()
+
+    newReview.id = newReviewId
+
+    const docRef = await addDoc(collection(db, "review_table"), newReview);
+    // console.log("Saved written with ID: ", docRef.id);
+    return newReviewId;
+
+  } catch (error) {
+    console.log("error on adding new product review");
+    return null
+  }
+
+}
+
+// update seller info
+export async function sellerRegister(newInstance: {
+  shopName: string | undefined;
+  address: string | undefined;
+  uid: string | undefined;
+}) : Promise<boolean> {
+  const newSellerId = uuidv4();
+
+  try {
+    const q = query(
+      collection(db, "user_table"),
+      where("accountId", "==", newInstance.uid)
+    );
+
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const userDoc = querySnapshot.docs[0];
+      const userRef = doc(db, "user_table", userDoc.id);
+
+      await updateDoc(userRef, {
+        "seller.id": newSellerId,
+        "seller.name": newInstance.shopName,
+        "seller.address": newInstance.address,
+      });
+
+      console.log("Seller information updated successfully");
+      return true;
+    } else {
+      console.log("User not found");
+      return false;
+    }
+  } catch (error) {
+    console.log("Error updating seller info:", error);
+    return false;
+  }
+}
+
+//seller product
+export async function getAllSellerProduct(sellerId: string | undefined) {
+  if (!sellerId) {
+    console.log("Invalid seller ID");
+    return [];
+  }
+
+  try {
+    const q = query(
+      collection(db, "product_table"),
+      where("sellerId", "==", sellerId)
+    );
+
+    const querySnapshot = await getDocs(q);
+    const products = querySnapshot.docs.map(doc => ({
+      ...doc.data()
+    }));
+
+    return products;
+  } catch (error) {
+    console.error("Error fetching seller's products:", error);
+    return [];
+  }
+}
+
+// add new product
+export async function addNewProduct(newInstance : {
+  category: string | undefined,
+    description: string | undefined,
+    imageUrl: string | undefined,
+    name: string | undefined,
+    price: number | undefined,
+    stock: number | undefined,
+    sellerId: string | undefined,
+}){
+
+  try {
+    
+    const newImageUrl = await addNewProductImage(newInstance.imageUrl)
+
+    const newProductId =  uuidv4()
+    const newSold = 0
+    const newReviewId = await  makeNewProductReview(newProductId)
+
+    const newProduct : IProduct = {
+      category: newInstance.category,
+      description: newInstance.description,
+      imageUrl: newImageUrl,
+      name: newInstance.name,
+      price: newInstance.price,
+      sold: newSold,
+      stock: newInstance.stock,
+      id: newProductId,
+      sellerId: newInstance.sellerId,
+      reviewId: newReviewId,
+
+
+    } 
+    const docRef = await addDoc(collection(db, "product_table"), newProduct);
+    // console.log("Saved written with ID: ", docRef.id);
+    return true;
+
+  } catch (error) {
+    console.log("error on adding new product")
+    return false;
+  }
+
+}

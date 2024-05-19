@@ -1,12 +1,13 @@
-import { getStorage, ref, getDownloadURL, listAll } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, listAll, uploadString } from "firebase/storage";
 import { firebaseApp } from "./config";
 import { CategoryArray } from "../../types";
 
 const storage = getStorage(firebaseApp);
 const categoryRef = ref(storage, "initial_assets/category");
+const productRef = ref(storage, "initial_assets/product");
 
 // get full image url
-const getImgFullUrl = async (path: string): Promise<string | null> => {
+const getImgFullUrl = async (path: string): Promise<string | undefined> => {
   try {
     const downloadUrl = await getDownloadURL(ref(storage, path));
 
@@ -14,7 +15,7 @@ const getImgFullUrl = async (path: string): Promise<string | null> => {
     return downloadUrl;
   } catch (error) {
     console.log("error getImgFull", error);
-    return null;
+    return undefined;
   }
 };
 
@@ -44,3 +45,24 @@ export const getCategoryAsset = async (): Promise<CategoryArray | undefined> => 
     console.log(error);
   }
 };
+
+
+// add new product image to bucket
+export async function addNewProductImage(imageUrl: string | undefined): Promise<string | undefined> {
+  if (imageUrl === undefined) return undefined;
+
+  try {
+    // Create a reference to the new product image
+    const newProductImageRef = ref(productRef, `product_${Date.now()}.jpg`);
+
+    // Upload the image to Firebase Storage
+    await uploadString(newProductImageRef, imageUrl, 'data_url');
+
+    // Get the full URL of the uploaded image
+    const downloadUrl = await getImgFullUrl(newProductImageRef.fullPath);
+    return downloadUrl;
+  } catch (error) {
+    console.log("error addNewProductImage", error);
+    return undefined;
+  }
+}
