@@ -38,7 +38,7 @@ const ProductCard = (product: IProduct) => {
 
   return (
     <Link
-      className="flex flex-col items-center w-44 sm:w-44 md:w-60 lg:w-72 shadow-lg shadow-gray-500 cursor-pointer"
+      className="flex flex-col items-center w-44 sm:w-44 md:w-60 lg:w-80 shadow-lg shadow-gray-500 cursor-pointer"
       to={`/product/${product.id}`}
       state={{ product }}
     >
