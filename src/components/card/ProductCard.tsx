@@ -30,6 +30,7 @@ const ProductCard = (product: IProduct) => {
 
     if (isDeleted) {
       toast.success("Success on deleting product");
+      window.location.href = "/seller/dashboard"
     } else {
       toast.error("Failed on deleting product");
     }
