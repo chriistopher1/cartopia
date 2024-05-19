@@ -53,6 +53,11 @@ const SellerAddProduct = () => {
       toast.error("Seller info is missing.");
     }
 
+    if (newProduct.imageUrl == "") {
+      toast.error("Image is either empty or not yet cropped");
+      return;
+    }
+
     if (
       newProduct.category == "" ||
       newProduct.description == "" ||
@@ -123,7 +128,9 @@ const SellerAddProduct = () => {
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           >
-            <option value="" disabled>Select a category</option>
+            <option value="" disabled>
+              Select a category
+            </option>
             {categories.map((category) => (
               <option key={category.value} value={category.value}>
                 {category.userInterface}

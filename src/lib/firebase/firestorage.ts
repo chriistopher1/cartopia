@@ -1,4 +1,11 @@
-import { getStorage, ref, getDownloadURL, listAll, uploadString } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  listAll,
+  uploadString,
+  deleteObject,
+} from "firebase/storage";
 import { firebaseApp } from "./config";
 import { CategoryArray } from "../../types";
 
@@ -20,7 +27,9 @@ const getImgFullUrl = async (path: string): Promise<string | undefined> => {
 };
 
 // get all category
-export const getCategoryAsset = async (): Promise<CategoryArray | undefined> => {
+export const getCategoryAsset = async (): Promise<
+  CategoryArray | undefined
+> => {
   try {
     const listAllAsset = await listAll(categoryRef);
 
@@ -46,17 +55,26 @@ export const getCategoryAsset = async (): Promise<CategoryArray | undefined> => 
   }
 };
 
-
 // add new product image to bucket
-export async function addNewProductImage(imageUrl: string | undefined): Promise<string | undefined> {
-  if (imageUrl === undefined) return undefined;
+export async function addNewProductImage(newInstance: {
+  imageUrl: string | undefined;
+  productId: string | undefined;
+}): Promise<string | undefined> {
+  if (
+    newInstance.imageUrl === undefined ||
+    newInstance.productId === undefined
+  )
+    return undefined;
 
   try {
     // Create a reference to the new product image
-    const newProductImageRef = ref(productRef, `product_${Date.now()}.jpg`);
+    const newProductImageRef = ref(
+      productRef,
+      `product_${newInstance.productId}.jpg`
+    );
 
     // Upload the image to Firebase Storage
-    await uploadString(newProductImageRef, imageUrl, 'data_url');
+    await uploadString(newProductImageRef, newInstance.imageUrl, "data_url");
 
     // Get the full URL of the uploaded image
     const downloadUrl = await getImgFullUrl(newProductImageRef.fullPath);
@@ -64,5 +82,34 @@ export async function addNewProductImage(imageUrl: string | undefined): Promise<
   } catch (error) {
     console.log("error addNewProductImage", error);
     return undefined;
+  }
+}
+
+// delete product image
+export async function removeProductImage(
+  productId: string | undefined
+): Promise<boolean> {
+  if (productId === undefined) return false;
+
+  try {
+    // Create a reference to the file to delete
+    const desertRef = ref(storage, `initial_assets/product/product_${productId}.jpg`);
+
+    // Delete the file
+    deleteObject(desertRef)
+      .then(() => {
+        // File deleted successfully
+        return true;
+      })
+      .catch((error) => {
+        // Uh-oh, an error occurred!
+
+        return false;
+      });
+
+    return true;
+  } catch (error) {
+    console.log("error on deleting product image");
+    return false;
   }
 }

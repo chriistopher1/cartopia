@@ -2,6 +2,7 @@ import { firebaseApp } from "./config";
 import {
   DocumentData,
   addDoc,
+  deleteDoc,
   doc,
   getDoc,
   getFirestore,
@@ -20,7 +21,7 @@ import {
 } from "../../types";
 
 import { v4 as uuidv4 } from "uuid";
-import { addNewProductImage } from "./firestorage";
+import { addNewProductImage, removeProductImage } from "./firestorage";
 
 const db = getFirestore(firebaseApp);
 
@@ -515,29 +516,25 @@ export async function findRelatedProduct(search: string | undefined) {
 }
 
 // add new product review
-export async function makeNewProductReview(newProductId : string | undefined){
-
-  const newReview : IReview = {
+export async function makeNewProductReview(newProductId: string | undefined) {
+  const newReview: IReview = {
     id: "",
-    item : [],
-    productId: newProductId
-  }
+    item: [],
+    productId: newProductId,
+  };
 
   try {
-    
-    const newReviewId = uuidv4()
+    const newReviewId = uuidv4();
 
-    newReview.id = newReviewId
+    newReview.id = newReviewId;
 
     const docRef = await addDoc(collection(db, "review_table"), newReview);
     // console.log("Saved written with ID: ", docRef.id);
     return newReviewId;
-
   } catch (error) {
     console.log("error on adding new product review");
-    return null
+    return null;
   }
-
 }
 
 // update seller info
@@ -545,7 +542,7 @@ export async function sellerRegister(newInstance: {
   shopName: string | undefined;
   address: string | undefined;
   uid: string | undefined;
-}) : Promise<boolean> {
+}): Promise<boolean> {
   const newSellerId = uuidv4();
 
   try {
@@ -591,8 +588,8 @@ export async function getAllSellerProduct(sellerId: string | undefined) {
     );
 
     const querySnapshot = await getDocs(q);
-    const products = querySnapshot.docs.map(doc => ({
-      ...doc.data()
+    const products = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
     }));
 
     return products;
@@ -603,25 +600,27 @@ export async function getAllSellerProduct(sellerId: string | undefined) {
 }
 
 // add new product
-export async function addNewProduct(newInstance : {
-  category: string | undefined,
-    description: string | undefined,
-    imageUrl: string | undefined,
-    name: string | undefined,
-    price: number | undefined,
-    stock: number | undefined,
-    sellerId: string | undefined,
-}){
-
+export async function addNewProduct(newInstance: {
+  category: string | undefined;
+  description: string | undefined;
+  imageUrl: string | undefined;
+  name: string | undefined;
+  price: number | undefined;
+  stock: number | undefined;
+  sellerId: string | undefined;
+}) {
   try {
-    
-    const newImageUrl = await addNewProductImage(newInstance.imageUrl)
+    const newProductId = uuidv4();
 
-    const newProductId =  uuidv4()
-    const newSold = 0
-    const newReviewId = await  makeNewProductReview(newProductId)
+    const newImageUrl = await addNewProductImage({
+      imageUrl: newInstance.imageUrl,
+      productId: newProductId,
+    });
 
-    const newProduct : IProduct = {
+    const newSold = 0;
+    const newReviewId = await makeNewProductReview(newProductId);
+
+    const newProduct: IProduct = {
       category: newInstance.category,
       description: newInstance.description,
       imageUrl: newImageUrl,
@@ -632,16 +631,91 @@ export async function addNewProduct(newInstance : {
       id: newProductId,
       sellerId: newInstance.sellerId,
       reviewId: newReviewId,
-
-
-    } 
+    };
     const docRef = await addDoc(collection(db, "product_table"), newProduct);
     // console.log("Saved written with ID: ", docRef.id);
     return true;
-
   } catch (error) {
-    console.log("error on adding new product")
+    console.log("error on adding new product");
     return false;
   }
+}
 
+// delete product
+export async function deleteProduct(
+  targetProduct: IProduct | undefined
+): Promise<boolean> {
+  if (targetProduct === undefined) return false;
+
+  try {
+    const db = getFirestore(); // Initialize Firestore
+
+    // Delete product image
+    const productImageIsDeleted = await removeProductImage(targetProduct.id);
+    if (!productImageIsDeleted) return false;
+
+    // Get all user info
+    const allUserInfo = await getAllUserAccountId();
+
+    if (allUserInfo === undefined) return false;
+
+    // Delete the product in all user saved list and cart list
+    for (const userId of allUserInfo) {
+      await removeItemFromCart(userId, targetProduct.id);
+      await removeItemFromSaved(userId, targetProduct.id);
+    }
+
+    // Delete review document at review_table
+    const reviewRef = collection(db, "review_table");
+    const reviewQuery = query(
+      reviewRef,
+      where("id", "==", targetProduct.reviewId)
+    );
+
+    const reviewSnapshot = await getDocs(reviewQuery);
+
+    reviewSnapshot.forEach(async (docSnapshot) => {
+      await deleteDoc(docSnapshot.ref);
+    });
+    // Find product ref using query
+    const productQuery = query(
+      collection(db, "product_table"),
+      where("id", "==", targetProduct.id)
+    );
+    const productSnapshot = await getDocs(productQuery);
+    if (!productSnapshot.empty) {
+      const productDoc = productSnapshot.docs[0];
+      const productRef = doc(db, "product_table", productDoc.id);
+
+      // Delete the product in the product_table
+      await deleteDoc(productRef);
+      console.log(`Product ${targetProduct.id} successfully deleted`);
+      return true;
+    } else {
+      console.log(`Product ${targetProduct.id} not found in product_table`);
+      return false;
+    }
+  } catch (error) {
+    console.log("Error on deleting product", error);
+    return false;
+  }
+}
+
+// get all user account ids
+export async function getAllUserAccountId(): Promise<string[] | undefined> {
+  const allUserId: string[] = [];
+
+  try {
+    const userCollection = collection(db, "user_table");
+    const userSnapshot = await getDocs(userCollection);
+
+    userSnapshot.forEach((doc) => {
+      allUserId.push(doc.data().accountId);
+    });
+
+    return allUserId;
+  } catch (error) {
+    console.log("error on getting all user account id");
+    return undefined;
+  }
 }

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IProductCart, IUser } from "../../types";
+import { IProduct, IProductCart, IUser } from "../../types";
 import {
   registerAccount,
   signInAccount,
@@ -11,6 +11,7 @@ import {
   addItemToCart,
   addItemToSaved,
   addNewProduct,
+  deleteProduct,
   findRelatedProduct,
   getAllProduct,
   getAllSellerProduct,
@@ -194,3 +195,14 @@ export const useAddNewProduct = () => {
   });
 };
 
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance : IProduct | undefined) => deleteProduct(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_ALL_SELLER_PRODUCT, QUERY_KEYS.GET_ALL_PRODUCT],
+      });
+    },
+  });
+};
