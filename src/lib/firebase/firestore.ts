@@ -611,11 +611,12 @@ export async function addItemToOrder(newInstance: {
           {
             id: newOrderId,
             date: newDate,
+            shippingDate : '' ,
             status: newStatus,
             addressFrom: sellerInfo.seller.address,
             addressTo: newInstance.addressTo,
             totalPrice: newTotalPrice,
-            item: newInstance.newProduct,
+            item: [newInstance.newProduct],
           },
         ];
 

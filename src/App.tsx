@@ -21,6 +21,10 @@ import SellerRegister from "./pages/seller/SellerRegister";
 import SellerDeleteProduct from "./pages/seller/SellerDeleteProduct";
 import SellerUpdateProduct from "./pages/seller/SellerUpdateProduct";
 import SellerAddProduct from "./pages/seller/SellerAddProduct";
+import Order from "./pages/protected/order/Order";
+import OrderPending from "./pages/protected/order/OrderPending";
+import OrderShipping from "./pages/protected/order/OrderShipping";
+import OrderComplete from "./pages/protected/order/OrderComplete";
 
 function App() {
   return (
@@ -43,17 +47,29 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/saved" element={<Saved />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/user/order" element={<Order />} />
+        <Route path="/user/order/pending" element={<OrderPending />} />
+        <Route path="/user/order/shipping" element={<OrderShipping />} />
+        <Route path="/user/order/complete" element={<OrderComplete />} />
       </Route>
 
       <Route element={<SellerLayout />}>
         <Route path="/seller/dashboard" element={<SellerDashboard />}></Route>
-        <Route path="/seller/add-product" element={<SellerAddProduct />}></Route>
-        <Route path="/seller/update-product" element={<SellerUpdateProduct />}></Route>
-        <Route path="/seller/delete-product" element={<SellerDeleteProduct />}></Route>
+        <Route
+          path="/seller/add-product"
+          element={<SellerAddProduct />}
+        ></Route>
+        <Route
+          path="/seller/update-product"
+          element={<SellerUpdateProduct />}
+        ></Route>
+        <Route
+          path="/seller/delete-product"
+          element={<SellerDeleteProduct />}
+        ></Route>
       </Route>
 
       <Route path="/seller/register" element={<SellerRegister />}></Route>
-
     </Routes>
   );
 }

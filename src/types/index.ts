@@ -75,6 +75,7 @@ export type IOrderItem = {
 
   id : string | undefined
   date : Timestamp | undefined
+  shippingDate : Timestamp | undefined
   status : string | undefined
   addressFrom : string | undefined
   addressTo : string | undefined

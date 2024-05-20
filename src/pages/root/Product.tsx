@@ -206,7 +206,7 @@ const Product = () => {
         progress: undefined,
         theme: "light",
       });
-      navigate("/profile");
+      navigate("/user/order");
     } else {
       toast.error("Error on adding item to order", {
         position: "top-center",

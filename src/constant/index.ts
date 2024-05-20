@@ -9,7 +9,6 @@ export const categories = [
   { value: "cars", userInterface: "Cars" },
 ];
 
-
 export const formatToIDR = (price: number | undefined) => {
   if (price == undefined) return;
 
@@ -32,4 +31,12 @@ export const checkIfItemInTheList = (
   }
 
   return false;
+};
+
+export const checkStatus = (status: string | undefined) => {
+  if (status === undefined) return "";
+
+  if (status == "pending") return "text-red-500";
+  if (status == "shipping") return "text-blue-500";
+  if (status == "complete") return "text-green-500";
 };
