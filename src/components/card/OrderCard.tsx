@@ -1,22 +1,27 @@
-import React from "react";
 import { Timestamp } from "firebase/firestore";
 import { IOrderItem } from "../../types";
 import { checkStatus, formatToIDR } from "../../constant";
-import { useCompleteOrder, useMakePayment } from "../../lib/tanstack/queries";
-import { ImSkype } from "react-icons/im";
+import {
+  useCompleteOrder,
+  useMakePayment,
+  useMakeReview,
+} from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { toast } from "react-toastify";
+import { makeReview } from "../../lib/firebase/firestore";
+import { useState } from "react";
+import Modal from "../product/Modal";
+import ImageUploader from "../seller/ImageUploader";
+import { useNavigate } from "react-router-dom";
 
 const styling = "font-semibold";
 
-interface OrderProps  {
-
-  order : IOrderItem
-  orderListId : string | undefined
-
+interface OrderProps {
+  order: IOrderItem;
+  orderListId: string | undefined;
 }
 
-const OrderCard = (newInstance : OrderProps) => {
+const OrderCard = (newInstance: OrderProps) => {
   const {
     id,
     date,
@@ -26,7 +31,10 @@ const OrderCard = (newInstance : OrderProps) => {
     addressTo,
     totalPrice,
     item,
+    isReviewed,
   } = newInstance.order;
+
+  const navigate = useNavigate()
 
   const { mutateAsync: makePayment, isPending: isMakingPayment } =
     useMakePayment();
@@ -39,15 +47,13 @@ const OrderCard = (newInstance : OrderProps) => {
     return date.toLocaleDateString();
   };
 
-  // console.log(item);
-
   // make payment
   const handlePayment = async () => {
     if (!id) return;
 
     const isPaid = await makePayment({
-      orderId : id,
-      orderListId : newInstance.orderListId
+      orderId: id,
+      orderListId: newInstance.orderListId,
     });
 
     if (isPaid) {
@@ -57,13 +63,13 @@ const OrderCard = (newInstance : OrderProps) => {
     }
   };
 
-   // complete order
-   const handleCompleteOrder = async () => {
+  // complete order
+  const handleCompleteOrder = async () => {
     if (!id) return;
 
     const isComplete = await completeOrder({
-      orderId : id,
-      orderListId : newInstance.orderListId
+      orderId: id,
+      orderListId: newInstance.orderListId,
     });
 
     if (isComplete) {
@@ -83,8 +89,12 @@ const OrderCard = (newInstance : OrderProps) => {
       </p>
       <p className={`${styling}`}>From: {addressFrom}</p>
       <p className={`${styling}`}>To: {addressTo}</p>
+      <p className={`${styling}`}>Is Reviewed : {isReviewed ? (<span>Reviewed</span>):(<span>Not Reviewed</span>)}</p>
       <p className={`${styling} `}>
-        Total Price: <span className="text-yellow-500">{totalPrice ? `${formatToIDR(totalPrice)}` : "N/A"}</span>
+        Total Price:{" "}
+        <span className="text-yellow-500">
+          {totalPrice ? `${formatToIDR(totalPrice)}` : "N/A"}
+        </span>
       </p>
       <div className="order-items mt-4">
         <h3 className="font-semibold mb-2">Items:</h3>
@@ -115,7 +125,7 @@ const OrderCard = (newInstance : OrderProps) => {
           />
           <span>Pay Now</span>
         </button>
-      ) : (status && status == "shipping" ? (
+      ) : status && status == "shipping" ? (
         <button
           className={`border-2 border-black bg-sky-500 px-4 py-2 rounded-lg text-white hover:bg-sky-700 font-medium ${
             isCompletingOrder ? "opacity-50 cursor-not-allowed" : ""
@@ -130,7 +140,23 @@ const OrderCard = (newInstance : OrderProps) => {
           />
           <span>Complete Order</span>
         </button>
-      ): "")}
+      ) : status && !isReviewed && item !== undefined && status == "complete" ? (
+        <>
+          <button
+            className={`border-2 border-black bg-yellow-500 px-4 py-2 rounded-lg text-white hover:bg-yellow-700 font-medium `}
+            onClick={() => navigate("/make-review" , {state : {
+              orderId : id,
+              orderListId : newInstance.orderListId,
+              productName : item[0].product?.name,
+              productReviewId : item[0].product?.reviewId
+            }})}
+          >
+            <span>Review</span>
+          </button>
+        </>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

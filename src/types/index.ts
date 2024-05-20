@@ -81,7 +81,7 @@ export type IOrderItem = {
   addressTo : string | undefined
   totalPrice : number | undefined
   item : IProductOrderItem[] | undefined
-
+  isReviewed : boolean | undefined
 };
 
 export type IOrder = {

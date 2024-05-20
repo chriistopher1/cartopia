@@ -48,7 +48,7 @@ const Order = () => {
       <div className="flex gap-2 flex-wrap">
         {userOrderList &&
           userOrderList.item?.map((order) => (
-            <OrderCard order={order} orderListId={user.order} />
+            <OrderCard key={order.id} order={order} orderListId={user.order} />
           ))}
       </div>
     </div>

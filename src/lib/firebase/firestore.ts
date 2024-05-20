@@ -3,6 +3,7 @@ import {
   DocumentData,
   Timestamp,
   addDoc,
+  arrayUnion,
   deleteDoc,
   doc,
   getDoc,
@@ -20,6 +21,7 @@ import {
   IProductCart,
   IProductOrderItem,
   IReview,
+  IReviewItem,
   ISaved,
   IUser,
 } from "../../types";
@@ -672,6 +674,71 @@ export async function getProductReview(
   }
 }
 
+// make a review on an order
+export async function makeReview(newInstance: {
+  newReview: IReviewItem | undefined;
+  productReviewId: string | undefined;
+  orderId: string | undefined;
+  orderListId: string | undefined;
+}) {
+  if (
+    !newInstance.newReview ||
+    !newInstance.productReviewId ||
+    !newInstance.orderId ||
+    !newInstance.orderListId
+  ) {
+    console.error("Invalid review data or product review ID");
+    return false;
+  }
+
+  try {
+    // Find the review document using productReviewId
+    const q = query(
+      collection(db, "review_table"),
+      where("id", "==", newInstance.productReviewId)
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      // If the cart document exists, update the item array
+
+      const userCartRef = doc(db, "review_table", querySnapshot.docs[0].id);
+      const userCartDoc = await getDoc(userCartRef);
+
+      if (userCartDoc.exists()) {
+        const userData = userCartDoc.data();
+        const currentItemArray = userData?.item || [];
+
+        const updatedItemArray = [...currentItemArray, newInstance.newReview];
+
+        await updateDoc(userCartRef, { item: updatedItemArray });
+
+        const isCompleteReview = await completeReview({
+          orderId: newInstance.orderId,
+          orderListId: newInstance.orderListId,
+        });
+
+        if (!isCompleteReview) {
+          return false;
+        }
+
+        console.log("New review added successfully");
+        return true;
+      } else {
+        console.log("Review document does not exist.");
+        return false;
+      }
+    } else {
+      // If the cart document does not exist, return false
+      console.log("Review document does not exist.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error adding review:", error);
+    return false;
+  }
+}
+
 // get related products based on user search
 export async function findRelatedProduct(search: string | undefined) {
   const relatedProduct: IProduct[] = [];
@@ -1034,6 +1101,68 @@ export async function completeOrder(newInstance: {
     return true;
   } catch (error) {
     console.error("Error completing order:", error);
+    return false;
+  }
+}
+
+// complete a review
+export async function completeReview(newInstance: {
+  orderId: string | undefined;
+  orderListId: string | undefined;
+}) {
+  if (
+    newInstance.orderId === undefined ||
+    newInstance.orderListId === undefined
+  ) {
+    console.error("Invalid order ID");
+    return false;
+  }
+
+  try {
+    // Find the orderList using orderListId where the id == newInstance.orderListId
+    const orderListQuery = query(
+      collection(db, "order_table"),
+      where("id", "==", newInstance.orderListId)
+    );
+    const orderListSnapshot = await getDocs(orderListQuery);
+
+    if (orderListSnapshot.empty) {
+      console.error("OrderList not found");
+      return false;
+    }
+
+    const orderListDocRef = orderListSnapshot.docs[0].ref;
+    const orderListData = orderListSnapshot.docs[0].data();
+
+    // Find the specific order in the orderList's item array
+    const orderToUpdate = orderListData.item.find(
+      (order: any) => order.id === newInstance.orderId
+    );
+    if (!orderToUpdate) {
+      console.error("Order not found in the orderList");
+      return false;
+    }
+
+    // Update the status to "shipping" and set a new timestamp for shippingDate
+    const updatedOrder = {
+      ...orderToUpdate,
+      isReviewed: true,
+    };
+
+    // Update the order in the orderList's item array
+    const updatedItems = orderListData.item.map((order: any) =>
+      order.id === newInstance.orderId ? updatedOrder : order
+    );
+
+    // Update the document with the modified order array
+    await updateDoc(orderListDocRef, {
+      item: updatedItems,
+    });
+
+    console.log("isReviewed is changed");
+    return true;
+  } catch (error) {
+    console.error("Error updating isReviewed:", error);
     return false;
   }
 }

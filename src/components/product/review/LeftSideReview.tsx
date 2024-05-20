@@ -30,7 +30,7 @@ const calculateBarWidth = (total: number, arrayLength: number): string => {
   const percentage = (total / arrayLength) * 100;
 
 
-  // console.log(total,  `${percentage}%`)
+  console.log(total,  `${percentage}%`)
   return `${percentage}%`;
 };
 

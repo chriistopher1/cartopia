@@ -4,6 +4,7 @@ import {
   IProduct,
   IProductCart,
   IProductOrderItem,
+  IReviewItem,
   IUser,
 } from "../../types";
 import {
@@ -29,6 +30,7 @@ import {
   getUserOrderList,
   getUserSavedList,
   makePayment,
+  makeReview,
   removeItemFromCart,
   removeItemFromSaved,
   sellerRegister,
@@ -153,6 +155,23 @@ export const useGetProductReview = (productId: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_PRODUCT_REVIEW, productId],
     queryFn: () => getProductReview(productId),
+  });
+};
+
+export const useMakeReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      newReview: IReviewItem | undefined;
+      productReviewId: string | undefined;
+      orderId: string | undefined;
+      orderListId: string | undefined;
+    }) => makeReview(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST, QUERY_KEYS.GET_PRODUCT_REVIEW],
+      });
+    },
   });
 };
 

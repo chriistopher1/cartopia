@@ -25,6 +25,7 @@ import Order from "./pages/protected/order/Order";
 import OrderPending from "./pages/protected/order/OrderPending";
 import OrderShipping from "./pages/protected/order/OrderShipping";
 import OrderComplete from "./pages/protected/order/OrderComplete";
+import MakeReview from "./pages/protected/MakeReview";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
         <Route path="/user/order/pending" element={<OrderPending />} />
         <Route path="/user/order/shipping" element={<OrderShipping />} />
         <Route path="/user/order/complete" element={<OrderComplete />} />
+        <Route path="/make-review" element={<MakeReview />} />
       </Route>
 
       <Route element={<SellerLayout />}>
