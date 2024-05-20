@@ -1047,12 +1047,16 @@ export async function makePayment(newInstance: {
 export async function completeOrder(newInstance: {
   orderId: string | undefined;
   orderListId: string | undefined;
+  productId: string | undefined;
+  bought: number | undefined;
 }) {
   if (
     newInstance.orderId === undefined ||
-    newInstance.orderListId === undefined
+    newInstance.orderListId === undefined ||
+    newInstance.bought === undefined ||
+    newInstance.productId === undefined
   ) {
-    console.error("Invalid order ID");
+    console.error("Invalid data");
     return false;
   }
 
@@ -1097,8 +1101,39 @@ export async function completeOrder(newInstance: {
       item: updatedItems,
     });
 
-    console.log("Order status updated to complete");
-    return true;
+    // Query for the product document reference based on newInstance.productId
+    const productQuery = query(
+      collection(db, "product_table"),
+      where("id", "==", newInstance.productId)
+    );
+    const productSnapshot = await getDocs(productQuery);
+
+    if (!productSnapshot.empty) {
+      const productDocRef = productSnapshot.docs[0].ref;
+      const productData = productSnapshot.docs[0].data();
+
+      // Subtract the bought quantity from the stock
+      const newStock = (productData.stock || 0) - newInstance.bought;
+      if (newStock < 0) {
+        console.error("Insufficient stock");
+        return false;
+      }
+
+      // Add the bought quantity to the sold count
+      const newSold = (productData.sold || 0) + newInstance.bought;
+
+      // Update the product document with the new stock and sold count
+      await updateDoc(productDocRef, {
+        stock: newStock,
+        sold: newSold,
+      });
+
+      console.log("Order status updated to complete and product stock updated");
+      return true;
+    } else {
+      console.error("Product not found");
+      return false;
+    }
   } catch (error) {
     console.error("Error completing order:", error);
     return false;

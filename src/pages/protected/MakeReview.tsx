@@ -109,13 +109,7 @@ const MakeReview = () => {
         </div>
         <div className="mb-4">
           <ImageUploader onImageUpload={handleImageUpload} />
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt="Uploaded"
-              className="mt-4 w-full rounded-md"
-            />
-          )}
+         
         </div>
         <button
           type="submit"

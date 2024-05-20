@@ -65,11 +65,13 @@ const OrderCard = (newInstance: OrderProps) => {
 
   // complete order
   const handleCompleteOrder = async () => {
-    if (!id) return;
+    if (!id || !item) return;
 
     const isComplete = await completeOrder({
       orderId: id,
       orderListId: newInstance.orderListId,
+      productId : item[0].product?.id,
+      bought : item[0].quantity
     });
 
     if (isComplete) {

@@ -287,6 +287,8 @@ export const useCompleteOrder = () => {
     mutationFn: (newInstance: {
       orderId: string | undefined;
       orderListId: string | undefined;
+      productId: string | undefined;
+      bought : number | undefined
     }) => completeOrder(newInstance),
     onSuccess: () => {
       queryClient.invalidateQueries({
