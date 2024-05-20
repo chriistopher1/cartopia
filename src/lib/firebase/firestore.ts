@@ -725,7 +725,7 @@ export async function makeNewProductReview(newProductId: string | undefined) {
     return newReviewId;
   } catch (error) {
     console.log("error on adding new product review");
-    return null;
+    return undefined;
   }
 }
 
@@ -822,7 +822,8 @@ export async function addNewProduct(newInstance: {
       stock: newInstance.stock,
       id: newProductId,
       sellerId: newInstance.sellerId,
-      reviewId: newReviewId,
+      reviewId: newReviewId
+    
     };
     const docRef = await addDoc(collection(db, "product_table"), newProduct);
     // console.log("Saved written with ID: ", docRef.id);
