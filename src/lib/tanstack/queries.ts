@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IProduct, IProductCart, IUser } from "../../types";
+import { IOrderItem, IProduct, IProductCart, IProductOrderItem, IUser } from "../../types";
 import {
   registerAccount,
   signInAccount,
@@ -9,6 +9,7 @@ import { QUERY_KEYS } from "./queryKeys";
 import { getCategoryAsset } from "../firebase/firestorage";
 import {
   addItemToCart,
+  addItemToOrder,
   addItemToSaved,
   addNewProduct,
   deleteProduct,
@@ -18,13 +19,12 @@ import {
   getProductReview,
   getUserCartList,
   getUserDataByUid,
+  getUserOrderList,
   getUserSavedList,
   removeItemFromCart,
   removeItemFromSaved,
   sellerRegister,
 } from "../firebase/firestore";
-
-
 
 //User
 export const useSignUpAccount = () => {
@@ -160,7 +160,7 @@ export const useFindRelatedProduct = (search: string | undefined) => {
 export const useSellerRegister = () => {
   return useMutation({
     mutationFn: (newInstance: {
-      shopName : string | undefined
+      shopName: string | undefined;
       address: string | undefined;
       uid: string | undefined;
     }) => sellerRegister(newInstance),
@@ -178,18 +178,21 @@ export const useGetAllSellerProduct = (sellerId: string | undefined) => {
 export const useAddNewProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (newInstance : {
-      category: string | undefined,
-        description: string | undefined,
-        imageUrl: string | undefined,
-        name: string | undefined,
-        price: number | undefined,
-        stock: number | undefined,
-        sellerId: string | undefined,
+    mutationFn: (newInstance: {
+      category: string | undefined;
+      description: string | undefined;
+      imageUrl: string | undefined;
+      name: string | undefined;
+      price: number | undefined;
+      stock: number | undefined;
+      sellerId: string | undefined;
     }) => addNewProduct(newInstance),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_ALL_SELLER_PRODUCT, QUERY_KEYS.GET_ALL_PRODUCT],
+        queryKey: [
+          QUERY_KEYS.GET_ALL_SELLER_PRODUCT,
+          QUERY_KEYS.GET_ALL_PRODUCT,
+        ],
       });
     },
   });
@@ -198,11 +201,42 @@ export const useAddNewProduct = () => {
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (newInstance : IProduct | undefined) => deleteProduct(newInstance),
+    mutationFn: (newInstance: IProduct | undefined) =>
+      deleteProduct(newInstance),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_ALL_SELLER_PRODUCT, QUERY_KEYS.GET_ALL_PRODUCT],
+        queryKey: [
+          QUERY_KEYS.GET_ALL_SELLER_PRODUCT,
+          QUERY_KEYS.GET_ALL_PRODUCT,
+        ],
       });
     },
+  });
+};
+
+// Order
+export const useAddItemToOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      addressTo : string | undefined
+      newProduct: IProductOrderItem;
+      sellerId : string | undefined
+      uid: string | undefined;
+    }) => addItemToOrder(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          QUERY_KEYS.GET_USER_ORDER_LIST,
+        ],
+      });
+    },
+  });
+};
+
+export const useGetUserOrderList = (uid: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST, uid],
+    queryFn: () => getUserOrderList(uid),
   });
 };

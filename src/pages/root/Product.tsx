@@ -8,6 +8,7 @@ import { IoCartOutline, IoHeartOutline } from "react-icons/io5";
 import { useUserContext } from "../../context/AuthProvider";
 import {
   useAddItemToCart,
+  useAddItemToOrder,
   useAddItemToSaved,
   useGetUserCartList,
   useGetUserSavedList,
@@ -15,18 +16,17 @@ import {
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Review from "../../components/product/Review";
-
-
+import Popup from "../../components/product/Modal";
+import Modal from "../../components/product/Modal";
 
 const Product = () => {
   const navigate = useNavigate();
-
   const { user } = useUserContext();
-
   const { id } = useParams();
   const location = useLocation();
   const product = location.state?.product as IProduct;
 
+  const [open, setOpen] = useState<boolean>(false);
   const [newQuantity, setNewQuantity] = useState<number>(1);
   const [isAddedToCartList, setIsAddedToCartList] = useState<boolean>(false);
   const [isAddedToSavedList, setIsAddedToSavedList] = useState<boolean>(false);
@@ -35,42 +35,42 @@ const Product = () => {
     useAddItemToCart();
   const { mutateAsync: addItemToSaved, isPending: isAddingItemToSaved } =
     useAddItemToSaved();
+  const { mutateAsync: addItemToOrder, isPending: isAddingItemToOrder } =
+    useAddItemToOrder();
 
   const { data: userCartList, isPending: isGettingUserCartList } =
     useGetUserCartList(user.accountId);
   const { data: userSavedList, isPending: isGettingUserSavedList } =
     useGetUserSavedList(user.accountId);
 
-
+  useEffect(() => {
+    if (!product || id !== product.id) {
+      navigate(-1);
+    }
+  }, [product, id, navigate]);
 
   useEffect(() => {
-    if (product == undefined || id != product.id) navigate(-1);
-  }, []);
-
-  useEffect(() => {
-    if (userCartList != undefined) {
+    if (userCartList) {
       const checkItem = checkIfItemInTheList(product, userCartList.item);
-
       setIsAddedToCartList(checkItem);
     }
-  }, [userCartList]);
+  }, [userCartList, product]);
 
   useEffect(() => {
-    if (userSavedList != undefined) {
+    if (userSavedList) {
       const checkItem = checkIfItemInTheList(product, userSavedList.item);
-
       setIsAddedToSavedList(checkItem);
     }
-  }, [userSavedList]);
+  }, [userSavedList, product]);
 
   if (isGettingUserCartList || isGettingUserSavedList)
-    return <div>Loading..</div>;
+    return <div>Loading...</div>;
 
-  // console.log(isAddedToSavedList);
-
-  // add item to cart
   const handleAddItemToCart = async () => {
-    if (user.accountId == "") window.location.href = "/login";
+    if (!user.accountId) {
+      window.location.href = "/login";
+      return;
+    }
 
     if (isAddedToCartList) {
       toast.error("Item is already in cart", {
@@ -83,7 +83,6 @@ const Product = () => {
         progress: undefined,
         theme: "light",
       });
-
       return;
     }
 
@@ -121,9 +120,11 @@ const Product = () => {
     }
   };
 
-  // add item to saved
   const handleAddItemToSaved = async () => {
-    if (user.accountId == "") window.location.href = "/login";
+    if (!user.accountId) {
+      window.location.href = "/login";
+      return;
+    }
 
     if (isAddedToSavedList) {
       toast.error("Item is already in saved", {
@@ -136,7 +137,6 @@ const Product = () => {
         progress: undefined,
         theme: "light",
       });
-
       return;
     }
 
@@ -162,6 +162,53 @@ const Product = () => {
       setIsAddedToSavedList(true);
     } else {
       toast.error("Error on adding item to saved", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  const handleAddItemToOrder = async () => {
+    if (!user.accountId) {
+      window.location.href = "/login";
+      return;
+    }
+
+    if (!user.address) {
+      toast.error("Your address is empty, please set it up first at profile");
+      return;
+    }
+
+    const isAddedToOrder = await addItemToOrder({
+      addressTo: user.address,
+      newProduct: {
+        product: product,
+        quantity: newQuantity,
+      },
+      sellerId: product.sellerId,
+      uid: user.accountId,
+    });
+
+    if (isAddedToOrder) {
+      toast.success("Success on adding item to order", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate("/profile");
+    } else {
+      toast.error("Error on adding item to order", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -227,13 +274,69 @@ const Product = () => {
                 +
               </button>
             </div>
-            <span className="font-bold">Stock : <h5 className="inline text-red-500">{product.stock}</h5></span>
+            <span className="font-bold">
+              Stock : <h5 className="inline text-red-500">{product.stock}</h5>
+            </span>
           </div>
 
           <div className="flex gap-3 items-center">
-            <button className="text-lg sm:text-xl  bg-[#63a5ea] rounded-lg text-white py-2 px-8  font-bold">
+            <button
+              className="border border-neutral-300 rounded-lg
+    py-1.5 px-10 my-2 bg-blue-500 hover:bg-blue-600 text-white "
+              onClick={() => setOpen(true)}
+            >
               Buy Now
             </button>
+            <Modal open={open} onClose={() => setOpen(false)}>
+              <div className="flex flex-col gap-5">
+                <h1 className="text-2xl font-bold">Place Order Confirmation</h1>
+
+                <div className="flex gap-5 items-center">
+                  <img src={product.imageUrl} className="w-1/3 rounded-lg" />
+                  <div className="flex flex-col gap-2">
+                    <h3 className="font-semibold text-sm md:text-lg">
+                      {product.name}
+                    </h3>
+                    <h3 className="font-semibold text-sm md:text-lg">
+                      Quantity :{" "}
+                      <span className="text-red-500">{newQuantity}</span>
+                    </h3>
+                    <h3 className="font-bold text-sm md:text-lg text-red-500">
+                      {product.price && formatToIDR(product.price * newQuantity) }
+                    </h3>
+                    <div className="flex gap-4">
+                      <button
+                        className={`border border-neutral-300 rounded-lg
+    py-1.5 px-6 my-2 bg-blue-500 hover:bg-blue-600 text-white ${
+      isAddingItemToOrder ? "opacity-50 cursor-not-allowed" : ""
+    }`}
+                        onClick={() => setOpen(false)}
+                        disabled={isAddingItemToOrder}
+                      >
+                        Exit
+                      </button>
+                      <button
+                        className={`border border-neutral-300 rounded-lg
+    py-1.5 px-6 my-2 bg-blue-500 hover:bg-blue-600 text-white  ${
+      isAddingItemToOrder ? "opacity-50 cursor-not-allowed" : ""
+    }`}
+                        onClick={handleAddItemToOrder}
+                        disabled={isAddingItemToOrder}
+                      >
+                        <AiOutlineLoading3Quarters
+                          className={`${
+                            isAddingItemToOrder
+                              ? "inline animate-spin"
+                              : "hidden"
+                          } mr-2`}
+                        />
+                        <span className={`${isAddingItemToOrder ? "hidden": ""}`}>Order</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Modal>
             <button className="text-[#63a5ea]" onClick={handleAddItemToCart}>
               {isAddingItemToCart ? (
                 <AiOutlineLoading3Quarters className="animate-spin text-3xl" />
@@ -255,7 +358,7 @@ const Product = () => {
           </div>
         </div>
       </div>
-     <Review productId={product.id}/>
+      <Review productId={product.id} />
     </div>
   );
 };

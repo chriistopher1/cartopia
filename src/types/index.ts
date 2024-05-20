@@ -12,8 +12,9 @@ export type IUser = {
     name: string | undefined;
     address: string | undefined;
   };
-  cart: string | undefined
-  saved: string | undefined
+  cart: string | undefined;
+  saved: string | undefined;
+  order: string | undefined;
 };
 
 export type CategoryArray = {
@@ -31,7 +32,7 @@ export type IProduct = {
   stock: number | undefined;
   sold: number | undefined;
   sellerId: string | undefined;
-  reviewId: string | undefined
+  reviewId: string | undefined;
 };
 
 export type IProductCart = {
@@ -46,21 +47,44 @@ export type ICart = {
 };
 
 export type ISaved = {
-  id : string | undefined
-  userId: string | undefined
+  id: string | undefined;
+  userId: string | undefined;
   item: IProductCart[] | undefined;
 };
 
 export type IReviewItem = {
-  createdAt: Timestamp | undefined
-  rating : number | undefined
-  user: IUser | undefined
-  imageUrl : string | undefined
-  description : string | undefined
-}
+  createdAt: Timestamp | undefined;
+  rating: number | undefined;
+  user: IUser | undefined;
+  imageUrl: string | undefined;
+  description: string | undefined;
+};
 
 export type IReview = {
-  id: string | undefined
-  item : IReviewItem[] | undefined
-  productId : string | undefined
-}
+  id: string | undefined;
+  item: IReviewItem[] | undefined;
+  productId: string | undefined;
+};
+
+export type IProductOrderItem = {
+  product: IProduct | undefined;
+  quantity: number | undefined;
+};
+
+export type IOrderItem = {
+
+  id : string | undefined
+  date : Timestamp | undefined
+  status : string | undefined
+  addressFrom : string | undefined
+  addressTo : string | undefined
+  totalPrice : number | undefined
+  item : IProductOrderItem[] | undefined
+
+};
+
+export type IOrder = {
+  id: string | undefined;
+  item: IOrderItem[] | undefined;
+  userId: string | undefined;
+};

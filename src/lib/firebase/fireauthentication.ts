@@ -8,7 +8,7 @@ import {
 } from "firebase/auth";
 import { IUser } from "../../types";
 import { firebaseApp } from "./config";
-import { getUserDataByUid, makeNewCart, makeNewSaved, registerUserData } from "./firestore";
+import { getUserDataByUid, makeNewCart, makeNewOrder, makeNewSaved, registerUserData } from "./firestore";
 
 const auth = getAuth(firebaseApp);
 let currentUser = auth.currentUser;
@@ -42,6 +42,7 @@ export async function registerAccount(user: {
 
     const newCart = await makeNewCart(newUserSession.user.uid)
     const newSaved = await makeNewSaved(newUserSession.user.uid)
+    const newOrder = await makeNewOrder(newUserSession.user.uid)
 
     const newUser : IUser = {
       accountId: newUserSession.user.uid,
@@ -51,6 +52,7 @@ export async function registerAccount(user: {
         "https://firebasestorage.googleapis.com/v0/b/cartopia-68776.appspot.com/o/user_assets%2Fdefault_profile%2Fdefault-profile-pic.jpg?alt=media&token=87535156-38fa-418e-bb7b-c173c138af1e",
       cart : newCart,
       saved: newSaved,
+      order: newOrder,
       address : "",
       phone: user.phone,
       seller: {

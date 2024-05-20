@@ -1,6 +1,6 @@
 interface singleCategory {
   name: string;
-  url: string | null;
+  url: string | undefined;
 }
 
 const CategoryCard = (category: singleCategory) => {

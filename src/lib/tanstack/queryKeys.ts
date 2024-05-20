@@ -24,5 +24,11 @@ export enum QUERY_KEYS {
     GET_ALL_SELLER_PRODUCT = "getAllSellerProduct",
     ADD_SELLER_PRODUCT = "addSellerProduct",
     UPDATE_SELLER_PRODUCT = "updateSellerProduct",
-    DELETE_SELLER_PRODUCT = "deleteSellerProduct"
+    DELETE_SELLER_PRODUCT = "deleteSellerProduct",
+
+    // ORDER
+    GET_USER_ORDER_LIST = "getUserOrderList",
+    ADD_ITEM_TO_ORDER = "addItemToOrder",
+    UPDATE_USER_ORDER = "updateUserOrder",
+    DELETE_USER_ORDER = "deleteUserOrder",
   }

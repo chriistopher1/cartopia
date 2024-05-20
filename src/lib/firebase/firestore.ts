@@ -1,6 +1,7 @@
 import { firebaseApp } from "./config";
 import {
   DocumentData,
+  Timestamp,
   addDoc,
   deleteDoc,
   doc,
@@ -13,8 +14,11 @@ import {
 import { collection, getDocs } from "firebase/firestore";
 import {
   ICart,
+  IOrder,
+  IOrderItem,
   IProduct,
   IProductCart,
+  IProductOrderItem,
   IReview,
   ISaved,
   IUser,
@@ -54,6 +58,7 @@ export async function getUserDataByUid(uid: string) {
     },
     cart: "",
     saved: "",
+    order: "",
   };
 
   try {
@@ -78,6 +83,7 @@ export async function getUserDataByUid(uid: string) {
 
       userData.cart = doc.data().cart;
       userData.saved = doc.data().saved;
+      userData.order = doc.data().order;
     });
 
     // console.log("query anjing  : ", userData)
@@ -85,6 +91,64 @@ export async function getUserDataByUid(uid: string) {
     return userData;
   } catch (error) {
     console.log("error get user data : ", error);
+  }
+}
+
+// get seller data by seller id
+export async function getSellerDataBySellerId(
+  sellerId: string | undefined
+): Promise<IUser | undefined> {
+  if (sellerId === undefined) return undefined;
+
+  var userData: IUser = {
+    accountId: "",
+    name: "",
+    phone: "",
+    email: "",
+    imageUrl: "",
+    address: "",
+
+    seller: {
+      id: "",
+      name: "",
+      address: "",
+    },
+    cart: "",
+    saved: "",
+    order: "",
+  };
+
+  try {
+    const q = query(
+      collection(db, "user_table"),
+      where("seller.id", "==", sellerId)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      userData.accountId = doc.data().accountId;
+      userData.name = doc.data().name;
+      userData.phone = doc.data().phone;
+      userData.email = doc.data().email;
+      userData.imageUrl = doc.data().imageUrl;
+
+      userData.address = doc.data().address;
+      userData.seller.id = doc.data().seller.id;
+      userData.seller.name = doc.data().seller.name;
+      userData.seller.address = doc.data().seller.address;
+
+      userData.cart = doc.data().cart;
+      userData.saved = doc.data().saved;
+      userData.order = doc.data().order;
+    });
+
+    // console.log("query anjing  : ", userData)
+
+    return userData;
+  } catch (error) {
+    console.log("error get user data : ", error);
+    return undefined;
   }
 }
 
@@ -188,6 +252,37 @@ export async function getUserSavedList(uid: string | undefined) {
   }
 }
 
+// get user order list
+export async function getUserOrderList(uid: string | undefined) {
+  if (uid == undefined) {
+    console.log("no uid");
+    return; // Return an empty array or null here if there's no UID
+  }
+
+  try {
+    const q = query(collection(db, "order_table"), where("userId", "==", uid));
+
+    const querySnapshot = await getDocs(q);
+
+    const orderListProduct: IOrder = {
+      id: "",
+      item: [],
+      userId: "",
+    };
+
+    querySnapshot.forEach((doc) => {
+      orderListProduct.id = doc.data().id;
+      orderListProduct.item = doc.data().item;
+      orderListProduct.userId = doc.data().userId;
+    });
+
+    return orderListProduct;
+  } catch (error) {
+    console.log("error fetching user cart list:", error);
+    throw error; // Throw the error to be handled by React Query
+  }
+}
+
 //get all product (temporary)
 export async function getAllProduct() {
   try {
@@ -257,6 +352,25 @@ export async function makeNewSaved(uid: string) {
     return newSavedId;
   } catch (error) {
     console.log("error on making new cart");
+  }
+}
+
+//make new order
+export async function makeNewOrder(uid: string) {
+  const newOrderId = uuidv4();
+
+  const newOrder: ICart = {
+    id: newOrderId,
+    userId: uid,
+    item: [],
+  };
+
+  try {
+    const docRef = await addDoc(collection(db, "order_table"), newOrder);
+    console.log("Order written with ID: ", docRef.id);
+    return newOrderId;
+  } catch (error) {
+    console.log("error on making new order");
   }
 }
 
@@ -442,6 +556,84 @@ export async function removeItemFromSaved(
     }
   } catch (error) {
     console.log("error on removing item from cart");
+    return false;
+  }
+}
+
+// add item to order
+export async function addItemToOrder(newInstance: {
+  addressTo: string | undefined;
+  newProduct: IProductOrderItem;
+  sellerId: string | undefined;
+  uid: string | undefined;
+}): Promise<boolean> {
+  try {
+    const newOrderId = uuidv4();
+    const newDate = Timestamp.now();
+    const newStatus = "pending";
+    const sellerInfo = await getSellerDataBySellerId(newInstance.sellerId);
+
+    if (sellerInfo === undefined) {
+      console.log("error on getting seller info");
+      return false;
+    }
+
+    if (
+      !newInstance.newProduct ||
+      newInstance.newProduct.quantity === undefined ||
+      newInstance.newProduct.product?.price === undefined
+    ) {
+      console.log("price or quantity is empty");
+      return false;
+    }
+
+    const newTotalPrice =
+      newInstance.newProduct.product?.price * newInstance.newProduct.quantity;
+
+    const q = query(
+      collection(db, "order_table"),
+      where("userId", "==", newInstance.uid)
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      // If the cart document exists, update the item array
+
+      const userOrderRef = doc(db, "order_table", querySnapshot.docs[0].id);
+      const userOrderDoc = await getDoc(userOrderRef);
+
+      if (userOrderDoc.exists()) {
+        const userData = userOrderDoc.data();
+        const currentItemArray = userData?.item || [];
+
+        const updatedItemArray = [
+          ...currentItemArray,
+          {
+            id: newOrderId,
+            date: newDate,
+            status: newStatus,
+            addressFrom: sellerInfo.seller.address,
+            addressTo: newInstance.addressTo,
+            totalPrice: newTotalPrice,
+            item: newInstance.newProduct,
+          },
+        ];
+
+        await updateDoc(userOrderRef, { item: updatedItemArray });
+
+        console.log("Successfully added new item to order.");
+        return true;
+      } else {
+        console.log("Order document does not exist.");
+        return false;
+      }
+    } else {
+      // If the cart document does not exist, return false
+      console.log("Order document does not exist.");
+      return false;
+    }
+  } catch (error) {
+    console.log("Error adding item to order:", error);
     return false;
   }
 }

@@ -17,7 +17,8 @@ export const INITIAL_USER = {
     address : ""
   },
   cart: "", 
-  saved : ""
+  saved : "",
+  order : ""
 };
 
 const INITIAL_STATE = {
@@ -63,7 +64,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             address : currentAuthenticatedUser.seller.address
           },
           cart : currentAuthenticatedUser.cart,
-          saved : currentAuthenticatedUser.saved
+          saved : currentAuthenticatedUser.saved,
+          order : currentAuthenticatedUser.order
           
         });
 
