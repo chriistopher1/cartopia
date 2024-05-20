@@ -611,7 +611,7 @@ export async function addItemToOrder(newInstance: {
           {
             id: newOrderId,
             date: newDate,
-            shippingDate : '' ,
+            shippingDate: "",
             status: newStatus,
             addressFrom: sellerInfo.seller.address,
             addressTo: newInstance.addressTo,
@@ -823,8 +823,7 @@ export async function addNewProduct(newInstance: {
       stock: newInstance.stock,
       id: newProductId,
       sellerId: newInstance.sellerId,
-      reviewId: newReviewId
-    
+      reviewId: newReviewId,
     };
     const docRef = await addDoc(collection(db, "product_table"), newProduct);
     // console.log("Saved written with ID: ", docRef.id);
@@ -911,5 +910,130 @@ export async function getAllUserAccountId(): Promise<string[] | undefined> {
   } catch (error) {
     console.log("error on getting all user account id");
     return undefined;
+  }
+}
+
+// pay an order
+export async function makePayment(newInstance: {
+  orderId: string | undefined;
+  orderListId: string | undefined;
+}) {
+  if (
+    newInstance.orderId === undefined ||
+    newInstance.orderListId === undefined
+  ) {
+    console.error("Invalid order ID");
+    return false;
+  }
+
+  try {
+    // Find the orderList using orderListId where the id == newInstance.orderListId
+    const orderListQuery = query(
+      collection(db, "order_table"),
+      where("id", "==", newInstance.orderListId)
+    );
+    const orderListSnapshot = await getDocs(orderListQuery);
+
+    if (orderListSnapshot.empty) {
+      console.error("OrderList not found");
+      return false;
+    }
+
+    const orderListDocRef = orderListSnapshot.docs[0].ref;
+    const orderListData = orderListSnapshot.docs[0].data();
+
+    // Find the specific order in the orderList's item array
+    const orderToUpdate = orderListData.item.find(
+      (order: any) => order.id === newInstance.orderId
+    );
+    if (!orderToUpdate) {
+      console.error("Order not found in the orderList");
+      return false;
+    }
+
+    // Update the status to "shipping" and set a new timestamp for shippingDate
+    const updatedOrder = {
+      ...orderToUpdate,
+      status: "shipping",
+      shippingDate: Timestamp.now(),
+    };
+
+    // Update the order in the orderList's item array
+    const updatedItems = orderListData.item.map((order: any) =>
+      order.id === newInstance.orderId ? updatedOrder : order
+    );
+
+    // Update the document with the modified order array
+    await updateDoc(orderListDocRef, {
+      item: updatedItems,
+    });
+
+    console.log("Order status updated to shipping");
+    return true;
+  } catch (error) {
+    console.error("Error making payment:", error);
+    return false;
+  }
+}
+
+// complete an order
+export async function completeOrder(newInstance: {
+  orderId: string | undefined;
+  orderListId: string | undefined;
+}) {
+  if (
+    newInstance.orderId === undefined ||
+    newInstance.orderListId === undefined
+  ) {
+    console.error("Invalid order ID");
+    return false;
+  }
+
+  try {
+    // Find the orderList using orderListId where the id == newInstance.orderListId
+    const orderListQuery = query(
+      collection(db, "order_table"),
+      where("id", "==", newInstance.orderListId)
+    );
+    const orderListSnapshot = await getDocs(orderListQuery);
+
+    if (orderListSnapshot.empty) {
+      console.error("OrderList not found");
+      return false;
+    }
+
+    const orderListDocRef = orderListSnapshot.docs[0].ref;
+    const orderListData = orderListSnapshot.docs[0].data();
+
+    // Find the specific order in the orderList's item array
+    const orderToUpdate = orderListData.item.find(
+      (order: any) => order.id === newInstance.orderId
+    );
+    if (!orderToUpdate) {
+      console.error("Order not found in the orderList");
+      return false;
+    }
+
+    // Update the status to "shipping" and set a new timestamp for shippingDate
+    const updatedOrder = {
+      ...orderToUpdate,
+      status: "complete",
+    };
+
+    // Update the order in the orderList's item array
+    const updatedItems = orderListData.item.map((order: any) =>
+      order.id === newInstance.orderId ? updatedOrder : order
+    );
+
+    // Update the document with the modified order array
+    await updateDoc(orderListDocRef, {
+      item: updatedItems,
+    });
+
+    console.log("Order status updated to complete");
+    return true;
+  } catch (error) {
+    console.error("Error completing order:", error);
+    return false;
   }
 }

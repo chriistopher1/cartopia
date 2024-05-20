@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IOrderItem, IProduct, IProductCart, IProductOrderItem, IUser } from "../../types";
+import {
+  IOrderItem,
+  IProduct,
+  IProductCart,
+  IProductOrderItem,
+  IUser,
+} from "../../types";
 import {
   registerAccount,
   signInAccount,
@@ -12,6 +18,7 @@ import {
   addItemToOrder,
   addItemToSaved,
   addNewProduct,
+  completeOrder,
   deleteProduct,
   findRelatedProduct,
   getAllProduct,
@@ -21,6 +28,7 @@ import {
   getUserDataByUid,
   getUserOrderList,
   getUserSavedList,
+  makePayment,
   removeItemFromCart,
   removeItemFromSaved,
   sellerRegister,
@@ -219,16 +227,14 @@ export const useAddItemToOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (newInstance: {
-      addressTo : string | undefined
+      addressTo: string | undefined;
       newProduct: IProductOrderItem;
-      sellerId : string | undefined
+      sellerId: string | undefined;
       uid: string | undefined;
     }) => addItemToOrder(newInstance),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [
-          QUERY_KEYS.GET_USER_ORDER_LIST,
-        ],
+        queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST],
       });
     },
   });
@@ -238,5 +244,35 @@ export const useGetUserOrderList = (uid: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST, uid],
     queryFn: () => getUserOrderList(uid),
+  });
+};
+
+export const useMakePayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      orderId: string | undefined;
+      orderListId: string | undefined;
+    }) => makePayment(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST],
+      });
+    },
+  });
+};
+
+export const useCompleteOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      orderId: string | undefined;
+      orderListId: string | undefined;
+    }) => completeOrder(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST],
+      });
+    },
   });
 };

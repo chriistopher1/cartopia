@@ -2,10 +2,21 @@ import React from "react";
 import { Timestamp } from "firebase/firestore";
 import { IOrderItem } from "../../types";
 import { checkStatus, formatToIDR } from "../../constant";
+import { useCompleteOrder, useMakePayment } from "../../lib/tanstack/queries";
+import { ImSkype } from "react-icons/im";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { toast } from "react-toastify";
 
-const styling = "font-medium"
+const styling = "font-semibold";
 
-const OrderCard = (order: IOrderItem) => {
+interface OrderProps  {
+
+  order : IOrderItem
+  orderListId : string | undefined
+
+}
+
+const OrderCard = (newInstance : OrderProps) => {
   const {
     id,
     date,
@@ -15,7 +26,12 @@ const OrderCard = (order: IOrderItem) => {
     addressTo,
     totalPrice,
     item,
-  } = order;
+  } = newInstance.order;
+
+  const { mutateAsync: makePayment, isPending: isMakingPayment } =
+    useMakePayment();
+  const { mutateAsync: completeOrder, isPending: isCompletingOrder } =
+    useCompleteOrder();
 
   const formatDate = (timestamp: Timestamp | undefined) => {
     if (!timestamp) return "N/A";
@@ -23,7 +39,39 @@ const OrderCard = (order: IOrderItem) => {
     return date.toLocaleDateString();
   };
 
-  console.log(item);
+  // console.log(item);
+
+  // make payment
+  const handlePayment = async () => {
+    if (!id) return;
+
+    const isPaid = await makePayment({
+      orderId : id,
+      orderListId : newInstance.orderListId
+    });
+
+    if (isPaid) {
+      toast.success("Payment Succesful, Status changed to shipping");
+    } else {
+      toast.error("Payment Failure, please try again");
+    }
+  };
+
+   // complete order
+   const handleCompleteOrder = async () => {
+    if (!id) return;
+
+    const isComplete = await completeOrder({
+      orderId : id,
+      orderListId : newInstance.orderListId
+    });
+
+    if (isComplete) {
+      toast.success("Order completed, Status changed to complete");
+    } else {
+      toast.error("Order completion failed, please try again");
+    }
+  };
 
   return (
     <div className="order-card border shadow-md p-4 mb-4 rounded-md">
@@ -35,7 +83,9 @@ const OrderCard = (order: IOrderItem) => {
       </p>
       <p className={`${styling}`}>From: {addressFrom}</p>
       <p className={`${styling}`}>To: {addressTo}</p>
-      <p className={`${styling}`}>Total Price: {totalPrice ? `${formatToIDR(totalPrice)}` : "N/A"}</p>
+      <p className={`${styling} `}>
+        Total Price: <span className="text-yellow-500">{totalPrice ? `${formatToIDR(totalPrice)}` : "N/A"}</span>
+      </p>
       <div className="order-items mt-4">
         <h3 className="font-semibold mb-2">Items:</h3>
         <ul>
@@ -50,6 +100,37 @@ const OrderCard = (order: IOrderItem) => {
           )}
         </ul>
       </div>
+      {status && status == "pending" ? (
+        <button
+          className={`border-2 border-black bg-rose-500 px-4 py-2 rounded-lg text-white hover:bg-rose-700 font-medium ${
+            isMakingPayment ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={handlePayment}
+          disabled={isMakingPayment}
+        >
+          <AiOutlineLoading3Quarters
+            className={`${
+              isMakingPayment ? "inline animate-spin" : "hidden"
+            } mr-2`}
+          />
+          <span>Pay Now</span>
+        </button>
+      ) : (status && status == "shipping" ? (
+        <button
+          className={`border-2 border-black bg-sky-500 px-4 py-2 rounded-lg text-white hover:bg-sky-700 font-medium ${
+            isCompletingOrder ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={handleCompleteOrder}
+          disabled={isCompletingOrder}
+        >
+          <AiOutlineLoading3Quarters
+            className={`${
+              isCompletingOrder ? "inline animate-spin" : "hidden"
+            } mr-2`}
+          />
+          <span>Complete Order</span>
+        </button>
+      ): "")}
     </div>
   );
 };

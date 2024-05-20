@@ -1,4 +1,3 @@
-
 import { useUserContext } from "../../../context/AuthProvider";
 import { useGetUserOrderList } from "../../../lib/tanstack/queries";
 import OrderCard from "../../../components/card/OrderCard";
@@ -20,7 +19,7 @@ const OrderComplete = () => {
       <h1 className="font-bold text-2xl md:text-3xl border-b-2 pb-4 border-black w-fit mb-4">
         Completed Orders
       </h1>
-      <div className="flex gap-2 mb-2">
+      <div className="flex gap-2 mb-2 flex-wrap">
         <Link
           className="border-2 px-4 py-2 rounded-lg bg-purple-500 text-white hover:bg-purple-700 border-black"
           to="/user/order"
@@ -48,19 +47,9 @@ const OrderComplete = () => {
       </div>
       <div className="flex flex-wrap gap-2">
         {userOrderList?.item
-          ?.filter(order => order.status === "complete")
-          ?.map(order => (
-            <OrderCard
-              key={order.id}
-              id={order.id}
-              date={order.date}
-              shippingDate={order.shippingDate}
-              status={order.status}
-              addressFrom={order.addressFrom}
-              addressTo={order.addressTo}
-              totalPrice={order.totalPrice}
-              item={order.item}
-            />
+          ?.filter((order) => order.status === "complete")
+          ?.map((order) => (
+            <OrderCard key={order.id} order={order} orderListId={user.order} />
           ))}
       </div>
     </div>
