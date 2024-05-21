@@ -6,7 +6,21 @@ import { useEffect } from "react";
 const SellerLayout = () => {
   const navigate = useNavigate();
 
-  const { user, isLoading } = useUserContext();
+  const { user, isLoading, checkAuthUser } = useUserContext();
+
+  useEffect(() => {
+
+    const checkCurrentUser = async () => {
+
+      const checkUser = await checkAuthUser();
+  
+      if(!checkUser) navigate("/login")
+
+    }
+
+    checkCurrentUser();
+
+  }, []);
 
   if (!isLoading && user && user.seller.id == "") navigate("/seller/register");
 

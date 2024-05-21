@@ -69,8 +69,8 @@ const Navbar = () => {
           <Link to={"/contact"} className={`${mobileViewCss}`}>
             Contact
           </Link>
-          <Link to={""} className={`${mobileViewCss}`}>
-            Pages
+          <Link to={"/seller/dashboard"} className={`${mobileViewCss}`}>
+            Seller
           </Link>
           <Link
             to={"/login"}
@@ -121,8 +121,8 @@ const Navbar = () => {
           <Link to={"/contact"} className="font-semibold text-lg">
             Contact
           </Link>
-          <Link to={""} className="font-semibold text-lg">
-            Pages
+          <Link to={"/seller/dashboard"} className="font-semibold text-lg">
+            Seller
           </Link>
         </div>
         <div className="max-lg:hidden lg:flex items-center gap-5">
