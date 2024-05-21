@@ -166,6 +166,7 @@ export const useMakeReview = () => {
       productReviewId: string | undefined;
       orderId: string | undefined;
       orderListId: string | undefined;
+      productId: string | undefined;
     }) => makeReview(newInstance),
     onSuccess: () => {
       queryClient.invalidateQueries({

@@ -27,7 +27,11 @@ import {
 } from "../../types";
 
 import { v4 as uuidv4 } from "uuid";
-import { addNewProductImage, removeProductImage } from "./firestorage";
+import {
+  addNewProductImage,
+  addNewReviewImage,
+  removeProductImage,
+} from "./firestorage";
 
 const db = getFirestore(firebaseApp);
 
@@ -680,6 +684,7 @@ export async function makeReview(newInstance: {
   productReviewId: string | undefined;
   orderId: string | undefined;
   orderListId: string | undefined;
+  productId: string | undefined;
 }) {
   if (
     !newInstance.newReview ||
@@ -692,6 +697,14 @@ export async function makeReview(newInstance: {
   }
 
   try {
+    if (newInstance.newReview.imageUrl != "") {
+      const imageReviewDownloadUrl = await addNewReviewImage({
+        imageUrl: newInstance.newReview.imageUrl,
+        productId: newInstance.productId,
+      });
+      newInstance.newReview.imageUrl = imageReviewDownloadUrl;
+    }
+
     // Find the review document using productReviewId
     const q = query(
       collection(db, "review_table"),
@@ -699,25 +712,27 @@ export async function makeReview(newInstance: {
     );
     const querySnapshot = await getDocs(q);
 
+    console.log("1");
+
     if (!querySnapshot.empty) {
       // If the cart document exists, update the item array
 
       const userCartRef = doc(db, "review_table", querySnapshot.docs[0].id);
       const userCartDoc = await getDoc(userCartRef);
-
+      console.log("2");
       if (userCartDoc.exists()) {
         const userData = userCartDoc.data();
         const currentItemArray = userData?.item || [];
-
+        console.log("3");
         const updatedItemArray = [...currentItemArray, newInstance.newReview];
 
         await updateDoc(userCartRef, { item: updatedItemArray });
-
+        console.log("4");
         const isCompleteReview = await completeReview({
           orderId: newInstance.orderId,
           orderListId: newInstance.orderListId,
         });
-
+        console.log("5");
         if (!isCompleteReview) {
           return false;
         }

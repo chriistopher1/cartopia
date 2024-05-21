@@ -72,6 +72,7 @@ const OrderCard = (newInstance: OrderProps) => {
       orderListId: newInstance.orderListId,
       productId : item[0].product?.id,
       bought : item[0].quantity
+
     });
 
     if (isComplete) {
@@ -150,7 +151,8 @@ const OrderCard = (newInstance: OrderProps) => {
               orderId : id,
               orderListId : newInstance.orderListId,
               productName : item[0].product?.name,
-              productReviewId : item[0].product?.reviewId
+              productReviewId : item[0].product?.reviewId,
+              productId : item[0].product?.id
             }})}
           >
             <span>Review</span>

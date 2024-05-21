@@ -53,6 +53,7 @@ const MakeReview = () => {
       orderId: reviewData.orderId,
       orderListId: reviewData.orderListId,
       productReviewId: reviewData.productReviewId,
+      productId : reviewData.productId
     });
 
     if (isCompletedReview) {

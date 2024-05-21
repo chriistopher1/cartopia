@@ -25,14 +25,16 @@ const Review = (currentProduct: ReviewProps) => {
           <h3 className="font-bold text-lg md:text-xl lg:text-2xl mb-1">
             Customer's Photo & Videos
           </h3>
-          {productReview?.item &&
-            productReview.item.map((review, index) => (
-              <img
-                key={index}
-                src={review.imageUrl}
-                className="w-20 h-auto rounded-lg cursor-pointer"
-              />
-            ))}
+          <div className="flex gap-2">
+            {productReview?.item &&
+              productReview.item.map((review, index) => (
+                <img
+                  key={index}
+                  src={review.imageUrl}
+                  className="w-20 h-auto rounded-lg cursor-pointer"
+                />
+              ))}
+          </div>
         </div>
         {productReview?.item &&
           productReview.item.map((review, index) => (
