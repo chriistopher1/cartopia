@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 interface singleCategory {
   name: string;
   url: string | undefined;
@@ -9,12 +11,12 @@ const CategoryCard = (category: singleCategory) => {
   };
 
   return (
-    <div className="relative grow shadow-lg shadow-gray-400 cursor-pointer">
+    <Link className="relative grow shadow-lg shadow-gray-400 cursor-pointer" to={`/category/${category.name}`}>
       <img src={category.url || ""} alt={category.name} className="w-auto h-full rounded-lg" />
       <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-xs md:text-lg lg:text-2xl">
         {capitalizeFirstLetter(category.name)}
       </p>
-    </div>
+    </Link>
   );
 };
 

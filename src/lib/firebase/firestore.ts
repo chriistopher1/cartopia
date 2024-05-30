@@ -1216,3 +1216,26 @@ export async function completeReview(newInstance: {
     return false;
   }
 }
+
+// filter based on category
+export async function filterProductBasedOnCategory(searchedCategory: string | undefined) {
+  try {
+    // Query the product collection based on the searched category
+    const productQuery = query(
+      collection(db, "product_table"),
+      where("category", "==", searchedCategory)
+    );
+
+    // Execute the query
+    const querySnapshot = await getDocs(productQuery);
+
+    // Map through the query results to extract the product data
+    const products = querySnapshot.docs.map((doc) => doc.data());
+
+    // Return the list of products
+    return products;
+  } catch (error) {
+    console.error("Error filtering products by category:", error);
+    return [];
+  }
+}

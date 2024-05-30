@@ -21,6 +21,7 @@ import {
   addNewProduct,
   completeOrder,
   deleteProduct,
+  filterProductBasedOnCategory,
   findRelatedProduct,
   getAllProduct,
   getAllSellerProduct,
@@ -296,5 +297,13 @@ export const useCompleteOrder = () => {
         queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST],
       });
     },
+  });
+};
+
+// Filter
+export const useFilterProductBasedOnCategory = (searchedCategory: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_ALL_SELLER_PRODUCT, searchedCategory],
+    queryFn: () => filterProductBasedOnCategory(searchedCategory),
   });
 };
