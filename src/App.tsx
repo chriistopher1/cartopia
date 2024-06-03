@@ -27,6 +27,7 @@ import OrderShipping from "./pages/protected/order/OrderShipping";
 import OrderComplete from "./pages/protected/order/OrderComplete";
 import MakeReview from "./pages/protected/MakeReview";
 import CategoryFilter from "./pages/root/CategoryFilter";
+import SearchProduct from "./pages/root/SearchProduct";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/category/:filter" element={<CategoryFilter />} />
+        <Route path="/search/:query" element={<SearchProduct />} />
       </Route>
 
       <Route element={<AuthLayout />}>

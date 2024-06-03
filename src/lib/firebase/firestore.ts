@@ -754,39 +754,40 @@ export async function makeReview(newInstance: {
   }
 }
 
-// get related products based on user search
+// Get related products based on user search
 export async function findRelatedProduct(search: string | undefined) {
-  const relatedProduct: IProduct[] = [];
-
-  const searchTerms = search ? search.split(" ") : [];
+  if (!search) {
+    console.error("Search query is undefined");
+    return [];
+  }
 
   try {
-    const searchTerms = search?.split(" ").filter((term) => term.trim() !== "");
+    const allProducts: (IProduct | null)[] | undefined = await getAllProduct();
+    if (!allProducts) {
+      console.error("No products found");
+      return [];
+    }
 
-    // Construct a query with array-contains-any
-    const q = query(
-      collection(db, "product_table"),
-      where("name", "array-contains-any", searchTerms)
-    );
+    // Create a regex pattern to match the search query, case-insensitive
+    const regex = new RegExp(search, "i");
 
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      relatedProduct.push({
-        category: doc.data().category,
-        description: doc.data().description,
-        imageUrl: doc.data().imageUrl,
-        name: doc.data().name,
-        price: doc.data().price,
-        sold: doc.data().sold,
-        stock: doc.data().stock,
-        id: doc.data().id,
-        sellerId: doc.data().sellerId,
-        reviewId: doc.data().reviewId,
-      });
+    // Filter products based on the search query
+    const relatedProducts = allProducts.filter((product) => {
+      if(product?.name === undefined || product.description === undefined || product.category === undefined) return false;
+      if (product != undefined) {
+        return (
+          regex.test(product.name) ||
+          regex.test(product.description) ||
+          regex.test(product.category)
+        );
+      }
+      return false;
     });
-    return relatedProduct;
+
+    return relatedProducts;
   } catch (error) {
-    console.log("error on finding related product from user query");
+    console.error("Error finding related products from user query:", error);
+    return [];
   }
 }
 

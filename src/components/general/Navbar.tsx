@@ -69,9 +69,9 @@ const Navbar = () => {
           <Link to={"/user/order"} className={`${mobileViewCss}`}>
             Order
           </Link>
-          <Link to={"/seller/dashboard"} className={`${mobileViewCss}`}>
+          <a href="/seller/dashboard" className={`${mobileViewCss}`}>
             Seller
-          </Link>
+          </a>
           <Link
             to={"/login"}
             className={`flex justify-center items-center gap-2 ${mobileViewCss} `}
@@ -121,9 +121,9 @@ const Navbar = () => {
           <Link to={"/user/order"} className="font-semibold text-lg">
             Order
           </Link>
-          <Link to={"/seller/dashboard"} className="font-semibold text-lg">
+          <a href="/seller/dashboard" className="font-semibold text-lg">
             Seller
-          </Link>
+          </a>
         </div>
         <div className="max-lg:hidden lg:flex items-center gap-5">
           <Link
