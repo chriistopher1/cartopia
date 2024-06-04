@@ -10,6 +10,7 @@ export enum QUERY_KEYS {
     GET_USER_SAVED_LIST = "getUserSavedList",
 
     // INITIAL ASSET
+    GET_CATEGORY_ITEMS: 'GET_CATEGORY_ITEMS',
     GET_CATEGORY_ASSET = "getCategoryAsset",
     GET_ALL_PRODUCT = "getAllProduct",
 
