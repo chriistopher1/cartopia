@@ -9,9 +9,7 @@ import { signOut } from "firebase/auth";
 const Register = () => {
   const navigate = useNavigate();
 
-  const { mutateAsync: signUp, isPending: isLoadingSignUp } =
-    useSignUpAccount();
-
+  const { mutateAsync: signUp, isPending: isLoadingSignUp } = useSignUpAccount();
   const { mutateAsync: signOut, isPending: isLoadingSignOut } = useSignOutAccount()
 
   const [formData, setFormData] = useState({
@@ -29,24 +27,44 @@ const Register = () => {
     }));
   };
 
+  const validatePhoneNumber = (phone: string) => {
+    const phoneRegex = /^\d{10,13}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])/;
+    return password.length >= 8 && passwordRegex.test(password);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
 
     //validation
     if (
-      formData.email == "" ||
-      formData.name == "" ||
-      formData.phone == "" ||
-      formData.password == ""
+      formData.email === "" ||
+      formData.name === "" ||
+      formData.phone === "" ||
+      formData.password === ""
     ) {
       toast.error("All fields are required.");
       return;
     }
 
+    if (!validatePhoneNumber(formData.phone)) {
+      toast.error("Phone number must be 10-13 digits long and only contain numbers.");
+      return;
+    }
+
+    if (!validatePassword(formData.password)) {
+      toast.error("Password must be at least 8 characters long and include at least one symbol and one digit.");
+      return;
+    }
+
     //sign up new user data
     try {
-      const signUpNewUser = signUp(formData);
+      const signUpNewUser = await signUp(formData);
 
       if (signUpNewUser == null) {
         toast.error("Register error, please try again.");
@@ -64,7 +82,7 @@ const Register = () => {
           theme: "light",
         });
 
-        navigate("/login")
+        navigate("/login");
       }, 800);
 
       console.log("Sign-in successful!");
