@@ -5,18 +5,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { signOut } from "firebase/auth";
+import { IUser } from "../../types/user"; // Import the IUser interface
 
 const Register = () => {
   const navigate = useNavigate();
 
   const { mutateAsync: signUp, isPending: isLoadingSignUp } = useSignUpAccount();
-  const { mutateAsync: signOut, isPending: isLoadingSignOut } = useSignOutAccount()
+  const { mutateAsync: signOut, isPending: isLoadingSignOut } = useSignOutAccount();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<IUser, "id">>({
     name: "",
     phone: "",
     email: "",
     password: "",
+    image: "/images/default-avatar.png", // Default image for new users
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

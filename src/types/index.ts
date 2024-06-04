@@ -15,6 +15,7 @@ export type IUser = {
   cart: string | undefined;
   saved: string | undefined;
   order: string | undefined;
+  image?: string | null;
 };
 
 export type CategoryArray = {

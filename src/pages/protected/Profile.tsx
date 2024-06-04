@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useUserContext } from "../../context/AuthProvider";
 import { useGetUserOrderList } from "../../lib/tanstack/queries";
 import { useNavigate } from "react-router-dom";
+import { IUser } from "../../types/user"; // Import the IUser interface
 
 const Profile = () => {
-  const { user } = useUserContext();
+  const { user } = useUserContext<IUser>();
   const navigate = useNavigate();
   const { data: orders, isLoading: isLoadingOrders, error: ordersError } = useGetUserOrderList(user?.id);
 
@@ -16,6 +17,13 @@ const Profile = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 rounded-lg shadow-md bg-white w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4">Profile</h2>
+        <div className="mb-4 flex justify-center">
+          <img
+            src={user.image || "/images/default-avatar.png"} // Use default image if user image is null
+            alt="Profile"
+            className="w-32 h-32 rounded-full object-cover"
+          />
+        </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold mb-1">Name</label>
           <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
