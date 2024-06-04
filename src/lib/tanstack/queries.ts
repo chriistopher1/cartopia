@@ -99,14 +99,6 @@ export const useGetAllProduct = () => {
   });
 };
 
-export const useGetCategoryItems = (category: string | undefined) => {
-  return useQuery({
-    queryKey: [QUERY_KEYS.GET_CATEGORY_ITEMS, category],
-    queryFn: () => filterProductBasedOnCategory(category),
-    enabled: !!category,
-  });
-};
-
 // Cart
 export const useAddItemToCart = () => {
   return useMutation({
