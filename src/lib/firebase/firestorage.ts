@@ -147,7 +147,7 @@ export async function addNewReviewImage(newInstance: {
 }
 
 // upload new profile picture
-export const uploadProfilePicture = async ( userId: string, imageUrl : string) => {
+export const uploadProfilePicture = async ( userId: string | undefined, imageUrl : string) => {
   const newProfilePicRef = ref(storage, `user_assets/profile_picture/${userId}`);
   // Upload the image to Firebase Storage
   await uploadString(newProfilePicRef, imageUrl, "data_url");
