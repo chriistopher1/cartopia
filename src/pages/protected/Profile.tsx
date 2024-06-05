@@ -97,6 +97,7 @@ const Profile = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 rounded-lg shadow-md bg-white w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4">Profile</h2>
+        
         <div className="mb-4 flex justify-center">
           <img
             src={user.imageUrl || "/images/default-avatar.png"} // Use default image if user image is null
@@ -104,68 +105,73 @@ const Profile = () => {
             className="w-32 h-32 rounded-full object-cover"
           />
         </div>
-        {isEditing && (
+        
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-2">User Information</h3>
+          {isEditing && (
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-1">
+                Change Profile Picture
+              </label>
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+            </div>
+          )}
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-1">
-              Change Profile Picture
-            </label>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
+            <label className="block text-sm font-semibold mb-1">Name</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border rounded-md px-3 py-2"
+              />
+            ) : (
+              <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
+                {user.name}
+              </div>
+            )}
           </div>
-        )}
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-1">Name</label>
-          {isEditing ? (
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border rounded-md px-3 py-2"
-            />
-          ) : (
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-1">Address</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full border rounded-md px-3 py-2"
+              />
+            ) : (
+              <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
+                {user.address}
+              </div>
+            )}
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-1">Phone</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full border rounded-md px-3 py-2"
+              />
+            ) : (
+              <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
+                {user.phone}
+              </div>
+            )}
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-1">Email</label>
             <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
-              {user.name}
+              {user.email}
             </div>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-1">Address</label>
-          {isEditing ? (
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="w-full border rounded-md px-3 py-2"
-            />
-          ) : (
-            <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
-              {user.address}
-            </div>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-1">Phone</label>
-          {isEditing ? (
-            <input
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full border rounded-md px-3 py-2"
-            />
-          ) : (
-            <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
-              {user.phone}
-            </div>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-1">Email</label>
-          <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
-            {user.email}
           </div>
         </div>
 
         {user.seller && (
-          <>
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-2">Seller Information</h3>
             <div className="mb-4">
               <label className="block text-sm font-semibold mb-1">Seller Name</label>
               <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
@@ -178,7 +184,7 @@ const Profile = () => {
                 {user.seller.address}
               </div>
             </div>
-          </>
+          </div>
         )}
 
         {isEditing ? (
