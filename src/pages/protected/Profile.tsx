@@ -19,6 +19,7 @@ const Profile = () => {
     if (user) {
       setName(user.name);
       setPhone(user.phone);
+      setAddress(user.address)
     }
   }, [user]);
 
