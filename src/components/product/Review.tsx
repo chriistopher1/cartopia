@@ -27,13 +27,15 @@ const Review = (currentProduct: ReviewProps) => {
           </h3>
           <div className="flex gap-2">
             {productReview?.item &&
-              productReview.item.map((review, index) => (
-                <img
-                  key={index}
-                  src={review.imageUrl}
-                  className="w-20 h-auto rounded-lg cursor-pointer"
-                />
-              ))}
+              productReview.item.map((review, index) =>
+                review.imageUrl ? (
+                  <img
+                    key={index}
+                    src={review.imageUrl}
+                    className="w-20 h-auto rounded-lg cursor-pointer"
+                  />
+                ) : null 
+              )}
           </div>
         </div>
         {productReview?.item &&
