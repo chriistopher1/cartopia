@@ -10,13 +10,8 @@ const Order = () => {
   const { data: userOrderList, isLoading: isGettingUserOrderList, refetch } = useGetUserOrderList(user.accountId);
   const [activeCategory, setActiveCategory] = useState("all");
 
-  const handleRemoveOrder = async (orderId) => {
-    // Implement your logic to remove the order from the user's order list
-    // You might need to call an API or update the Firestore database
-    console.log(`Removing order ${orderId}`);
-    // Example logic to remove order
-    await removeOrderFromUserOrderList(orderId);
-    refetch(); // Refetch the order list after removal
+  const handleRemoveOrder = async () => {
+   
   };
 
   if (isGettingUserOrderList) {
