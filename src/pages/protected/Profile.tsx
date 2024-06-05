@@ -1,17 +1,66 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../context/AuthProvider";
 import { useGetUserOrderList } from "../../lib/tanstack/queries";
 import { useNavigate } from "react-router-dom";
-import { IUser } from "../../types/user"; // Import the IUser interface
+import { IUser } from "../../types/user";
+import { updateUserProfile } from "../../lib/firebase/firestore";
 
 const Profile = () => {
-  const { user } = useUserContext<IUser>();
+  const { user, setUser } = useUserContext<IUser>();
   const navigate = useNavigate();
   const { data: orders, isLoading: isLoadingOrders, error: ordersError } = useGetUserOrderList(user?.id);
+
+  const [name, setName] = useState(user?.name || "");
+  const [phone, setPhone] = useState(user?.phone || "");
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setPhone(user.phone);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    console.log("User state updated:", user);
+  }, [user]);
 
   if (!user) {
     return <div>No user data found</div>;
   }
+
+  const handleSave = async () => {
+    console.log("Save button clicked");
+    if (!user.id) {
+      console.error("User ID is missing");
+      return;
+    }
+
+    console.log("Saving user profile with:", { name, phone });
+
+    try {
+      const success = await updateUserProfile(user.id, { name, phone });
+      if (success) {
+        console.log("User profile updated successfully");
+
+        // Update user context
+        setUser((prevUser) => {
+          const updatedUser = {
+            ...prevUser,
+            name,
+            phone,
+          };
+          console.log("Updating user context with:", updatedUser);
+          return updatedUser;
+        });
+        setIsEditing(false);
+      } else {
+        console.error("Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Failed to update profile", error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -26,15 +75,33 @@ const Profile = () => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold mb-1">Name</label>
-          <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
-            {user.name}
-          </div>
+          {isEditing ? (
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full border rounded-md px-3 py-2"
+            />
+          ) : (
+            <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
+              {user.name}
+            </div>
+          )}
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold mb-1">Phone</label>
-          <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
-            {user.phone}
-          </div>
+          {isEditing ? (
+            <input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full border rounded-md px-3 py-2"
+            />
+          ) : (
+            <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
+              {user.phone}
+            </div>
+          )}
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold mb-1">Email</label>
@@ -42,12 +109,21 @@ const Profile = () => {
             {user.email}
           </div>
         </div>
-        <button
-          onClick={() => navigate("/edit-profile")}
-          className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
-        >
-          Edit Profile
-        </button>
+        {isEditing ? (
+          <button
+            onClick={handleSave}
+            className="w-full bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition duration-300"
+          >
+            Save
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+          >
+            Edit Profile
+          </button>
+        )}
       </div>
 
       <div className="p-8 mt-8 rounded-lg shadow-md bg-white w-full max-w-md">

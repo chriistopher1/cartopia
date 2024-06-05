@@ -28,6 +28,8 @@ import OrderComplete from "./pages/protected/order/OrderComplete";
 import MakeReview from "./pages/protected/MakeReview";
 import CategoryFilter from "./pages/root/CategoryFilter";
 import SearchProduct from "./pages/root/SearchProduct";
+import Checkout from "./pages/protected/Checkout";
+import Payment from "./pages/protected/Payment"; // Import the new Payment component
 
 function App() {
   return (
@@ -57,22 +59,15 @@ function App() {
         <Route path="/user/order/shipping" element={<OrderShipping />} />
         <Route path="/user/order/complete" element={<OrderComplete />} />
         <Route path="/make-review" element={<MakeReview />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/payment" element={<Payment />} /> {/* Add the new Payment route */}
       </Route>
 
       <Route element={<SellerLayout />}>
         <Route path="/seller/dashboard" element={<SellerDashboard />}></Route>
-        <Route
-          path="/seller/add-product"
-          element={<SellerAddProduct />}
-        ></Route>
-        <Route
-          path="/seller/update-product"
-          element={<SellerUpdateProduct />}
-        ></Route>
-        <Route
-          path="/seller/delete-product"
-          element={<SellerDeleteProduct />}
-        ></Route>
+        <Route path="/seller/add-product" element={<SellerAddProduct />}></Route>
+        <Route path="/seller/update-product" element={<SellerUpdateProduct />}></Route>
+        <Route path="/seller/delete-product" element={<SellerDeleteProduct />}></Route>
       </Route>
 
       <Route path="/seller/register" element={<SellerRegister />}></Route>

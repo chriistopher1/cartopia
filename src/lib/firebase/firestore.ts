@@ -81,22 +81,31 @@ export async function getUserDataByUid(uid: string) {
       userData.phone = doc.data().phone;
       userData.email = doc.data().email;
       userData.imageUrl = doc.data().imageUrl;
-
       userData.address = doc.data().address;
       userData.seller.id = doc.data().seller.id;
       userData.seller.name = doc.data().seller.name;
       userData.seller.address = doc.data().seller.address;
-
       userData.cart = doc.data().cart;
       userData.saved = doc.data().saved;
       userData.order = doc.data().order;
     });
 
-    // console.log("query anjing  : ", userData)
-
     return userData;
   } catch (error) {
     console.log("error get user data : ", error);
+  }
+}
+
+// update user profile
+export async function updateUserProfile(userId: string, profileData: Partial<IUser>) {
+  try {
+    const userDocRef = doc(db, "user_table", userId);
+    await updateDoc(userDocRef, profileData);
+    console.log("User profile updated successfully");
+    return true;
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    return false;
   }
 }
 
@@ -149,14 +158,15 @@ export async function getSellerDataBySellerId(
       userData.order = doc.data().order;
     });
 
-    // console.log("query anjing  : ", userData)
-
     return userData;
   } catch (error) {
     console.log("error get user data : ", error);
     return undefined;
   }
 }
+
+// Additional functions remain unchanged
+
 
 // get one product info
 export async function getProductInfo(pid: string): Promise<IProduct | null> {
