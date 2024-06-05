@@ -11,6 +11,7 @@ import {
   useAddItemToOrder,
   useAddItemToSaved,
   useGetUserCartList,
+  useGetUserInfoFromSellerId,
   useGetUserSavedList,
 } from "../../lib/tanstack/queries";
 import { toast } from "react-toastify";
@@ -43,6 +44,9 @@ const Product = () => {
   const { data: userSavedList, isPending: isGettingUserSavedList } =
     useGetUserSavedList(user.accountId);
 
+    const { data: sellerInfo, isPending: isGettingSellerInfo } =
+    useGetUserInfoFromSellerId(product.sellerId);
+
   useEffect(() => {
     if (!product || id !== product.id) {
       navigate(-1);
@@ -63,7 +67,7 @@ const Product = () => {
     }
   }, [userSavedList, product]);
 
-  if (isGettingUserCartList || isGettingUserSavedList)
+  if (isGettingUserCartList || isGettingUserSavedList || isGettingSellerInfo)
     return <div>Loading...</div>;
 
   const handleAddItemToCart = async () => {
@@ -355,6 +359,11 @@ const Product = () => {
                 <IoHeartOutline className="text-3xl" />
               )}
             </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+              <img src={sellerInfo?.imageUrl} className="w-8 h-8 rounded-md"/>
+              <p className="hover:underline font-semibold cursor-pointer">{sellerInfo?.seller.name}</p>
           </div>
         </div>
       </div>

@@ -29,6 +29,7 @@ import {
   getProductReview,
   getUserCartList,
   getUserDataByUid,
+  getUserInfoFromSellerId,
   getUserOrderList,
   getUserSavedList,
   makePayment,
@@ -211,6 +212,13 @@ export const useSellerRegister = () => {
       address: string | undefined;
       uid: string | undefined;
     }) => sellerRegister(newInstance),
+  });
+};
+
+export const useGetUserInfoFromSellerId = (sellerId : string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_INFO_FROM_SELLER_ID],
+    queryFn: () => getUserInfoFromSellerId(sellerId),
   });
 };
 

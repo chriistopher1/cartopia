@@ -22,6 +22,7 @@ export enum QUERY_KEYS {
     GET_POPULAR_PRODUCT = "getPopularProduct",
 
     // SELLER
+    GET_USER_INFO_FROM_SELLER_ID = "getUserInfoFromSellerId",
     GET_ALL_SELLER_PRODUCT = "getAllSellerProduct",
     ADD_SELLER_PRODUCT = "addSellerProduct",
     UPDATE_SELLER_PRODUCT = "updateSellerProduct",

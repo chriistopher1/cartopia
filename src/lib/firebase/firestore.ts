@@ -1325,3 +1325,35 @@ export const getPopularProduct = async (): Promise<IProduct[]> => {
   }
 };
 
+// Get user info from seller ID
+export const getUserInfoFromSellerId = async (sellerId: string | undefined): Promise<IUser | null> => {
+  try {
+    // Reference to the user collection
+    const userCollectionRef = collection(db, "user_table");
+
+    // Query to find the user document with the specified seller ID
+    const userQuery = query(
+      userCollectionRef,
+      where("seller.id", "==", sellerId)
+    );
+
+    // Execute the query
+    const querySnapshot = await getDocs(userQuery);
+
+    // If no user is found, return null
+    if (querySnapshot.empty) {
+      console.log("No user found with the specified seller ID");
+      return null;
+    }
+
+    // Assuming sellerId is unique and there's only one document with this ID
+    const userDoc = querySnapshot.docs[0];
+    const userInfo = userDoc.data() as IUser;
+
+    return userInfo;
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    return null;
+  }
+};
+
