@@ -1,12 +1,12 @@
-import React from 'react'
 import { useGetAllProduct } from '../../lib/tanstack/queries';
+import ProductCard from '../../components/card/ProductCard';
 
 const Shop = () => {
 
   const { data: allProduct, isPending } = useGetAllProduct();
 
   if (isPending) return <div>Loading...</div>;
-  
+
   return (
     <div className="mx-4 md:mx-24 mb-10">
       <h2 className="border-b-2 border-black mb-8 text-xl md:text-3xl font-bold pb-4 text-center">

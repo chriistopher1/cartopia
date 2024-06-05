@@ -11,6 +11,7 @@ const Profile = () => {
   
   const [name, setName] = useState(user?.name || undefined);
   const [phone, setPhone] = useState(user?.phone || undefined);
+  const [address, setAddress] = useState(user.address || undefined);
   const [image, setImage] = useState<File>();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -57,6 +58,7 @@ const Profile = () => {
           profileData: {
             name: name,
             phone: phone,
+            address : address
           },
           userAccountId: user.accountId,
           imageUrl: base64String,
@@ -75,6 +77,7 @@ const Profile = () => {
         profileData: {
           name: name,
           phone: phone,
+          address : address
         },
         userAccountId: user.accountId,
       });
@@ -120,6 +123,21 @@ const Profile = () => {
           ) : (
             <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
               {user.name}
+            </div>
+          )}
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold mb-1">Address</label>
+          {isEditing ? (
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full border rounded-md px-3 py-2"
+            />
+          ) : (
+            <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
+              {user.address}
             </div>
           )}
         </div>
