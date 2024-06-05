@@ -829,9 +829,6 @@ export async function makeNewProductReview(newProductId: string | undefined) {
 export async function sellerRegister(newInstance: {
   shopName: string | undefined;
   address: string | undefined;
-  email: string | undefined;
-  password: string | undefined;
-  phoneNum: string | undefined;
   uid: string | undefined;
 }): Promise<boolean> {
   const newSellerId = uuidv4();
@@ -851,9 +848,6 @@ export async function sellerRegister(newInstance: {
         "seller.id": newSellerId,
         "seller.name": newInstance.shopName,
         "seller.address": newInstance.address,
-        email: newInstance.email,
-        password: newInstance.password,
-        phoneNum: newInstance.phoneNum,
       });
 
       console.log("Seller information updated successfully");
@@ -867,7 +861,6 @@ export async function sellerRegister(newInstance: {
     return false;
   }
 }
-
 
 //seller product
 export async function getAllSellerProduct(sellerId: string | undefined) {
