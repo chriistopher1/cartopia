@@ -278,6 +278,7 @@ export const useAddItemToOrder = () => {
       newProduct: IProductOrderItem;
       sellerId: string | undefined;
       uid: string | undefined;
+      isPaid ? : boolean
     }) => addItemToOrder(newInstance),
     onSuccess: () => {
       queryClient.invalidateQueries({

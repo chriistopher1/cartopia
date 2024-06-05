@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { IOrderItem } from "../../types";
 import { checkStatus, formatToIDR } from "../../constant";
-import { useCompleteOrder } from "../../lib/tanstack/queries";
+import { useCompleteOrder, useMakePayment } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +26,7 @@ const OrderCard = ({ order, orderListId, onRemoveOrder }) => {
   const navigate = useNavigate();
 
   const { mutateAsync: completeOrder, isPending: isCompletingOrder } = useCompleteOrder();
+  const { mutateAsync: makePayment, isPending: isMakingPayment } = useMakePayment();
 
   const formatDate = (timestamp: Timestamp | undefined) => {
     if (!timestamp) return "N/A";
@@ -47,6 +48,21 @@ const OrderCard = ({ order, orderListId, onRemoveOrder }) => {
       toast.success("Order completed, Status changed to complete");
     } else {
       toast.error("Order completion failed, please try again");
+    }
+  };
+
+  const handleMakePayment = async () => {
+    if (!id || !item) return;
+
+    const isComplete = await makePayment({
+      orderId: id,
+      orderListId: orderListId,
+    });
+
+    if (isComplete) {
+      toast.success("Payment completed, Status changed to shipping");
+    } else {
+      toast.error("Payment completion failed, please try again");
     }
   };
 
@@ -92,6 +108,22 @@ const OrderCard = ({ order, orderListId, onRemoveOrder }) => {
           </ul>
         </div>
         <div className="mt-4 flex flex-col gap-2">
+          {status === "pending" && (
+            <button
+              className={`border-2 border-black bg-red-500 px-4 py-2 rounded-lg text-white hover:bg-red-700 font-medium ${
+                isCompletingOrder ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={handleMakePayment}
+              disabled={isCompletingOrder}
+            >
+              <AiOutlineLoading3Quarters
+                className={`${
+                  isCompletingOrder ? "inline animate-spin" : "hidden"
+                } mr-2`}
+              />
+              <span>Pay</span>
+            </button>
+          )}
           {status === "shipping" && (
             <button
               className={`border-2 border-black bg-sky-500 px-4 py-2 rounded-lg text-white hover:bg-sky-700 font-medium ${
