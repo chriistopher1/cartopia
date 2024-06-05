@@ -13,9 +13,14 @@ import { useUserContext } from "../../context/AuthProvider";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoHeartOutline } from "react-icons/io5";
+import { useLocation } from "react-router-dom";
 
 const CartCard = (newProduct: IProductCart) => {
   const { user } = useUserContext();
+
+  const location = useLocation();
+
+  const isAtCheckout = location.pathname === "/checkout";
 
   const [newQuantity, setNewQuantity] = useState<number>(
     newProduct.quantity ?? 1
@@ -26,10 +31,10 @@ const CartCard = (newProduct: IProductCart) => {
   const { mutateAsync: addItemToSaved, isPending: isAddingItemToSaved } =
     useAddItemToSaved();
 
-  const { data: userSavedList } =
-    useGetUserSavedList(user.accountId);
+  const { data: userSavedList } = useGetUserSavedList(user.accountId);
 
-  const { mutateAsync: removeItemFromCart, isPending: isRemovingItemFromCart } = useRemoveItemFromCart()
+  const { mutateAsync: removeItemFromCart, isPending: isRemovingItemFromCart } =
+    useRemoveItemFromCart();
 
   useEffect(() => {
     if (userSavedList != undefined && newProduct.product != undefined) {
@@ -95,40 +100,40 @@ const CartCard = (newProduct: IProductCart) => {
     }
   };
 
-// remove item from cart
-const handleRemoveItemFromCart = async () => {
-  if (user.accountId == "") window.location.href = "/login";
+  // remove item from cart
+  const handleRemoveItemFromCart = async () => {
+    if (user.accountId == "") window.location.href = "/login";
 
-  const isRemovedFromCart = await removeItemFromCart({
-    idToBeDeleted : newProduct.product?.id,
-    uid: user.accountId
-});
+    const isRemovedFromCart = await removeItemFromCart({
+      idToBeDeleted: newProduct.product?.id,
+      uid: user.accountId,
+    });
 
-  if (isRemovedFromCart) {
-    toast.success("Success on removing item from cart", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    setIsAddedToSavedList(true);
-  } else {
-    toast.error("Error on removing item from cart", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  }
-};
+    if (isRemovedFromCart) {
+      toast.success("Success on removing item from cart", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setIsAddedToSavedList(true);
+    } else {
+      toast.error("Error on removing item from cart", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
 
   return (
     <div className="flex items-center justify-between bg-white shadow-lg  shadow-gray-400 border-2 border-black">
@@ -148,7 +153,12 @@ const handleRemoveItemFromCart = async () => {
             newProduct.quantity &&
             formatToIDR(newProduct.product.price * newQuantity)}
         </h4>
-        <div className="flex items-center gap-3 md:gap-5">
+        <p className={`${isAtCheckout ? "font-bold":"hidden"}`}>Quantity : {newQuantity}</p>
+        <div
+          className={`flex items-center gap-3 md:gap-5 ${
+            isAtCheckout ? "hidden" : ""
+          }`}
+        >
           <CgNotes className="text-[#63a5ea] md:text-xl cursor-pointer" />
           <button className="text-[#63a5ea]" onClick={handleAddItemToSaved}>
             {isAddingItemToSaved ? (
@@ -158,9 +168,15 @@ const handleRemoveItemFromCart = async () => {
             ) : (
               <IoHeartOutline className="md:text-2xl" />
             )}
-          </button >
-          <button  onClick={handleRemoveItemFromCart}>{isRemovingItemFromCart ? (<AiOutlineLoading3Quarters className="animate-spin md:text-xl" />) : (<FaRegTrashAlt className="text-[#63a5ea] md:text-xl cursor-pointer"/>)}</button>
-          
+          </button>
+          <button onClick={handleRemoveItemFromCart}>
+            {isRemovingItemFromCart ? (
+              <AiOutlineLoading3Quarters className="animate-spin md:text-xl" />
+            ) : (
+              <FaRegTrashAlt className="text-[#63a5ea] md:text-xl cursor-pointer" />
+            )}
+          </button>
+
           <div className="flex items-center justify-around gap-3 md:gap-5 border border-gray-500 w-fit px-3 rounded-lg ">
             <button
               className="text-lg md:text-xl font-bold text-[#63a5ea]"

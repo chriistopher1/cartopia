@@ -573,11 +573,12 @@ export async function addItemToOrder(newInstance: {
   newProduct: IProductOrderItem;
   sellerId: string | undefined;
   uid: string | undefined;
+  isPaid? : boolean
 }): Promise<boolean> {
   try {
     const newOrderId = uuidv4();
     const newDate = Timestamp.now();
-    const newStatus = "pending";
+    const newStatus = newInstance.isPaid ? "shipping" : "pending";
     const sellerInfo = await getSellerDataBySellerId(newInstance.sellerId);
 
     if (sellerInfo === undefined) {

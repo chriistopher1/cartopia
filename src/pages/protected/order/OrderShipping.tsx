@@ -61,7 +61,7 @@ const OrderShipping = () => {
           </Link>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {userOrderList?.item
           ?.filter((order) => order.status === "shipping")
           ?.map((order) => (

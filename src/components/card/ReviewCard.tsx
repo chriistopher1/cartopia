@@ -34,7 +34,7 @@ const ReviewCard = (review: IReviewItem) => {
         <CiMenuKebab className="text-xl cursor-pointer font-bold" />
       </div>
       <div className="flex gap-2 items-center">
-        <img src={review.user?.imageUrl} className="w-8 h-8" />
+        <img src={review.user?.imageUrl} className="w-8 h-8 rounded-lg" />
         <h3 className="font-semibold">{review.user?.name}</h3>
       </div>
       <div>{review.description}</div>
