@@ -35,6 +35,11 @@ const SellerRegister = () => {
     e.preventDefault();
     console.log(formData);
 
+    if(formData.address == "" || formData.shopName == "") {
+      toast.error("All field must be filled.")
+      return;
+    }
+
     const registerStatus = await register({
       address: formData.address,
       shopName: formData.shopName,
