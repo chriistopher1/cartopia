@@ -31,6 +31,7 @@ import {
   addNewProductImage,
   addNewReviewImage,
   removeProductImage,
+  uploadProfilePicture,
 } from "./firestorage";
 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -98,19 +99,6 @@ export async function getUserDataByUid(uid: string) {
   }
 }
 
-// update user profile
-export async function updateUserProfile(userId: string, profileData: Partial<IUser>) {
-  try {
-    const userDocRef = doc(db, "user_table", userId);
-    await updateDoc(userDocRef, profileData);
-    console.log("User profile updated successfully");
-    return true;
-  } catch (error) {
-    console.error("Error updating user profile:", error);
-    return false;
-  }
-}
-
 // get seller data by seller id
 export async function getSellerDataBySellerId(
   sellerId: string | undefined
@@ -168,7 +156,6 @@ export async function getSellerDataBySellerId(
 }
 
 // Additional functions remain unchanged
-
 
 // get one product info
 export async function getProductInfo(pid: string): Promise<IProduct | null> {
@@ -785,7 +772,12 @@ export async function findRelatedProduct(search: string | undefined) {
 
     // Filter products based on the search query
     const relatedProducts = allProducts.filter((product) => {
-      if(product?.name === undefined || product.description === undefined || product.category === undefined) return false;
+      if (
+        product?.name === undefined ||
+        product.description === undefined ||
+        product.category === undefined
+      )
+        return false;
       if (product != undefined) {
         return (
           regex.test(product.name) ||
@@ -1231,7 +1223,9 @@ export async function completeReview(newInstance: {
 }
 
 // filter based on category
-export async function filterProductBasedOnCategory(searchedCategory: string | undefined) {
+export async function filterProductBasedOnCategory(
+  searchedCategory: string | undefined
+) {
   try {
     // Query the product collection based on the searched category
     const productQuery = query(
@@ -1253,19 +1247,47 @@ export async function filterProductBasedOnCategory(searchedCategory: string | un
   }
 }
 
-export const uploadProfilePicture = async (file: File, userId: string): Promise<string> => {
-  const storageRef = ref(storage, `profile_pictures/${userId}`);
-  await uploadBytes(storageRef, file);
-  return getDownloadURL(storageRef);
-};
-
-export const updateUserProfileWithImage = async (userId: string, profileData: Partial<IUser>): Promise<boolean> => {
+// Update user profile information
+export const updateUserProfile = async (newInstance: {
+  userAccountId: string | undefined;
+  profileData: Partial<IUser>;
+  imageUrl?: string; // Make imageUrl optional
+}): Promise<boolean> => {
   try {
-    const userDocRef = doc(db, "user_table", userId);
-    await updateDoc(userDocRef, profileData);
+    let newImageUrl;
+
+    if (newInstance.imageUrl) {
+      newImageUrl = await uploadProfilePicture(
+        newInstance.userAccountId,
+        newInstance.imageUrl
+      );
+    }
+
+    const userCollectionRef = collection(db, "user_table");
+    const userQuery = query(
+      userCollectionRef,
+      where("accountId", "==", newInstance.userAccountId)
+    );
+    const querySnapshot = await getDocs(userQuery);
+
+    if (querySnapshot.empty) {
+      console.error("No user found with the specified account ID");
+      return false;
+    }
+
+    // Assuming accountId is unique and there's only one document with this ID
+    const userDocRef = querySnapshot.docs[0].ref;
+
+    const newProfileData = {
+      ...newInstance.profileData,
+      ...(newImageUrl && { imageUrl: newImageUrl }),
+    };
+
+    await updateDoc(userDocRef, newProfileData);
     return true;
   } catch (error) {
     console.error("Error updating user profile:", error);
     return false;
   }
 };
+

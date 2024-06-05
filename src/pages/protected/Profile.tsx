@@ -2,15 +2,22 @@ import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { IUser } from "../../types/user";
-import { updateUserProfileWithImage, uploadProfilePicture } from "../../lib/firebase/firestore";
+import {
+  updateUserProfileWithImage,
+  uploadProfilePicture,
+} from "../../lib/firebase/firestore";
+import { toast } from "react-toastify";
+import { useUpdateUserProfile } from "../../lib/tanstack/queries";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Profile = () => {
-  const { user, setUser } = useUserContext<IUser>();
+  const { user, checkAuthUser } = useUserContext();
   const navigate = useNavigate();
 
-  const [name, setName] = useState(user?.name || "");
-  const [phone, setPhone] = useState(user?.phone || "");
-  const [image, setImage] = useState<File | null>(null);
+  const [newUser, setNewUser] = useState();
+  const [name, setName] = useState(user?.name || undefined);
+  const [phone, setPhone] = useState(user?.phone || undefined);
+  const [image, setImage] = useState<File>();
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -28,42 +35,63 @@ const Profile = () => {
     return <div>No user data found</div>;
   }
 
-  const handleSave = async () => {
-    console.log("Save button clicked");
-    if (!user.id) {
-      console.error("User ID is missing");
-      return;
+  const { mutateAsync: updateUserProfile, isPending: isUpdatingUserProfile } =
+    useUpdateUserProfile();
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const validImageTypes = ["image/jpeg", "image/png"];
+      if (!validImageTypes.includes(file.type)) {
+        toast.error("Please select a valid image file (jpg, png)");
+        return;
+      }
+      setImage(file);
     }
+  };
 
-    console.log("Saving user profile with:", { name, phone });
+  const handleSave = async () => {
+    const reader = new FileReader();
 
-    try {
-      let imageUrl = user.image;
-      if (image) {
-        imageUrl = await uploadProfilePicture(image, user.id);
-      }
+    if (image) {
+      reader.readAsDataURL(image);
+      reader.onloadend = async () => {
+        const base64String = reader.result as string;
+        console.log(base64String);
 
-      const success = await updateUserProfileWithImage(user.id, { name, phone, image: imageUrl });
-      if (success) {
-        console.log("User profile updated successfully");
-
-        // Update user context
-        setUser((prevUser) => {
-          const updatedUser = {
-            ...prevUser,
-            name,
-            phone,
-            image: imageUrl,
-          };
-          console.log("Updating user context with:", updatedUser);
-          return updatedUser;
+        const userProfileUpdated = await updateUserProfile({
+          profileData: {
+            name: name,
+            phone: phone,
+          },
+          userAccountId: user.accountId,
+          imageUrl: base64String,
         });
-        setIsEditing(false);
+
+        if (userProfileUpdated) {
+          checkAuthUser()
+          toast.success("User profile is updated");
+          navigate("/")
+        } else {
+          toast.error("Update profile failed");
+        }
+      };
+    } else {
+      const userProfileUpdated = await updateUserProfile({
+        profileData: {
+          name: name,
+          phone: phone,
+        },
+        userAccountId: user.accountId,
+      });
+
+      if (userProfileUpdated) {
+        checkAuthUser()
+        toast.success("User profile is updated");
+        navigate("/")
       } else {
-        console.error("Failed to update profile");
+        toast.error("Update profile failed");
       }
-    } catch (error) {
-      console.error("Failed to update profile", error);
     }
   };
 
@@ -73,15 +101,17 @@ const Profile = () => {
         <h2 className="text-2xl font-bold mb-4">Profile</h2>
         <div className="mb-4 flex justify-center">
           <img
-            src={user.image || "/images/default-avatar.png"} // Use default image if user image is null
+            src={user.imageUrl || "/images/default-avatar.png"} // Use default image if user image is null
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover"
           />
         </div>
         {isEditing && (
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-1">Change Profile Picture</label>
-            <input type="file" onChange={(e) => setImage(e.target.files?.[0] || null)} />
+            <label className="block text-sm font-semibold mb-1">
+              Change Profile Picture
+            </label>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
           </div>
         )}
         <div className="mb-4">
@@ -123,8 +153,16 @@ const Profile = () => {
         {isEditing ? (
           <button
             onClick={handleSave}
-            className="w-full bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition duration-300"
+            className={`w-full bg-green-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-green-600 transition duration-300 ${
+              isUpdatingUserProfile ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isUpdatingUserProfile}
           >
+            <AiOutlineLoading3Quarters
+              className={`${
+                isUpdatingUserProfile ? "inline animate-spin" : "hidden"
+              } mr-2`}
+            />
             Save
           </button>
         ) : (

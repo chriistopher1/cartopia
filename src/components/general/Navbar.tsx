@@ -94,7 +94,7 @@ const Navbar = () => {
               Login/Register
             </span>
           </Link>
-          <SearchButton className={`${mobileViewCss}`} />
+          <SearchButton  />
           <Link to={"/cart"} className={`flex items-center ${mobileViewCss}`}>
             <FaCartShopping />
           </Link>

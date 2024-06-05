@@ -35,6 +35,7 @@ import {
   removeItemFromCart,
   removeItemFromSaved,
   sellerRegister,
+  updateUserProfile,
 } from "../firebase/firestore";
 
 //User
@@ -81,6 +82,15 @@ export const useGetUserSavedList = (uid: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_USER_SAVED_LIST, uid],
     queryFn: () => getUserSavedList(uid),
+  });
+};
+
+export const useUpdateUserProfile = () => {
+  return useMutation({
+    mutationFn: (newInstance : {
+      userAccountId : string | undefined, 
+      profileData: Partial<IUser>, imageUrl? : string
+    }) => updateUserProfile(newInstance)
   });
 };
 

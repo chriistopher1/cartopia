@@ -5,6 +5,7 @@ import {
   listAll,
   uploadString,
   deleteObject,
+  uploadBytes,
 } from "firebase/storage";
 import { firebaseApp } from "./config";
 import { CategoryArray } from "../../types";
@@ -144,3 +145,14 @@ export async function addNewReviewImage(newInstance: {
     return undefined;
   }
 }
+
+// upload new profile picture
+export const uploadProfilePicture = async ( userId: string, imageUrl : string) => {
+  const newProfilePicRef = ref(storage, `user_assets/profile_picture/${userId}`);
+  // Upload the image to Firebase Storage
+  await uploadString(newProfilePicRef, imageUrl, "data_url");
+
+  // Get the full URL of the uploaded image
+  const downloadUrl = await getImgFullUrl(newProfilePicRef.fullPath);
+  return downloadUrl;
+};
