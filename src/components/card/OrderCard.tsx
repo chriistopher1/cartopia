@@ -126,13 +126,13 @@ const OrderCard = ({ order, orderListId, onRemoveOrder }) => {
               <span>Review</span>
             </button>
           )}
-          <button
+          {/* <button
             className="border-2 border-black bg-red-500 px-4 py-2 rounded-lg text-white hover:bg-red-700 font-medium"
             onClick={() => onRemoveOrder(id)}
           >
             <FaTrash className="inline mr-2" />
             Remove from Cart
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
