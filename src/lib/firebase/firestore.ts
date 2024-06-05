@@ -8,6 +8,8 @@ import {
   doc,
   getDoc,
   getFirestore,
+  limit,
+  orderBy,
   query,
   updateDoc,
   where,
@@ -1288,6 +1290,38 @@ export const updateUserProfile = async (newInstance: {
   } catch (error) {
     console.error("Error updating user profile:", error);
     return false;
+  }
+};
+
+// Get the top 8 most popular products, i.e., the products that are the most sold.
+export const getPopularProduct = async (): Promise<IProduct[]> => {
+  try {
+    // Reference to the products collection
+    const productsCollectionRef = collection(db, "product_table");
+
+    // Query to get the top 8 products with the highest sales count
+    const popularProductsQuery = query(
+      productsCollectionRef,
+      orderBy("sold", "desc"),
+      limit(8)
+    );
+
+    // Execute the query
+    const querySnapshot = await getDocs(popularProductsQuery);
+
+    // If there are no products, return an empty array
+    if (querySnapshot.empty) {
+      console.log("No products found");
+      return [];
+    }
+
+    // Map the documents to the IProduct type
+    const popularProducts: IProduct[] = querySnapshot.docs.map((doc) => doc.data() as IProduct);
+
+    return popularProducts;
+  } catch (error) {
+    console.error("Error fetching popular products:", error);
+    return [];
   }
 };
 

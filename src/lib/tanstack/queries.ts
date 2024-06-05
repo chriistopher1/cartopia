@@ -25,6 +25,7 @@ import {
   findRelatedProduct,
   getAllProduct,
   getAllSellerProduct,
+  getPopularProduct,
   getProductReview,
   getUserCartList,
   getUserDataByUid,
@@ -192,6 +193,13 @@ export const useFindRelatedProduct = (search: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.FIND_RELATED_PRODUCT, search],
     queryFn: () => findRelatedProduct(search),
+  });
+};
+
+export const useGetPopularProduct = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_POPULAR_PRODUCT],
+    queryFn: () => getPopularProduct(),
   });
 };
 

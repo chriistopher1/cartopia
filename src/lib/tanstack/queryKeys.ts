@@ -19,6 +19,7 @@ export enum QUERY_KEYS {
     // PRODUCT
     GET_PRODUCT_REVIEW = "getProductReview",
     FIND_RELATED_PRODUCT = "findRelatedProduct",
+    GET_POPULAR_PRODUCT = "getPopularProduct",
 
     // SELLER
     GET_ALL_SELLER_PRODUCT = "getAllSellerProduct",

@@ -1,8 +1,8 @@
-import { useGetAllProduct } from "../../lib/tanstack/queries";
+import { useGetAllProduct, useGetPopularProduct } from "../../lib/tanstack/queries";
 import ProductCard from "../card/ProductCard";
 
 const Recommend = () => {
-  const { data: allProduct, isPending } = useGetAllProduct();
+  const { data: allProduct, isPending } = useGetPopularProduct();
 
   if (isPending) return <div>Loading...</div>;
 
