@@ -21,6 +21,7 @@ import SellerRegister from "./pages/seller/SellerRegister";
 import SellerDeleteProduct from "./pages/seller/SellerDeleteProduct";
 import SellerUpdateProduct from "./pages/seller/SellerUpdateProduct";
 import SellerAddProduct from "./pages/seller/SellerAddProduct";
+import SellerLogin from "./pages/seller/SellerLogin"; // Import the SellerLogin component
 import Order from "./pages/protected/order/Order";
 import OrderPending from "./pages/protected/order/OrderPending";
 import OrderShipping from "./pages/protected/order/OrderShipping";
@@ -64,13 +65,14 @@ function App() {
       </Route>
 
       <Route element={<SellerLayout />}>
-        <Route path="/seller/dashboard" element={<SellerDashboard />}></Route>
-        <Route path="/seller/add-product" element={<SellerAddProduct />}></Route>
-        <Route path="/seller/update-product" element={<SellerUpdateProduct />}></Route>
-        <Route path="/seller/delete-product" element={<SellerDeleteProduct />}></Route>
+        <Route path="/seller/dashboard" element={<SellerDashboard />} />
+        <Route path="/seller/add-product" element={<SellerAddProduct />} />
+        <Route path="/seller/update-product" element={<SellerUpdateProduct />} />
+        <Route path="/seller/delete-product" element={<SellerDeleteProduct />} />
       </Route>
 
-      <Route path="/seller/register" element={<SellerRegister />}></Route>
+      <Route path="/seller/register" element={<SellerRegister />} />
+      <Route path="/seller/login" element={<SellerLogin />} /> {/* Add the SellerLogin route */}
     </Routes>
   );
 }
