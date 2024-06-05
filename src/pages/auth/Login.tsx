@@ -1,12 +1,11 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { useSignInAccount } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { Link,  } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
-
   const { mutateAsync, isPending } = useSignInAccount();
 
   const [formData, setFormData] = useState({
@@ -26,7 +25,7 @@ const Login = () => {
     e.preventDefault();
     console.log(formData);
 
-    if(formData.email == "" || formData.password == "" ){
+    if (formData.email === "" || formData.password === "") {
       toast.error("All fields are required.");
       return;
     }
@@ -39,7 +38,7 @@ const Login = () => {
         toast.error("Invalid credentials.");
         return;
       }
-      window.location.href = '/'
+      window.location.href = "/";
       console.log("Sign-in successful!");
     } catch (error) {
       console.error("Sign-in error:", error);
@@ -47,12 +46,12 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col relative justify-center items-center h-screen">
-      <div className="bg-gray-200 border-2 border-gray-400 p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4">Login</h2>
+    <div className="flex flex-col relative justify-center items-center min-h-screen bg-gradient-to-r from-blue-50 to-blue-100">
+      <div className="bg-white border-2 border-gray-200 p-8 rounded-lg shadow-lg w-full max-w-sm">
+        <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">Welcome Back</h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-semibold mb-1">
+          <div className="mb-5">
+            <label htmlFor="email" className="block text-sm font-semibold mb-2 text-gray-700">
               Email
             </label>
             <input
@@ -60,16 +59,16 @@ const Login = () => {
               id="email"
               name="email"
               placeholder="Enter your email"
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 bg-white"
+              className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500 bg-gray-50"
               value={formData.email}
               onChange={handleInputChange}
               autoComplete="off"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-6">
             <label
               htmlFor="password"
-              className="block text-sm font-semibold mb-1"
+              className="block text-sm font-semibold mb-2 text-gray-700"
             >
               Password
             </label>
@@ -78,7 +77,7 @@ const Login = () => {
               id="password"
               name="password"
               placeholder="Enter your password"
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500 bg-gray-50"
               value={formData.password}
               autoComplete="off"
               onChange={handleInputChange}
@@ -86,7 +85,7 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className={`w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 flex items-center gap-5 justify-center ${
+            className={`w-full bg-blue-500 text-white font-semibold py-3 px-4 rounded-md hover:bg-blue-600 transition duration-300 flex items-center justify-center ${
               isPending ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={isPending}
@@ -97,15 +96,17 @@ const Login = () => {
             <span>Login</span>
           </button>
         </form>
-        <span>
-          Don't have an account?{" "}
-          <Link
-            to={"/register"}
-            className="font-semibold underline text-[#63a5ea]"
-          >
-            Click here
-          </Link>
-        </span>
+        <div className="mt-6 text-center">
+          <span className="text-gray-700">
+            Don't have an account?{" "}
+            <Link
+              to={"/register"}
+              className="font-semibold underline text-blue-500"
+            >
+              Sign up
+            </Link>
+          </span>
+        </div>
       </div>
     </div>
   );

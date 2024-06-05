@@ -1,12 +1,21 @@
-import { getStorage, ref, getDownloadURL, listAll } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  listAll,
+  uploadString,
+  deleteObject,
+} from "firebase/storage";
 import { firebaseApp } from "./config";
 import { CategoryArray } from "../../types";
 
 const storage = getStorage(firebaseApp);
 const categoryRef = ref(storage, "initial_assets/category");
+const reviewRef = ref(storage, "review_assets/");
+const productRef = ref(storage, "initial_assets/product");
 
 // get full image url
-const getImgFullUrl = async (path: string): Promise<string | null> => {
+const getImgFullUrl = async (path: string): Promise<string | undefined> => {
   try {
     const downloadUrl = await getDownloadURL(ref(storage, path));
 
@@ -14,12 +23,14 @@ const getImgFullUrl = async (path: string): Promise<string | null> => {
     return downloadUrl;
   } catch (error) {
     console.log("error getImgFull", error);
-    return null;
+    return undefined;
   }
 };
 
 // get all category
-export const getCategoryAsset = async (): Promise<CategoryArray | undefined> => {
+export const getCategoryAsset = async (): Promise<
+  CategoryArray | undefined
+> => {
   try {
     const listAllAsset = await listAll(categoryRef);
 
@@ -44,3 +55,92 @@ export const getCategoryAsset = async (): Promise<CategoryArray | undefined> => 
     console.log(error);
   }
 };
+
+// add new product image to bucket
+export async function addNewProductImage(newInstance: {
+  imageUrl: string | undefined;
+  productId: string | undefined;
+}): Promise<string | undefined> {
+  if (
+    newInstance.imageUrl === undefined ||
+    newInstance.productId === undefined
+  )
+    return undefined;
+
+  try {
+    // Create a reference to the new product image
+    const newProductImageRef = ref(
+      productRef,
+      `product_${newInstance.productId}.jpg`
+    );
+
+    // Upload the image to Firebase Storage
+    await uploadString(newProductImageRef, newInstance.imageUrl, "data_url");
+
+    // Get the full URL of the uploaded image
+    const downloadUrl = await getImgFullUrl(newProductImageRef.fullPath);
+    return downloadUrl;
+  } catch (error) {
+    console.log("error addNewProductImage", error);
+    return undefined;
+  }
+}
+
+// delete product image
+export async function removeProductImage(
+  productId: string | undefined
+): Promise<boolean> {
+  if (productId === undefined) return false;
+
+  try {
+    // Create a reference to the file to delete
+    const desertRef = ref(storage, `initial_assets/product/product_${productId}.jpg`);
+
+    // Delete the file
+    deleteObject(desertRef)
+      .then(() => {
+        // File deleted successfully
+        return true;
+      })
+      .catch((error) => {
+        // Uh-oh, an error occurred!
+
+        return false;
+      });
+
+    return true;
+  } catch (error) {
+    console.log("error on deleting product image");
+    return false;
+  }
+}
+
+// add new product image to bucket
+export async function addNewReviewImage(newInstance: {
+  imageUrl: string | undefined;
+  productId: string | undefined;
+}): Promise<string | undefined> {
+  if (
+    newInstance.imageUrl === undefined ||
+    newInstance.productId === undefined
+  )
+    return undefined;
+
+  try {
+    // Create a reference to the new product image
+    const newProductImageRef = ref(
+      reviewRef,
+      `product_${newInstance.productId}.jpg`
+    );
+
+    // Upload the image to Firebase Storage
+    await uploadString(newProductImageRef, newInstance.imageUrl, "data_url");
+
+    // Get the full URL of the uploaded image
+    const downloadUrl = await getImgFullUrl(newProductImageRef.fullPath);
+    return downloadUrl;
+  } catch (error) {
+    console.log("error addNewProductImage", error);
+    return undefined;
+  }
+}

@@ -6,25 +6,26 @@ const Recommend = () => {
 
   if (isPending) return <div>Loading...</div>;
 
-  // console.log(allProduct);
-
   return (
-    <div className="mx-4 md:mx-24 mb-5">
-      <h2 className="border-b-2 border-black mb-5 text-lg md:text-2xl font-bold pb-4">Popular Product</h2>
-      <div className="flex gap-5 flex-wrap  ">
+    <div className="mx-4 md:mx-24 mb-10">
+      <h2 className="border-b-2 border-black mb-8 text-xl md:text-3xl font-bold pb-4 text-center">
+        Popular Products
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {allProduct &&
           allProduct.map((product) => (
             <ProductCard
-              key={product?.name}
+              key={product?.id}
               category={product?.category}
               description={product?.description}
               imageUrl={product?.imageUrl}
               name={product?.name}
               price={product?.price}
-              review={product?.review}
+              sold={product?.sold}
               stock={product?.stock}
               id={product?.id}
               sellerId={product?.sellerId}
+              reviewId={product?.reviewId}
             />
           ))}
       </div>

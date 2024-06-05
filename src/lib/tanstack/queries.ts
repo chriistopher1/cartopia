@@ -1,5 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { IProductCart, IUser } from "../../types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  IOrderItem,
+  IProduct,
+  IProductCart,
+  IProductOrderItem,
+  IReviewItem,
+  IUser,
+} from "../../types";
 import {
   registerAccount,
   signInAccount,
@@ -7,13 +14,38 @@ import {
 } from "../firebase/fireauthentication";
 import { QUERY_KEYS } from "./queryKeys";
 import { getCategoryAsset } from "../firebase/firestorage";
-import { addItemToCart, addItemToSaved, getAllProduct, getUserCartList, getUserDataByUid, getUserSavedList } from "../firebase/firestore";
+import {
+  addItemToCart,
+  addItemToOrder,
+  addItemToSaved,
+  addNewProduct,
+  completeOrder,
+  deleteProduct,
+  filterProductBasedOnCategory,
+  findRelatedProduct,
+  getAllProduct,
+  getAllSellerProduct,
+  getProductReview,
+  getUserCartList,
+  getUserDataByUid,
+  getUserOrderList,
+  getUserSavedList,
+  makePayment,
+  makeReview,
+  removeItemFromCart,
+  removeItemFromSaved,
+  sellerRegister,
+} from "../firebase/firestore";
 
 //User
 export const useSignUpAccount = () => {
   return useMutation({
-    mutationFn: (user: { email: string; password: string, name: string, phone: string }) =>
-      registerAccount(user),
+    mutationFn: (user: {
+      email: string;
+      password: string;
+      name: string;
+      phone: string;
+    }) => registerAccount(user),
   });
 };
 
@@ -38,20 +70,19 @@ export const useGetUserDataByUid = (uid: string) => {
   });
 };
 
-export const useGetUserCartList = (uid: string | undefined ) => {
+export const useGetUserCartList = (uid: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_USER_CART_LIST, uid],
     queryFn: () => getUserCartList(uid),
   });
 };
 
-export const useGetUserSavedList = (uid: string | undefined ) => {
+export const useGetUserSavedList = (uid: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_USER_SAVED_LIST, uid],
     queryFn: () => getUserSavedList(uid),
   });
 };
-
 
 // Asset
 export const useGetCategoryAsset = () => {
@@ -68,19 +99,211 @@ export const useGetAllProduct = () => {
   });
 };
 
-
 // Cart
 export const useAddItemToCart = () => {
   return useMutation({
-    mutationFn: (newInstance : {newProduct : IProductCart, uid:string | undefined}) =>
-      addItemToCart(newInstance),
+    mutationFn: (newInstance: {
+      newProduct: IProductCart;
+      uid: string | undefined;
+    }) => addItemToCart(newInstance),
+  });
+};
+
+export const useRemoveItemFromCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      uid: string | undefined;
+      idToBeDeleted: string | undefined;
+    }) => removeItemFromCart(newInstance.uid, newInstance.idToBeDeleted),
+    onSuccess: () => {
+      // Invalidate the cart list query to trigger a refetch
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_CART_LIST],
+      });
+    },
   });
 };
 
 //Saved
 export const useAddItemToSaved = () => {
   return useMutation({
-    mutationFn: (newInstance : {newProduct : IProductCart, uid:string | undefined}) =>
-      addItemToSaved(newInstance),
+    mutationFn: (newInstance: {
+      newProduct: IProductCart;
+      uid: string | undefined;
+    }) => addItemToSaved(newInstance),
+  });
+};
+
+export const useRemoveItemFromSaved = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      uid: string | undefined;
+      idToBeDeleted: string | undefined;
+    }) => removeItemFromSaved(newInstance.uid, newInstance.idToBeDeleted),
+    onSuccess: () => {
+      // Invalidate the cart list query to trigger a refetch
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_SAVED_LIST],
+      });
+    },
+  });
+};
+
+// Review
+export const useGetProductReview = (productId: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_PRODUCT_REVIEW, productId],
+    queryFn: () => getProductReview(productId),
+  });
+};
+
+export const useMakeReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      newReview: IReviewItem | undefined;
+      productReviewId: string | undefined;
+      orderId: string | undefined;
+      orderListId: string | undefined;
+      productId: string | undefined;
+    }) => makeReview(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST, QUERY_KEYS.GET_PRODUCT_REVIEW],
+      });
+    },
+  });
+};
+
+// Product
+export const useFindRelatedProduct = (search: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.FIND_RELATED_PRODUCT, search],
+    queryFn: () => findRelatedProduct(search),
+  });
+};
+
+// Seller
+export const useSellerRegister = () => {
+  return useMutation({
+    mutationFn: (newInstance: {
+      shopName: string | undefined;
+      address: string | undefined;
+      uid: string | undefined;
+    }) => sellerRegister(newInstance),
+  });
+};
+
+// Product
+export const useGetAllSellerProduct = (sellerId: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_ALL_SELLER_PRODUCT, sellerId],
+    queryFn: () => getAllSellerProduct(sellerId),
+  });
+};
+
+export const useAddNewProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      category: string | undefined;
+      description: string | undefined;
+      imageUrl: string | undefined;
+      name: string | undefined;
+      price: number | undefined;
+      stock: number | undefined;
+      sellerId: string | undefined;
+    }) => addNewProduct(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          QUERY_KEYS.GET_ALL_SELLER_PRODUCT,
+          QUERY_KEYS.GET_ALL_PRODUCT,
+        ],
+      });
+    },
+  });
+};
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: IProduct | undefined) =>
+      deleteProduct(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          QUERY_KEYS.GET_ALL_SELLER_PRODUCT,
+          QUERY_KEYS.GET_ALL_PRODUCT,
+        ],
+      });
+    },
+  });
+};
+
+// Order
+export const useAddItemToOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      addressTo: string | undefined;
+      newProduct: IProductOrderItem;
+      sellerId: string | undefined;
+      uid: string | undefined;
+    }) => addItemToOrder(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST],
+      });
+    },
+  });
+};
+
+export const useGetUserOrderList = (uid: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST, uid],
+    queryFn: () => getUserOrderList(uid),
+  });
+};
+
+export const useMakePayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      orderId: string | undefined;
+      orderListId: string | undefined;
+    }) => makePayment(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST],
+      });
+    },
+  });
+};
+
+export const useCompleteOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newInstance: {
+      orderId: string | undefined;
+      orderListId: string | undefined;
+      productId: string | undefined;
+      bought : number | undefined
+    }) => completeOrder(newInstance),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_ORDER_LIST],
+      });
+    },
+  });
+};
+
+// Filter
+export const useFilterProductBasedOnCategory = (searchedCategory: string | undefined) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_ALL_SELLER_PRODUCT, searchedCategory],
+    queryFn: () => filterProductBasedOnCategory(searchedCategory),
   });
 };
