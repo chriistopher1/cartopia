@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
+
 import RootLayout from "./pages/layout/RootLayout";
+
 import Dashboard from "./pages/root/Dashboard";
 import About from "./pages/root/About";
 import Login from "./pages/auth/Login";
@@ -19,7 +21,7 @@ import SellerRegister from "./pages/seller/SellerRegister";
 import SellerDeleteProduct from "./pages/seller/SellerDeleteProduct";
 import SellerUpdateProduct from "./pages/seller/SellerUpdateProduct";
 import SellerAddProduct from "./pages/seller/SellerAddProduct";
-import SellerLogin from "./pages/seller/SellerLogin";
+import SellerLogin from "./pages/seller/SellerLogin"; // Import the SellerLogin component
 import Order from "./pages/protected/order/Order";
 import OrderPending from "./pages/protected/order/OrderPending";
 import OrderShipping from "./pages/protected/order/OrderShipping";
@@ -28,7 +30,7 @@ import MakeReview from "./pages/protected/MakeReview";
 import CategoryFilter from "./pages/root/CategoryFilter";
 import SearchProduct from "./pages/root/SearchProduct";
 import Checkout from "./pages/protected/Checkout";
-import Payment from "./pages/protected/Payment";
+import Payment from "./pages/protected/Payment"; // Import the new Payment component
 
 function App() {
   return (
@@ -59,7 +61,7 @@ function App() {
         <Route path="/user/order/complete" element={<OrderComplete />} />
         <Route path="/make-review" element={<MakeReview />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/payment" element={<Payment />} />
+        <Route path="/payment" element={<Payment />} /> {/* Add the new Payment route */}
       </Route>
 
       <Route element={<SellerLayout />}>
@@ -70,7 +72,7 @@ function App() {
       </Route>
 
       <Route path="/seller/register" element={<SellerRegister />} />
-      <Route path="/seller/login" element={<SellerLogin />} />
+      <Route path="/seller/login" element={<SellerLogin />} /> {/* Add the SellerLogin route */}
     </Routes>
   );
 }

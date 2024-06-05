@@ -1,5 +1,3 @@
-// src/pages/seller/SellerDashboard.js
-import React from "react";
 import ProductCard from "../../components/card/ProductCard";
 import { useUserContext } from "../../context/AuthProvider";
 import { useGetAllSellerProduct } from "../../lib/tanstack/queries";
@@ -10,14 +8,16 @@ const SellerDashboard = () => {
   const { data: sellerProduct, isPending: isGettingSellerProduct } =
     useGetAllSellerProduct(user.seller.id);
 
-  if (isGettingSellerProduct) return <div>Loading...</div>;
+  if (isGettingSellerProduct) return <div>Loading..</div>;
+
+  console.log(sellerProduct);
 
   return (
     <div className="flex flex-col gap-4">
       <h3 className="font-bold text-2xl md:text-3xl border-b-2 w-fit pb-2 border-black">
-        Your Products
+        Your Product
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+      <div className="flex flex-wrap gap-6 w-full">
         {sellerProduct &&
           sellerProduct.map((product) => (
             <ProductCard
