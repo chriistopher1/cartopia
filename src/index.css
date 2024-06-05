@@ -29,3 +29,40 @@
 body {
   margin: 0;
 }
+
+.order-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.order-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.order-card .card-content {
+  padding: 16px;
+}
+
+.order-card .card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.order-card .card-details {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Enhancements for buttons */
+button {
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #333;
+  color: #fff;
+}

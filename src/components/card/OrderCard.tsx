@@ -1,27 +1,14 @@
+import { useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { IOrderItem } from "../../types";
 import { checkStatus, formatToIDR } from "../../constant";
-import {
-  useCompleteOrder,
-  useMakePayment,
-  useMakeReview,
-} from "../../lib/tanstack/queries";
+import { useCompleteOrder } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { toast } from "react-toastify";
-import { makeReview } from "../../lib/firebase/firestore";
-import { useState } from "react";
-import Modal from "../product/Modal";
-import ImageUploader from "../seller/ImageUploader";
 import { useNavigate } from "react-router-dom";
+import { FaCheck, FaTrash } from "react-icons/fa";
 
-const styling = "font-semibold";
-
-interface OrderProps {
-  order: IOrderItem;
-  orderListId: string | undefined;
-}
-
-const OrderCard = (newInstance: OrderProps) => {
+const OrderCard = ({ order, orderListId, onRemoveOrder }) => {
   const {
     id,
     date,
@@ -32,14 +19,13 @@ const OrderCard = (newInstance: OrderProps) => {
     totalPrice,
     item,
     isReviewed,
-  } = newInstance.order;
+  } = order;
 
-  const navigate = useNavigate()
+  const [isChecked, setIsChecked] = useState(false);
 
-  const { mutateAsync: makePayment, isPending: isMakingPayment } =
-    useMakePayment();
-  const { mutateAsync: completeOrder, isPending: isCompletingOrder } =
-    useCompleteOrder();
+  const navigate = useNavigate();
+
+  const { mutateAsync: completeOrder, isPending: isCompletingOrder } = useCompleteOrder();
 
   const formatDate = (timestamp: Timestamp | undefined) => {
     if (!timestamp) return "N/A";
@@ -47,32 +33,14 @@ const OrderCard = (newInstance: OrderProps) => {
     return date.toLocaleDateString();
   };
 
-  // make payment
-  const handlePayment = async () => {
-    if (!id) return;
-
-    const isPaid = await makePayment({
-      orderId: id,
-      orderListId: newInstance.orderListId,
-    });
-
-    if (isPaid) {
-      toast.success("Payment Succesful, Status changed to shipping");
-    } else {
-      toast.error("Payment Failure, please try again");
-    }
-  };
-
-  // complete order
   const handleCompleteOrder = async () => {
     if (!id || !item) return;
 
     const isComplete = await completeOrder({
       orderId: id,
-      orderListId: newInstance.orderListId,
-      productId : item[0].product?.id,
-      bought : item[0].quantity
-
+      orderListId: orderListId,
+      productId: item[0].product?.id,
+      bought: item[0].quantity,
     });
 
     if (isComplete) {
@@ -82,85 +50,91 @@ const OrderCard = (newInstance: OrderProps) => {
     }
   };
 
+  const toggleCheck = () => {
+    setIsChecked(!isChecked);
+  };
+
   return (
-    <div className="order-card border shadow-md p-4 mb-4 rounded-md">
-      <h2 className="font-bold text-lg mb-2">Order ID: {id}</h2>
-      <p className={`${styling}`}>Date: {formatDate(date)}</p>
-      <p className={`${styling}`}>Shipping Date: {formatDate(shippingDate)}</p>
-      <p className={`${styling}`}>
-        Status: <span className={`${checkStatus(status)}`}>{status}</span>
-      </p>
-      <p className={`${styling}`}>From: {addressFrom}</p>
-      <p className={`${styling}`}>To: {addressTo}</p>
-      <p className={`${styling}`}>Is Reviewed : {isReviewed ? (<span>Reviewed</span>):(<span>Not Reviewed</span>)}</p>
-      <p className={`${styling} `}>
-        Total Price:{" "}
-        <span className="text-yellow-500">
-          {totalPrice ? `${formatToIDR(totalPrice)}` : "N/A"}
-        </span>
-      </p>
-      <div className="order-items mt-4">
-        <h3 className="font-semibold mb-2">Items:</h3>
-        <ul>
-          {item && item.length > 0 ? (
-            item.map((product, index) => (
-              <li key={index} className="border-b py-2 font-medium">
-                {product.product?.name} - Quantity: {product.quantity}
-              </li>
-            ))
-          ) : (
-            <li>No items in this order.</li>
+    <div className="order-card bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6 hover:shadow-lg transition-shadow duration-300 ease-in-out flex items-start">
+      <input
+        type="checkbox"
+        checked={isChecked}
+        onChange={toggleCheck}
+        className="mr-4 mt-1"
+      />
+      <div className="flex-1">
+        <h2 className="font-bold text-xl mb-2">Order ID: {id}</h2>
+        <p className="font-semibold mb-1">Date: {formatDate(date)}</p>
+        <p className="font-semibold mb-1">Shipping Date: {formatDate(shippingDate)}</p>
+        <p className="font-semibold mb-1">
+          Status: <span className={`${checkStatus(status)} capitalize`}>{status}</span>
+        </p>
+        <p className="font-semibold mb-1">From: {addressFrom}</p>
+        <p className="font-semibold mb-1">To: {addressTo}</p>
+        <p className="font-semibold mb-1">
+          Is Reviewed: {isReviewed ? <span className="text-green-500">Reviewed</span> : <span className="text-red-500">Not Reviewed</span>}
+        </p>
+        <p className="font-semibold mb-1">
+          Total Price: <span className="text-yellow-500">{totalPrice ? `${formatToIDR(totalPrice)}` : "N/A"}</span>
+        </p>
+        <div className="order-items mt-4">
+          <h3 className="font-semibold mb-2">Items:</h3>
+          <ul>
+            {item && item.length > 0 ? (
+              item.map((product, index) => (
+                <li key={index} className="border-b py-2 font-medium">
+                  {product.product?.name} - Quantity: {product.quantity}
+                </li>
+              ))
+            ) : (
+              <li>No items in this order.</li>
+            )}
+          </ul>
+        </div>
+        <div className="mt-4 flex flex-col gap-2">
+          {status === "shipping" && (
+            <button
+              className={`border-2 border-black bg-sky-500 px-4 py-2 rounded-lg text-white hover:bg-sky-700 font-medium ${
+                isCompletingOrder ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={handleCompleteOrder}
+              disabled={isCompletingOrder}
+            >
+              <AiOutlineLoading3Quarters
+                className={`${
+                  isCompletingOrder ? "inline animate-spin" : "hidden"
+                } mr-2`}
+              />
+              <span>Complete Order</span>
+            </button>
           )}
-        </ul>
-      </div>
-      {status && status == "pending" ? (
-        <button
-          className={`border-2 border-black bg-rose-500 px-4 py-2 rounded-lg text-white hover:bg-rose-700 font-medium ${
-            isMakingPayment ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          onClick={handlePayment}
-          disabled={isMakingPayment}
-        >
-          <AiOutlineLoading3Quarters
-            className={`${
-              isMakingPayment ? "inline animate-spin" : "hidden"
-            } mr-2`}
-          />
-          <span>Pay Now</span>
-        </button>
-      ) : status && status == "shipping" ? (
-        <button
-          className={`border-2 border-black bg-sky-500 px-4 py-2 rounded-lg text-white hover:bg-sky-700 font-medium ${
-            isCompletingOrder ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          onClick={handleCompleteOrder}
-          disabled={isCompletingOrder}
-        >
-          <AiOutlineLoading3Quarters
-            className={`${
-              isCompletingOrder ? "inline animate-spin" : "hidden"
-            } mr-2`}
-          />
-          <span>Complete Order</span>
-        </button>
-      ) : status && !isReviewed && item !== undefined && status == "complete" ? (
-        <>
+          {status === "complete" && !isReviewed && item && (
+            <button
+              className="border-2 border-black bg-yellow-500 px-4 py-2 rounded-lg text-white hover:bg-yellow-700 font-medium"
+              onClick={() =>
+                navigate("/make-review", {
+                  state: {
+                    orderId: id,
+                    orderListId: orderListId,
+                    productName: item[0].product?.name,
+                    productReviewId: item[0].product?.reviewId,
+                    productId: item[0].product?.id,
+                  },
+                })
+              }
+            >
+              <span>Review</span>
+            </button>
+          )}
           <button
-            className={`border-2 border-black bg-yellow-500 px-4 py-2 rounded-lg text-white hover:bg-yellow-700 font-medium `}
-            onClick={() => navigate("/make-review" , {state : {
-              orderId : id,
-              orderListId : newInstance.orderListId,
-              productName : item[0].product?.name,
-              productReviewId : item[0].product?.reviewId,
-              productId : item[0].product?.id
-            }})}
+            className="border-2 border-black bg-red-500 px-4 py-2 rounded-lg text-white hover:bg-red-700 font-medium"
+            onClick={() => onRemoveOrder(id)}
           >
-            <span>Review</span>
+            <FaTrash className="inline mr-2" />
+            Remove from Cart
           </button>
-        </>
-      ) : (
-        ""
-      )}
+        </div>
+      </div>
     </div>
   );
 };
