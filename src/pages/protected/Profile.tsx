@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import { IUser } from "../../types/user";
-import {
-  updateUserProfileWithImage,
-  uploadProfilePicture,
-} from "../../lib/firebase/firestore";
 import { toast } from "react-toastify";
 import { useUpdateUserProfile } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -13,8 +8,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 const Profile = () => {
   const { user, checkAuthUser } = useUserContext();
   const navigate = useNavigate();
-
-  const [newUser, setNewUser] = useState();
+  
   const [name, setName] = useState(user?.name || undefined);
   const [phone, setPhone] = useState(user?.phone || undefined);
   const [image, setImage] = useState<File>();
