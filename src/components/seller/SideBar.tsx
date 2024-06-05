@@ -115,13 +115,23 @@ const SideBar = () => {
             </a>
           </li>
 
+          <hr className="sidebar-divider" />
+
+          <li className="nav-item">
+            <a className="nav-link" href="/">
+              <i className="fas fa-fw fa-chart-area"></i>
+              <span>Return</span>
+            </a>
+          </li>
+
           <hr className="sidebar-divider d-none d-md-block" />
 
           <div className="text-center d-none d-md-inline">
             <button className="rounded-circle border-0" id="sidebarToggle"></button>
           </div>
 
-          
+
+
         </ul>
       </div>
     </>
