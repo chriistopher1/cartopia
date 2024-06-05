@@ -33,6 +33,8 @@ import {
   removeProductImage,
 } from "./firestorage";
 
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 const db = getFirestore(firebaseApp);
 
 // register user account
@@ -1250,3 +1252,20 @@ export async function filterProductBasedOnCategory(searchedCategory: string | un
     return [];
   }
 }
+
+export const uploadProfilePicture = async (file: File, userId: string): Promise<string> => {
+  const storageRef = ref(storage, `profile_pictures/${userId}`);
+  await uploadBytes(storageRef, file);
+  return getDownloadURL(storageRef);
+};
+
+export const updateUserProfileWithImage = async (userId: string, profileData: Partial<IUser>): Promise<boolean> => {
+  try {
+    const userDocRef = doc(db, "user_table", userId);
+    await updateDoc(userDocRef, profileData);
+    return true;
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    return false;
+  }
+};

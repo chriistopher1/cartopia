@@ -6,14 +6,12 @@ const Recommend = () => {
 
   if (isPending) return <div>Loading...</div>;
 
-  // console.log(allProduct);
-
   return (
-    <div className="mx-4 md:mx-24 mb-5">
-      <h2 className="border-b-2 border-black mb-5 text-lg md:text-2xl font-bold pb-4">
-        Popular Product
+    <div className="mx-4 md:mx-24 mb-10">
+      <h2 className="border-b-2 border-black mb-8 text-xl md:text-3xl font-bold pb-4 text-center">
+        Popular Products
       </h2>
-      <div className="flex flex-wrap gap-6 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {allProduct &&
           allProduct.map((product) => (
             <ProductCard

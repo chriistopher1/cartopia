@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useUserContext } from "../../context/AuthProvider";
-import { useGetUserOrderList } from "../../lib/tanstack/queries";
 import { useNavigate } from "react-router-dom";
 import { IUser } from "../../types/user";
-import { updateUserProfile } from "../../lib/firebase/firestore";
+import { updateUserProfileWithImage, uploadProfilePicture } from "../../lib/firebase/firestore";
 
 const Profile = () => {
   const { user, setUser } = useUserContext<IUser>();
   const navigate = useNavigate();
-  const { data: orders, isLoading: isLoadingOrders, error: ordersError } = useGetUserOrderList(user?.id);
 
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(user?.phone || "");
+  const [image, setImage] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -39,7 +38,12 @@ const Profile = () => {
     console.log("Saving user profile with:", { name, phone });
 
     try {
-      const success = await updateUserProfile(user.id, { name, phone });
+      let imageUrl = user.image;
+      if (image) {
+        imageUrl = await uploadProfilePicture(image, user.id);
+      }
+
+      const success = await updateUserProfileWithImage(user.id, { name, phone, image: imageUrl });
       if (success) {
         console.log("User profile updated successfully");
 
@@ -49,6 +53,7 @@ const Profile = () => {
             ...prevUser,
             name,
             phone,
+            image: imageUrl,
           };
           console.log("Updating user context with:", updatedUser);
           return updatedUser;
@@ -73,6 +78,12 @@ const Profile = () => {
             className="w-32 h-32 rounded-full object-cover"
           />
         </div>
+        {isEditing && (
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-1">Change Profile Picture</label>
+            <input type="file" onChange={(e) => setImage(e.target.files?.[0] || null)} />
+          </div>
+        )}
         <div className="mb-4">
           <label className="block text-sm font-semibold mb-1">Name</label>
           {isEditing ? (
@@ -123,27 +134,6 @@ const Profile = () => {
           >
             Edit Profile
           </button>
-        )}
-      </div>
-
-      <div className="p-8 mt-8 rounded-lg shadow-md bg-white w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Order List</h2>
-        {isLoadingOrders && <div>Loading orders...</div>}
-        {ordersError && <div>Error loading orders</div>}
-        {orders && orders.length > 0 ? (
-          <ul>
-            {orders.map((order) => (
-              <li key={order.id} className="mb-4">
-                <div className="border rounded-md px-3 py-2 bg-gray-200">
-                  <p><strong>Order ID:</strong> {order.id}</p>
-                  <p><strong>Date:</strong> {order.date}</p>
-                  <p><strong>Total:</strong> ${order.total}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div>No orders found</div>
         )}
       </div>
     </div>

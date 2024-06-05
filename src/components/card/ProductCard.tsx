@@ -30,7 +30,7 @@ const ProductCard = (product: IProduct) => {
 
     if (isDeleted) {
       toast.success("Success on deleting product");
-      window.location.href = "/seller/dashboard"
+      window.location.href = "/seller/dashboard";
     } else {
       toast.error("Failed on deleting product");
     }
@@ -38,44 +38,42 @@ const ProductCard = (product: IProduct) => {
 
   return (
     <Link
-      className="flex flex-col items-center w-44 sm:w-44 md:w-60 lg:w-80 shadow-lg shadow-gray-500 cursor-pointer"
+      className="flex flex-col items-center w-full max-w-xs bg-white shadow-md rounded-lg overflow-hidden transform transition-transform hover:scale-105 cursor-pointer"
       to={`/product/${product.id}`}
       state={{ product }}
     >
-      <img src={product.imageUrl} className="w-full h-auto" />
-      <div className="flex flex-col items-center p-5 sm:p-7 md:p-9 lg:p-12">
-        <h2 className="font-bold text-xs sm:text-md md:text-lg truncate">
-          {product.name}
-        </h2>
-        <h3 className="font-semibold text-xs sm:text-md md:text-lg">
-          {formatToIDR(product.price)}
-        </h3>
-        <h3 className="text-gray-700 flex items-center sm:text-md md:text-lg">
-          <FaStar className="text-yellow-400 text-xs sm:text-md md:text-lg" />
-          <FaStar className="text-yellow-400 text-xs sm:text-md md:text-lg" />
-          <FaStar className="text-yellow-400 text-xs sm:text-md md:text-lg" />
-          <FaStar className="text-yellow-400 text-xs sm:text-md md:text-lg" />
-          <FaStar className="text-yellow-400 text-xs sm:text-md md:text-lg" />
-          <span className="text-xs sm:text-md md:text-lg">
-            ({product.sold})
-          </span>
+      <img
+        src={product.imageUrl}
+        alt={product.name}
+        className="w-full h-56 object-cover"
+      />
+      <div className="flex flex-col items-center p-4">
+        <h2 className="font-bold text-md truncate">{product.name}</h2>
+        <h3 className="font-semibold text-md">{formatToIDR(product.price)}</h3>
+        <div className="flex items-center text-gray-700">
+          <FaStar className="text-yellow-400 text-md" />
+          <FaStar className="text-yellow-400 text-md" />
+          <FaStar className="text-yellow-400 text-md" />
+          <FaStar className="text-yellow-400 text-md" />
+          <FaStar className="text-yellow-400 text-md" />
+          <span className="ml-2 text-md">({product.sold})</span>
           {isDeletingProduct ? (
             <AiOutlineLoading3Quarters
-              className={`${
+              className={`ml-2 ${
                 isDeletingProduct ? "inline animate-spin" : "hidden"
-              } ml-2`}
+              }`}
             />
           ) : (
             <button
-              className={`text-xl md:text-2xl ml-2 hover:text-red-500 ${
+              className={`text-2xl ml-2 hover:text-red-500 ${
                 isOnDeletePage ? "" : "hidden"
-              } cursor-pointer`}
+              }`}
               onClick={handleDeleteProduct}
             >
               <FaRegTrashAlt />
             </button>
           )}
-        </h3>
+        </div>
       </div>
     </Link>
   );
