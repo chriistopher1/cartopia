@@ -11,7 +11,7 @@ const Profile = () => {
   
   const [name, setName] = useState(user?.name || undefined);
   const [phone, setPhone] = useState(user?.phone || undefined);
-  const [address, setAddress] = useState(user.address || undefined);
+  const [address, setAddress] = useState(user?.address || undefined);
   const [image, setImage] = useState<File>();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -19,6 +19,7 @@ const Profile = () => {
     if (user) {
       setName(user.name);
       setPhone(user.phone);
+      setAddress(user.address);
     }
   }, [user]);
 
@@ -58,16 +59,16 @@ const Profile = () => {
           profileData: {
             name: name,
             phone: phone,
-            address : address
+            address: address,
           },
           userAccountId: user.accountId,
           imageUrl: base64String,
         });
 
         if (userProfileUpdated) {
-          checkAuthUser()
+          checkAuthUser();
           toast.success("User profile is updated");
-          navigate("/")
+          navigate("/");
         } else {
           toast.error("Update profile failed");
         }
@@ -77,15 +78,15 @@ const Profile = () => {
         profileData: {
           name: name,
           phone: phone,
-          address : address
+          address: address,
         },
         userAccountId: user.accountId,
       });
 
       if (userProfileUpdated) {
-        checkAuthUser()
+        checkAuthUser();
         toast.success("User profile is updated");
-        navigate("/")
+        navigate("/");
       } else {
         toast.error("Update profile failed");
       }
@@ -162,6 +163,24 @@ const Profile = () => {
             {user.email}
           </div>
         </div>
+
+        {user.seller && (
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-1">Seller Name</label>
+              <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
+                {user.seller.name}
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold mb-1">Seller Address</label>
+              <div className="w-full border rounded-md px-3 py-2 bg-gray-200">
+                {user.seller.address}
+              </div>
+            </div>
+          </>
+        )}
+
         {isEditing ? (
           <button
             onClick={handleSave}
