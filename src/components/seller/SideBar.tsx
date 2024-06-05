@@ -43,7 +43,7 @@ const SideBar = () => {
 
           <div className="sidebar-heading">Interface</div>
 
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseComponents" aria-expanded="true" aria-controls="collapseComponents">
               <i className="fas fa-fw fa-cog"></i>
               <span>Components</span>
@@ -91,19 +91,27 @@ const SideBar = () => {
                 <a className="collapse-item" href="blank.html">Blank Page</a>
               </div>
             </div>
-          </li>
+          </li> */}
 
           <li className="nav-item">
-            <a className="nav-link" href="charts.html">
+            <a className="nav-link" href="/seller/add-product">
               <i className="fas fa-fw fa-chart-area"></i>
-              <span>Charts</span>
+              <span>Add Product</span>
             </a>
           </li>
 
           <li className="nav-item">
-            <a className="nav-link" href="tables.html">
+            <a className="nav-link" href="/seller/update-product">
               <i className="fas fa-fw fa-table"></i>
-              <span>Tables</span>
+              <span>Update Product</span>
+            </a>
+          </li>
+
+
+          <li className="nav-item">
+            <a className="nav-link" href="/seller/delete-product">
+              <i className="fas fa-fw fa-table"></i>
+              <span>Delete Product</span>
             </a>
           </li>
 
