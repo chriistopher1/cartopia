@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { IProduct } from "../../types";
 import { useEffect, useState } from "react";
 import { FaHeart, FaStar } from "react-icons/fa";
@@ -363,7 +363,7 @@ const Product = () => {
 
           <div className="flex items-center gap-2">
               <img src={sellerInfo?.imageUrl} className="w-8 h-8 rounded-md"/>
-              <p className="hover:underline font-semibold cursor-pointer">{sellerInfo?.seller.name}</p>
+              <Link to={`/seller/${product.sellerId}`} className="hover:underline font-semibold cursor-pointer">{sellerInfo?.seller.name}</Link>
           </div>
         </div>
       </div>

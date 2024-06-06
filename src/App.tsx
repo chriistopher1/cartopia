@@ -31,6 +31,7 @@ import SearchProduct from "./pages/root/SearchProduct";
 import Checkout from "./pages/protected/Checkout";
 import Payment from "./pages/protected/Payment"; // Import the new Payment component
 import CreditCard from "./pages/protected/CreditCard"; // Import the new CreditCard component
+import SellerShop from "./pages/root/SellerShop";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route path="/product/:id" element={<Product />} />
         <Route path="/category/:filter" element={<CategoryFilter />} />
         <Route path="/search/:query" element={<SearchProduct />} />
+        <Route path="/seller/:sellerId" element={<SellerShop />} />
       </Route>
 
       <Route element={<AuthLayout />}>
