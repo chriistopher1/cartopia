@@ -30,6 +30,7 @@ import CategoryFilter from "./pages/root/CategoryFilter";
 import SearchProduct from "./pages/root/SearchProduct";
 import Checkout from "./pages/protected/Checkout";
 import Payment from "./pages/protected/Payment"; // Import the new Payment component
+import CreditCard from "./pages/protected/CreditCard"; // Import the new CreditCard component
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
         <Route path="/make-review" element={<MakeReview />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment" element={<Payment />} /> {/* Add the new Payment route */}
+        <Route path="/credit-card" element={<CreditCard />} /> {/* Add the new CreditCard route */}
       </Route>
 
       <Route element={<SellerLayout />}>

@@ -53,7 +53,8 @@ const Cart = () => {
         <div className="flex justify-center">
           <button
             onClick={handleCheckout}
-            className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-300"
+            className={`px-6 py-3 rounded-md transition duration-300 ${selectedItems.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}`}
+            disabled={selectedItems.length === 0}
           >
             Checkout
           </button>
