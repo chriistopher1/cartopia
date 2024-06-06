@@ -25,7 +25,7 @@ const CategoryFilter = () => {
 //   console.log(filteredProducts)
 
   return (
-    <div className='mx-2'>
+    <div className='mx-5 my-5'>
       <h1 className='font-bold text-2xl md:text-4xl'>Category : {capitalizeFirstLetter(filter)}</h1>
       <div className="flex flex-wrap gap-6 w-full">
         {filteredProducts &&
