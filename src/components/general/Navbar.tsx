@@ -69,9 +69,9 @@ const Navbar = () => {
           <Link to={"/about"} className={`${mobileViewCss}`}>
             About
           </Link>
-          <Link to={"/blog"} className={`${mobileViewCss}`}>
+          {/* <Link to={"/blog"} className={`${mobileViewCss}`}>
             Blog
-          </Link>
+          </Link> */}
           <Link to={"/user/order"} className={`${mobileViewCss}`}>
             Order
           </Link>
