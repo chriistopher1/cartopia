@@ -24,8 +24,9 @@ const SellerShop = () => {
 
   return (
     <div className="flex flex-col gap-4 mx-5 my-5">
-      <h3 className="font-bold text-2xl md:text-3xl border-b-2 w-fit pb-2 border-black">
-       {sellerInfo?.seller.name}
+      <h3 className="flex items-center gap-4 font-bold text-2xl md:text-3xl border-b-2 w-fit pb-2 border-black">
+    <img src={sellerInfo?.imageUrl} className="w-8 h-8 rounded-lg"/>
+       <p className="text-black font-bold">{sellerInfo?.seller.name}</p>
       </h3>
       <div className="flex flex-wrap gap-6 w-full">
         {sellerProduct &&
