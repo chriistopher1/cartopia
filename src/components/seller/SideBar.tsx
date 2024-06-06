@@ -59,12 +59,12 @@ const SideBar = () => {
             </a>
           </li>
 
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a className="nav-link" href="/seller/update-product">
               <i className="fas fa-fw fa-table"></i>
               <span>Update Product</span>
             </a>
-          </li>
+          </li> */}
 
           <li className="nav-item">
             <a className="nav-link" href="/seller/delete-product">

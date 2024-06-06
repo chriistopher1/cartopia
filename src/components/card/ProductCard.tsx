@@ -51,11 +51,16 @@ const ProductCard = (product: IProduct) => {
         <h2 className="font-bold text-md truncate">{product.name}</h2>
         <h3 className="font-semibold text-md">{formatToIDR(product.price)}</h3>
         <div className="flex items-center text-gray-700">
+          {product.sold == 0 ? (<> <FaStar className="text-gray-400 text-md" />
+          <FaStar className="text-gray-400 text-md" />
+          <FaStar className="text-gray-400 text-md" />
+          <FaStar className="text-gray-400 text-md" />
+          <FaStar className="text-gray-400 text-md" /></>):(<> <FaStar className="text-yellow-400 text-md" />
           <FaStar className="text-yellow-400 text-md" />
           <FaStar className="text-yellow-400 text-md" />
           <FaStar className="text-yellow-400 text-md" />
-          <FaStar className="text-yellow-400 text-md" />
-          <FaStar className="text-yellow-400 text-md" />
+          <FaStar className="text-yellow-400 text-md" /></>)}
+         
           <span className="ml-2 text-md">({product.sold})</span>
           {isDeletingProduct ? (
             <AiOutlineLoading3Quarters
