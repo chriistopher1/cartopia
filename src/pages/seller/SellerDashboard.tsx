@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import ProductCard from "../../components/card/ProductCard";
 import { useUserContext } from "../../context/AuthProvider";
 import { useGetAllSellerProduct } from "../../lib/tanstack/queries";
 import { FaRegChartBar, FaClipboardList, FaPlusCircle, FaEnvelope } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { getMessagesForSeller } from "../../lib/firebase/firestore"; // Import the new function
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../../lib/firebase/config";
+import { formatToIDR } from "../../constant"; // Import your currency formatting function
+import ProductCard from "../../components/card/ProductCard";
 
 const SellerDashboard: React.FC = () => {
   const { user } = useUserContext();
@@ -14,13 +16,23 @@ const SellerDashboard: React.FC = () => {
   const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      if (user.seller.id) {
-        const fetchedMessages = await getMessagesForSeller(user.seller.id);
-        setMessages(fetchedMessages);
+    const fetchMessages = () => {
+      try {
+        if (user.seller.id) {
+          const q = query(collection(db, "chats_metadata"), where("sellerId", "==", user.seller.id));
+          const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const msgs = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+            setMessages(msgs);
+          });
+
+          return unsubscribe;
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
       }
     };
-    fetchMessages();
+    const unsubscribe = fetchMessages();
+    return () => unsubscribe && unsubscribe();
   }, [user.seller.id]);
 
   if (isGettingSellerProduct) return <div>Loading..</div>;
@@ -30,7 +42,7 @@ const SellerDashboard: React.FC = () => {
 
   const handleChatClick = (msg: any) => {
     // Navigate to the chat page with the necessary state
-    navigate(`/chat/${msg.productId}/${msg.senderId}`, { state: { seller: user, product: msg.product } });
+    navigate(`/chat/${msg.productId}/${msg.userId}`, { state: { seller: user, product: msg.product } });
   };
 
   return (
@@ -121,7 +133,7 @@ const SellerDashboard: React.FC = () => {
                     <FaEnvelope className="text-2xl text-gray-500" />
                     <div>
                       <h4 className="font-semibold text-lg">{msg.senderName}</h4>
-                      <p>{msg.text}</p>
+                      <p>{msg.latestMessage}</p>
                       <span className="text-sm text-gray-500">{new Date(msg.timestamp.seconds * 1000).toLocaleString()}</span>
                     </div>
                   </div>

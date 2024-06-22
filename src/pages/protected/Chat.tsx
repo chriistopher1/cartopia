@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { collection, addDoc, query, onSnapshot, orderBy, Timestamp } from "firebase/firestore";
+import { collection, addDoc, query, onSnapshot, orderBy, Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase/config";
 import { useUserContext } from "../../context/AuthProvider";
 import { FaPaperPlane } from "react-icons/fa";
@@ -35,11 +35,24 @@ const Chat = () => {
   const sendMessage = async () => {
     if (newMessage.trim()) {
       const chatId = `${productId}_${userId}`;
-      await addDoc(collection(db, "chats", chatId, "messages"), {
+      const messageData = {
         senderId: user.accountId,
         text: newMessage,
         timestamp: Timestamp.now(),
-      });
+      };
+      await addDoc(collection(db, "chats", chatId, "messages"), messageData);
+
+      // Update or create chat metadata
+      const metadataRef = doc(db, "chats_metadata", chatId);
+      await setDoc(metadataRef, {
+        productId,
+        sellerId: product.sellerId,
+        userId,
+        latestMessage: messageData.text,
+        timestamp: messageData.timestamp,
+        product: product, // Include product details if needed
+      }, { merge: true });
+
       setNewMessage("");
     }
   };
