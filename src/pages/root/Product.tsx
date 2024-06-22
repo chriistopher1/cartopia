@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { IProduct } from "../../types";
 import { useEffect, useState } from "react";
-import { FaHeart, FaStar } from "react-icons/fa";
+import { FaHeart, FaStar, FaComments } from "react-icons/fa";
 import { checkIfItemInTheList, formatToIDR } from "../../constant";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoCartOutline, IoHeartOutline } from "react-icons/io5";
@@ -44,7 +44,7 @@ const Product = () => {
   const { data: userSavedList, isPending: isGettingUserSavedList } =
     useGetUserSavedList(user.accountId);
 
-    const { data: sellerInfo, isPending: isGettingSellerInfo } =
+  const { data: sellerInfo, isPending: isGettingSellerInfo } =
     useGetUserInfoFromSellerId(product.sellerId);
 
   useEffect(() => {
@@ -228,12 +228,12 @@ const Product = () => {
   return (
     <div>
       <div className="flex flex-col md:flex-row max-md:px-10 max-md:py-5 md:gap-12 shadow-lg shadow-gray-400 mb-12 border border-black">
-      <img
-        src={product.imageUrl}
-        className="w-full md:w-[35%] lg:w-[25%] h-auto md:h-[300px] object-cover"
-        alt={product.name}
-        style={{ objectFit: "contain" }} // Add this style
-      />
+        <img
+          src={product.imageUrl}
+          className="w-full md:w-[35%] lg:w-[25%] h-auto md:h-[300px] object-cover"
+          alt={product.name}
+          style={{ objectFit: "contain" }} // Add this style
+        />
 
         <div className="flex flex-col gap-2 md:gap-6 py-10 md:py-16 md:w-1/2 lg:w-1/3">
           <h3 className="font-bold text-2xl md:text-4xl">{product.name}</h3>
@@ -309,7 +309,8 @@ const Product = () => {
                       <span className="text-red-500">{newQuantity}</span>
                     </h3>
                     <h3 className="font-bold text-sm md:text-lg text-red-500">
-                      {product.price && formatToIDR(product.price * newQuantity) }
+                      {product.price &&
+                        formatToIDR(product.price * newQuantity)}
                     </h3>
                     <div className="flex gap-4">
                       <button
@@ -337,7 +338,7 @@ const Product = () => {
                               : "hidden"
                           } mr-2`}
                         />
-                        <span className={`${isAddingItemToOrder ? "hidden": ""}`}>Order</span>
+                        <span className={`${isAddingItemToOrder ? "hidden" : ""}`}>Order</span>
                       </button>
                     </div>
                   </div>
@@ -365,8 +366,25 @@ const Product = () => {
           </div>
 
           <div className="flex items-center gap-2">
-              <img src={sellerInfo?.imageUrl} className="w-8 h-8 rounded-md"/>
-              <Link to={`/seller/${product.sellerId}`} className="hover:underline font-semibold cursor-pointer">{sellerInfo?.seller.name}</Link>
+            <img
+              src={sellerInfo?.imageUrl}
+              className="w-8 h-8 rounded-md"
+              alt="Seller"
+            />
+            <Link
+              to={`/seller/${product.sellerId}`}
+              className="hover:underline font-semibold cursor-pointer"
+            >
+              {sellerInfo?.seller.name}
+            </Link>
+            <Link
+              to={`/chat/${product.sellerId}`}
+              state={{ seller: sellerInfo, product: product }}
+              className="text-[#63a5ea] hover:underline flex items-center gap-2"
+            >
+              <FaComments className="text-xl" />
+              <span>Message</span>
+            </Link>
           </div>
         </div>
       </div>

@@ -29,9 +29,10 @@ import MakeReview from "./pages/protected/MakeReview";
 import CategoryFilter from "./pages/root/CategoryFilter";
 import SearchProduct from "./pages/root/SearchProduct";
 import Checkout from "./pages/protected/Checkout";
-import Payment from "./pages/protected/Payment"; // Import the new Payment component
-import CreditCard from "./pages/protected/CreditCard"; // Import the new CreditCard component
+import Payment from "./pages/protected/Payment";
+import CreditCard from "./pages/protected/CreditCard";
 import SellerShop from "./pages/root/SellerShop";
+import ChatPage from "./pages/protected/Chat"; // Import the ChatPage component
 
 function App() {
   return (
@@ -63,18 +64,19 @@ function App() {
         <Route path="/user/order/complete" element={<OrderComplete />} />
         <Route path="/make-review" element={<MakeReview />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/payment" element={<Payment />} /> {/* Add the new Payment route */}
-        <Route path="/credit-card" element={<CreditCard />} /> {/* Add the new CreditCard route */}
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/credit-card" element={<CreditCard />} />
+        <Route path="/chat/:sellerId" element={<ChatPage />} /> {/* Add the new Chat route */}
       </Route>
 
       <Route element={<SellerLayout />}>
-        <Route path="/seller/dashboard" element={<SellerDashboard />}></Route>
-        <Route path="/seller/add-product" element={<SellerAddProduct />}></Route>
-        <Route path="/seller/update-product" element={<SellerUpdateProduct />}></Route>
-        <Route path="/seller/delete-product" element={<SellerDeleteProduct />}></Route>
+        <Route path="/seller/dashboard" element={<SellerDashboard />} />
+        <Route path="/seller/add-product" element={<SellerAddProduct />} />
+        <Route path="/seller/update-product" element={<SellerUpdateProduct />} />
+        <Route path="/seller/delete-product" element={<SellerDeleteProduct />} />
       </Route>
 
-      <Route path="/seller/register" element={<SellerRegister />}></Route>
+      <Route path="/seller/register" element={<SellerRegister />} />
     </Routes>
   );
 }

@@ -90,3 +90,14 @@ export type IOrder = {
   item: IOrderItem[] | undefined;
   userId: string | undefined;
 };
+
+export type Message = {
+  senderId: string;
+  text: string;
+  timestamp: Timestamp;
+};
+
+export type Chat = {
+  participants: string[];
+  messages: Message[];
+};

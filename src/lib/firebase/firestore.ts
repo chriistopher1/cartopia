@@ -1358,4 +1358,17 @@ export const getUserInfoFromSellerId = async (sellerId: string | undefined): Pro
   }
 };
 
-
+export const getMessagesForSeller = async (sellerId: string) => {
+  try {
+    const q = query(collection(db, "chats"), where("sellerId", "==", sellerId));
+    const querySnapshot = await getDocs(q);
+    const messages = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return messages;
+  } catch (error) {
+    console.error("Error fetching messages: ", error);
+    return [];
+  }
+};
