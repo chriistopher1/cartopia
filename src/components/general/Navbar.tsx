@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaUser, FaHeart } from "react-icons/fa";
+import { FaUser, FaHeart, FaEnvelope } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoMenu, IoClose } from "react-icons/io5";
 import { useUserContext } from "../../context/AuthProvider";
@@ -8,9 +8,6 @@ import { IUser } from "../../types";
 import { useSignOutAccount } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SearchButton from "../button/SearchButton";
-
-const mobileViewCss =
-  "w-full py-2 rounded-md text-center hover:text-white hover:bg-[#63a5ea] font-semibold text-xl lg:font-normal lg:text-lg lg:w-auto lg:px-3 lg:py-1";
 
 const Navbar = () => {
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
@@ -38,7 +35,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
-      <div className="w-full flex flex-wrap items-center justify-between p-4 lg:px-8">
+      <div className="w-full flex items-center justify-between p-4 lg:px-8">
         <Link to={"/"}>
           <span className="self-center text-xl lg:text-3xl font-bold whitespace-nowrap dark:text-white">
             Cartopia
@@ -55,57 +52,50 @@ const Navbar = () => {
             <IoMenu className="text-4xl" />
           )}
         </button>
-        <div
-          className={`${
-            menuOpen ? "flex" : "hidden"
-          } flex-col items-center justify-center lg:flex lg:flex-row lg:items-center lg:gap-5 w-full lg:w-auto mt-4 lg:mt-0 space-y-4 lg:space-y-0`}
-        >
-          <Link to={"/"} className={`${mobileViewCss}`}>
+        <div className={`hidden lg:flex lg:items-center lg:space-x-4`}>
+          <Link to={"/"} className="text-lg font-semibold hover:text-[#63a5ea]">
             Home
           </Link>
-          <Link to={"/shop"} className={`${mobileViewCss}`}>
+          <Link to={"/shop"} className="text-lg font-semibold hover:text-[#63a5ea]">
             Shop
           </Link>
-          <Link to={"/about"} className={`${mobileViewCss}`}>
+          <Link to={"/about"} className="text-lg font-semibold hover:text-[#63a5ea]">
             About
           </Link>
-          {/* <Link to={"/blog"} className={`${mobileViewCss}`}>
-            Blog
-          </Link> */}
-          <Link to={"/user/order"} className={`${mobileViewCss}`}>
+          <Link to={"/user/order"} className="text-lg font-semibold hover:text-[#63a5ea]">
             Order
           </Link>
-          <Link to={"/seller/dashboard"} className={`${mobileViewCss}`}>
+          <Link to={"/seller/dashboard"} className="text-lg font-semibold hover:text-[#63a5ea]">
             Seller
+          </Link>
+          <SearchButton />
+          <Link to={"/cart"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
+            <FaCartShopping />
+          </Link>
+          <Link to={"/saved"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
+            <FaHeart />
+          </Link>
+          <Link to={"/messages"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
+            <FaEnvelope />
           </Link>
           <Link
             to={isHaveUser() ? "/profile" : "/login"}
-            className={`flex items-center gap-2 ${mobileViewCss}`}
+            className="flex items-center text-lg font-semibold hover:text-[#63a5ea]"
           >
             <img
               src={currentUser?.imageUrl}
               className={`${isHaveUser() ? "" : "hidden"} w-8 h-8 rounded-2xl`}
             />
-            <span className={`${isHaveUser() ? "" : "hidden"}`}>
+            <span className={`${isHaveUser() ? "" : "hidden"} ml-2`}>
               {currentUser?.name}
             </span>
-            <FaUser className={`${isHaveUser() ? "hidden" : ""}`} />
-            <span className={`${isHaveUser() ? "hidden" : ""}`}>
+            <FaUser className={`${isHaveUser() ? "hidden" : "ml-2"}`} />
+            <span className={`${isHaveUser() ? "hidden" : "ml-2"}`}>
               Login/Register
             </span>
           </Link>
-          <SearchButton  />
-          <Link to={"/cart"} className={`flex items-center ${mobileViewCss}`}>
-            <FaCartShopping />
-          </Link>
-          <Link to={"/saved"} className={`flex items-center ${mobileViewCss}`}>
-            <FaHeart />
-          </Link>
           {isHaveUser() && (
-            <button
-              className={`${mobileViewCss}`}
-              onClick={handleSignOut}
-            >
+            <button className="text-lg font-semibold hover:text-[#63a5ea]" onClick={handleSignOut}>
               Sign Out
             </button>
           )}
@@ -113,6 +103,61 @@ const Navbar = () => {
             <AiOutlineLoading3Quarters className="inline animate-spin text-xl lg:ml-2" />
           )}
         </div>
+      </div>
+      <div
+        className={`${
+          menuOpen ? "block" : "hidden"
+        } lg:hidden flex flex-col items-start pl-4 pr-4 space-y-4 mt-4`}
+      >
+        <Link to={"/"} className="text-lg font-semibold hover:text-[#63a5ea]">
+          Home
+        </Link>
+        <Link to={"/shop"} className="text-lg font-semibold hover:text-[#63a5ea]">
+          Shop
+        </Link>
+        <Link to={"/about"} className="text-lg font-semibold hover:text-[#63a5ea]">
+          About
+        </Link>
+        <Link to={"/user/order"} className="text-lg font-semibold hover:text-[#63a5ea]">
+          Order
+        </Link>
+        <Link to={"/seller/dashboard"} className="text-lg font-semibold hover:text-[#63a5ea]">
+          Seller
+        </Link>
+        <SearchButton />
+        <Link to={"/cart"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
+          <FaCartShopping />
+        </Link>
+        <Link to={"/saved"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
+          <FaHeart />
+        </Link>
+        <Link to={"/messages"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
+          <FaEnvelope />
+        </Link>
+        <Link
+          to={isHaveUser() ? "/profile" : "/login"}
+          className="flex items-center text-lg font-semibold hover:text-[#63a5ea]"
+        >
+          <img
+            src={currentUser?.imageUrl}
+            className={`${isHaveUser() ? "" : "hidden"} w-8 h-8 rounded-2xl`}
+          />
+          <span className={`${isHaveUser() ? "" : "hidden"} ml-2`}>
+            {currentUser?.name}
+          </span>
+          <FaUser className={`${isHaveUser() ? "hidden" : "ml-2"}`} />
+          <span className={`${isHaveUser() ? "hidden" : "ml-2"}`}>
+            Login/Register
+          </span>
+        </Link>
+        {isHaveUser() && (
+          <button className="text-lg font-semibold hover:text-[#63a5ea]" onClick={handleSignOut}>
+            Sign Out
+          </button>
+        )}
+        {isPending && (
+          <AiOutlineLoading3Quarters className="inline animate-spin text-xl lg:ml-2" />
+        )}
       </div>
     </nav>
   );
