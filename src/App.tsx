@@ -66,7 +66,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/credit-card" element={<CreditCard />} />
-        <Route path="/chat/:sellerId" element={<ChatPage />} /> {/* Add the new Chat route */}
+        <Route path="/chat/:productId/:userId" element={<ChatPage />} /> {/* Correct the chat route */}
       </Route>
 
       <Route element={<SellerLayout />}>

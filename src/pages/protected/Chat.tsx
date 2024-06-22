@@ -1,40 +1,41 @@
-// src/pages/protected/Chat.tsx
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { collection, addDoc, query, onSnapshot, orderBy, Timestamp } from "firebase/firestore";
 import { db } from "../../lib/firebase/config";
 import { useUserContext } from "../../context/AuthProvider";
 import { FaPaperPlane } from "react-icons/fa";
-import { IProduct, IUser } from "../../types";
-import { formatToIDR } from "../../constant"; // Import your currency formatting function
+import { IProduct, IUser, Message } from "../../types";
+import { formatToIDR } from "../../constant";
 
 const Chat = () => {
-  const { sellerId } = useParams();
+  const { productId, userId } = useParams();
   const location = useLocation();
   const { user } = useUserContext();
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const chatEndRef = useRef(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const seller = location.state?.seller as IUser;
   const product = location.state?.product as IProduct;
 
   useEffect(() => {
-    if (sellerId) {
-      const q = query(collection(db, "chats", sellerId, "messages"), orderBy("timestamp"));
+    if (productId && userId) {
+      const chatId = `${productId}_${userId}`;
+      const q = query(collection(db, "chats", chatId, "messages"), orderBy("timestamp"));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const msgs = querySnapshot.docs.map((doc) => doc.data());
+        const msgs = querySnapshot.docs.map((doc) => doc.data() as Message);
         setMessages(msgs);
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
       });
 
       return () => unsubscribe();
     }
-  }, [sellerId]);
+  }, [productId, userId]);
 
   const sendMessage = async () => {
     if (newMessage.trim()) {
-      await addDoc(collection(db, "chats", sellerId, "messages"), {
+      const chatId = `${productId}_${userId}`;
+      await addDoc(collection(db, "chats", chatId, "messages"), {
         senderId: user.accountId,
         text: newMessage,
         timestamp: Timestamp.now(),
@@ -60,9 +61,7 @@ const Chat = () => {
         <div className="p-4 bg-white shadow-md flex items-center">
           <img src={product.imageUrl} alt={product.name} className="w-20 h-20 object-cover rounded-md mr-4" />
           <div className="flex-1">
-            <Link to={`/product/${product.id}`} className="text-lg font-semibold hover:underline">
-              {product.name}
-            </Link>
+            <h2 className="text-lg font-semibold">{product.name}</h2>
             <p className="text-gray-500">{formatToIDR(product.price)}</p>
           </div>
         </div>

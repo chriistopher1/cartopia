@@ -1362,10 +1362,20 @@ export const getMessagesForSeller = async (sellerId: string) => {
   try {
     const q = query(collection(db, "chats"), where("sellerId", "==", sellerId));
     const querySnapshot = await getDocs(q);
-    const messages = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+
+    const messages = await Promise.all(
+      querySnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        const productDoc = await getDoc(doc(db, "product_table", data.productId));
+        const productData = productDoc.exists() ? productDoc.data() : null;
+        return {
+          id: doc.id,
+          ...data,
+          product: productData,
+        };
+      })
+    );
+
     return messages;
   } catch (error) {
     console.error("Error fetching messages: ", error);

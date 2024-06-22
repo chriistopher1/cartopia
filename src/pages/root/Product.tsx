@@ -17,7 +17,6 @@ import {
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Review from "../../components/product/Review";
-import Popup from "../../components/product/Modal";
 import Modal from "../../components/product/Modal";
 
 const Product = () => {
@@ -338,7 +337,9 @@ const Product = () => {
                               : "hidden"
                           } mr-2`}
                         />
-                        <span className={`${isAddingItemToOrder ? "hidden" : ""}`}>Order</span>
+                        <span className={`${isAddingItemToOrder ? "hidden" : ""}`}>
+                          Order
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -378,7 +379,7 @@ const Product = () => {
               {sellerInfo?.seller.name}
             </Link>
             <Link
-              to={`/chat/${product.sellerId}`}
+              to={`/chat/${product.id}/${user.accountId}`}
               state={{ seller: sellerInfo, product: product }}
               className="text-[#63a5ea] hover:underline flex items-center gap-2"
             >

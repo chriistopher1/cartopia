@@ -3,7 +3,7 @@ import ProductCard from "../../components/card/ProductCard";
 import { useUserContext } from "../../context/AuthProvider";
 import { useGetAllSellerProduct } from "../../lib/tanstack/queries";
 import { FaRegChartBar, FaClipboardList, FaPlusCircle, FaEnvelope } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getMessagesForSeller } from "../../lib/firebase/firestore"; // Import the new function
 
 const SellerDashboard: React.FC = () => {
@@ -11,6 +11,7 @@ const SellerDashboard: React.FC = () => {
   const { data: sellerProduct, isPending: isGettingSellerProduct } = useGetAllSellerProduct(user.seller.id);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [messages, setMessages] = useState<any[]>([]); // State to store messages
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -26,6 +27,11 @@ const SellerDashboard: React.FC = () => {
 
   const totalSales = sellerProduct.reduce((acc, product) => acc + product.sold, 0);
   const totalStock = sellerProduct.reduce((acc, product) => acc + product.stock, 0);
+
+  const handleChatClick = (msg: any) => {
+    // Navigate to the chat page with the necessary state
+    navigate(`/chat/${msg.productId}/${msg.senderId}`, { state: { seller: user, product: msg.product } });
+  };
 
   return (
     <div className="flex">
@@ -103,20 +109,37 @@ const SellerDashboard: React.FC = () => {
           <h3 className="font-bold text-2xl md:text-3xl border-b-2 w-fit pb-2 border-black mb-6 mt-12">
             Messages from Users
           </h3>
-          <div className="flex flex-col gap-6 w-full mb-6">
-            {messages.map((msg) => (
-              <div key={msg.id} className="p-4 bg-white shadow-md rounded-lg">
-                <div className="flex items-center gap-4">
-                  <FaEnvelope className="text-2xl text-gray-500" />
-                  <div>
-                    <h4 className="font-semibold text-lg">{msg.senderName}</h4>
-                    <p>{msg.text}</p>
-                    <span className="text-sm text-gray-500">{new Date(msg.timestamp.seconds * 1000).toLocaleString()}</span>
+          {messages.length === 0 ? (
+            <div className="flex justify-center items-center p-6 bg-white shadow-md rounded-lg">
+              <p className="text-lg text-gray-500">No messages yet</p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-6 w-full mb-6">
+              {messages.map((msg) => (
+                <div key={msg.id} className="p-4 bg-white shadow-md rounded-lg cursor-pointer" onClick={() => handleChatClick(msg)}>
+                  <div className="flex items-center gap-4">
+                    <FaEnvelope className="text-2xl text-gray-500" />
+                    <div>
+                      <h4 className="font-semibold text-lg">{msg.senderName}</h4>
+                      <p>{msg.text}</p>
+                      <span className="text-sm text-gray-500">{new Date(msg.timestamp.seconds * 1000).toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    {msg.product && (
+                      <div className="flex items-center gap-4">
+                        <img src={msg.product.imageUrl} alt={msg.product.name} className="w-10 h-10 object-cover rounded-md" />
+                        <div>
+                          <h4 className="font-semibold text-sm">{msg.product.name}</h4>
+                          <p className="text-xs text-gray-500">{formatToIDR(msg.product.price)}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
