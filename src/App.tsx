@@ -1,38 +1,39 @@
-import { Routes, Route } from "react-router-dom";
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-import RootLayout from "./pages/layout/RootLayout";
-
-import Dashboard from "./pages/root/Dashboard";
-import About from "./pages/root/About";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import ProtectedLayout from "./pages/layout/ProtectedLayout";
-import AuthLayout from "./pages/layout/AuthLayout";
-import Shop from "./pages/root/Shop";
-import Blog from "./pages/root/Blog";
-import Contact from "./pages/root/Contact";
-import Cart from "./pages/protected/Cart";
-import Saved from "./pages/protected/Saved";
-import Product from "./pages/root/Product";
-import Profile from "./pages/protected/Profile";
-import SellerDashboard from "./pages/seller/SellerDashboard";
-import SellerLayout from "./pages/layout/SellerLayout";
-import SellerRegister from "./pages/seller/SellerRegister";
-import SellerDeleteProduct from "./pages/seller/SellerDeleteProduct";
-import SellerUpdateProduct from "./pages/seller/SellerUpdateProduct";
-import SellerAddProduct from "./pages/seller/SellerAddProduct";
-import Order from "./pages/protected/order/Order";
-import OrderPending from "./pages/protected/order/OrderPending";
-import OrderShipping from "./pages/protected/order/OrderShipping";
-import OrderComplete from "./pages/protected/order/OrderComplete";
-import MakeReview from "./pages/protected/MakeReview";
-import CategoryFilter from "./pages/root/CategoryFilter";
-import SearchProduct from "./pages/root/SearchProduct";
-import Checkout from "./pages/protected/Checkout";
-import Payment from "./pages/protected/Payment";
-import CreditCard from "./pages/protected/CreditCard";
-import SellerShop from "./pages/root/SellerShop";
-import ChatPage from "./pages/protected/Chat"; // Import the ChatPage component
+import RootLayout from './pages/layout/RootLayout';
+import Dashboard from './pages/root/Dashboard';
+import About from './pages/root/About';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import ProtectedLayout from './pages/layout/ProtectedLayout';
+import AuthLayout from './pages/layout/AuthLayout';
+import Shop from './pages/root/Shop';
+import Blog from './pages/root/Blog';
+import Contact from './pages/root/Contact';
+import Cart from './pages/protected/Cart';
+import Saved from './pages/protected/Saved';
+import Product from './pages/root/Product';
+import Profile from './pages/protected/Profile';
+import SellerDashboard from './pages/seller/SellerDashboard';
+import SellerLayout from './pages/layout/SellerLayout';
+import SellerRegister from './pages/seller/SellerRegister';
+import SellerDeleteProduct from './pages/seller/SellerDeleteProduct';
+import SellerUpdateProduct from './pages/seller/SellerUpdateProduct';
+import SellerAddProduct from './pages/seller/SellerAddProduct';
+import Order from './pages/protected/order/Order';
+import OrderPending from './pages/protected/order/OrderPending';
+import OrderShipping from './pages/protected/order/OrderShipping';
+import OrderComplete from './pages/protected/order/OrderComplete';
+import MakeReview from './pages/protected/MakeReview';
+import CategoryFilter from './pages/root/CategoryFilter';
+import SearchProduct from './pages/root/SearchProduct';
+import Checkout from './pages/protected/Checkout';
+import Payment from './pages/protected/Payment';
+import CreditCard from './pages/protected/CreditCard';
+import SellerShop from './pages/root/SellerShop';
+import ChatPage from './pages/protected/Chat'; // Import the ChatPage component
+import NotFound from './pages/NotFound'; // Import the NotFound component
 
 function App() {
   return (
@@ -77,6 +78,9 @@ function App() {
       </Route>
 
       <Route path="/seller/register" element={<SellerRegister />} />
+
+      {/* Catch-all route for 404 Not Found */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
