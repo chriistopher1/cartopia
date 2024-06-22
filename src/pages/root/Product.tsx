@@ -1,14 +1,11 @@
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { IProduct } from "../../types";
-import { useEffect, useState } from "react";
 import { FaHeart, FaStar, FaComments } from "react-icons/fa";
-import { checkIfItemInTheList, formatToIDR } from "../../constant";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoCartOutline, IoHeartOutline } from "react-icons/io5";
 import { useUserContext } from "../../context/AuthProvider";
 import {
   useAddItemToCart,
-  useAddItemToOrder,
   useAddItemToSaved,
   useGetUserCartList,
   useGetUserInfoFromSellerId,
@@ -18,6 +15,8 @@ import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Review from "../../components/product/Review";
 import Modal from "../../components/product/Modal";
+import { IProduct } from "../../types";
+import { checkIfItemInTheList, formatToIDR } from "../../constant";
 
 const Product = () => {
   const navigate = useNavigate();
@@ -35,8 +34,6 @@ const Product = () => {
     useAddItemToCart();
   const { mutateAsync: addItemToSaved, isPending: isAddingItemToSaved } =
     useAddItemToSaved();
-  const { mutateAsync: addItemToOrder, isPending: isAddingItemToOrder } =
-    useAddItemToOrder();
 
   const { data: userCartList, isPending: isGettingUserCartList } =
     useGetUserCartList(user.accountId);
@@ -177,7 +174,7 @@ const Product = () => {
     }
   };
 
-  const handleAddItemToOrder = async () => {
+  const handleBuyNow = () => {
     if (!user.accountId) {
       window.location.href = "/login";
       return;
@@ -188,40 +185,16 @@ const Product = () => {
       return;
     }
 
-    const isAddedToOrder = await addItemToOrder({
-      addressTo: user.address,
-      newProduct: {
-        product: product,
-        quantity: newQuantity,
+    navigate("/checkout", {
+      state: {
+        selectedProducts: [
+          {
+            product: product,
+            quantity: newQuantity,
+          },
+        ],
       },
-      sellerId: product.sellerId,
-      uid: user.accountId,
     });
-
-    if (isAddedToOrder) {
-      toast.success("Success on adding item to order", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      navigate("/user/order");
-    } else {
-      toast.error("Error on adding item to order", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
   };
 
   return (
@@ -231,7 +204,7 @@ const Product = () => {
           src={product.imageUrl}
           className="w-full md:w-[35%] lg:w-[25%] h-auto md:h-[300px] object-cover"
           alt={product.name}
-          style={{ objectFit: "contain" }} // Add this style
+          style={{ objectFit: "contain" }}
         />
 
         <div className="flex flex-col gap-2 md:gap-6 py-10 md:py-16 md:w-1/2 lg:w-1/3">
@@ -287,65 +260,11 @@ const Product = () => {
 
           <div className="flex gap-3 items-center">
             <button
-              className="border border-neutral-300 rounded-lg
-    py-1.5 px-10 my-2 bg-blue-500 hover:bg-blue-600 text-white "
-              onClick={() => setOpen(true)}
+              className="border border-neutral-300 rounded-lg py-1.5 px-10 my-2 bg-blue-500 hover:bg-blue-600 text-white"
+              onClick={handleBuyNow}
             >
               Buy Now
             </button>
-            <Modal open={open} onClose={() => setOpen(false)}>
-              <div className="flex flex-col gap-5">
-                <h1 className="text-2xl font-bold">Place Order Confirmation</h1>
-
-                <div className="flex gap-5 items-center">
-                  <img src={product.imageUrl} className="w-1/3 rounded-lg" />
-                  <div className="flex flex-col gap-2">
-                    <h3 className="font-semibold text-sm md:text-lg">
-                      {product.name}
-                    </h3>
-                    <h3 className="font-semibold text-sm md:text-lg">
-                      Quantity :{" "}
-                      <span className="text-red-500">{newQuantity}</span>
-                    </h3>
-                    <h3 className="font-bold text-sm md:text-lg text-red-500">
-                      {product.price &&
-                        formatToIDR(product.price * newQuantity)}
-                    </h3>
-                    <div className="flex gap-4">
-                      <button
-                        className={`border border-neutral-300 rounded-lg
-    py-1.5 px-6 my-2 bg-blue-500 hover:bg-blue-600 text-white ${
-      isAddingItemToOrder ? "opacity-50 cursor-not-allowed" : ""
-    }`}
-                        onClick={() => setOpen(false)}
-                        disabled={isAddingItemToOrder}
-                      >
-                        Exit
-                      </button>
-                      <button
-                        className={`border border-neutral-300 rounded-lg
-    py-1.5 px-6 my-2 bg-blue-500 hover:bg-blue-600 text-white  ${
-      isAddingItemToOrder ? "opacity-50 cursor-not-allowed" : ""
-    }`}
-                        onClick={handleAddItemToOrder}
-                        disabled={isAddingItemToOrder}
-                      >
-                        <AiOutlineLoading3Quarters
-                          className={`${
-                            isAddingItemToOrder
-                              ? "inline animate-spin"
-                              : "hidden"
-                          } mr-2`}
-                        />
-                        <span className={`${isAddingItemToOrder ? "hidden" : ""}`}>
-                          Order
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Modal>
             <button className="text-[#63a5ea]" onClick={handleAddItemToCart}>
               {isAddingItemToCart ? (
                 <AiOutlineLoading3Quarters className="animate-spin text-3xl" />
