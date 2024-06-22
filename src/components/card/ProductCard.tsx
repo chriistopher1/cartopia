@@ -36,6 +36,13 @@ const ProductCard = (product: IProduct) => {
     }
   };
 
+  const truncateName = (name: string) => {
+    if (name.length > 28) {
+      return name.substring(0, 28) + "...";
+    }
+    return name;
+  };
+
   return (
     <Link
       className="flex flex-col items-center w-full max-w-xs bg-white shadow-md rounded-lg overflow-hidden transform transition-transform hover:scale-105 cursor-pointer"
@@ -45,10 +52,10 @@ const ProductCard = (product: IProduct) => {
       <img
         src={product.imageUrl}
         alt={product.name}
-        className="w-full h-56 object-cover"
+        className="w-full h-56 object-contain bg-white"
       />
       <div className="flex flex-col items-center p-4">
-        <h2 className="font-bold text-md truncate">{product.name}</h2>
+        <h2 className="font-bold text-md">{truncateName(product.name)}</h2>
         <h3 className="font-semibold text-md">{formatToIDR(product.price)}</h3>
         <div className="flex items-center text-gray-700">
           {product.sold == 0 ? (<> <FaStar className="text-gray-400 text-md" />
@@ -60,7 +67,6 @@ const ProductCard = (product: IProduct) => {
           <FaStar className="text-yellow-400 text-md" />
           <FaStar className="text-yellow-400 text-md" />
           <FaStar className="text-yellow-400 text-md" /></>)}
-         
           <span className="ml-2 text-md">({product.sold})</span>
           {isDeletingProduct ? (
             <AiOutlineLoading3Quarters
