@@ -228,10 +228,13 @@ const Product = () => {
   return (
     <div>
       <div className="flex flex-col md:flex-row max-md:px-10 max-md:py-5 md:gap-12 shadow-lg shadow-gray-400 mb-12 border border-black">
-        <img
-          src={product.imageUrl}
-          className="w-full md:w-[35%] lg:w-[25%] h-auto object-cover"
-        />
+      <img
+        src={product.imageUrl}
+        className="w-full md:w-[35%] lg:w-[25%] h-auto md:h-[300px] object-cover"
+        alt={product.name}
+        style={{ objectFit: "contain" }} // Add this style
+      />
+
         <div className="flex flex-col gap-2 md:gap-6 py-10 md:py-16 md:w-1/2 lg:w-1/3">
           <h3 className="font-bold text-2xl md:text-4xl">{product.name}</h3>
           <h3 className="text-gray-700 flex items-center sm:text-md md:text-lg">
