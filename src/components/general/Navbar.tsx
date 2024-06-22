@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaHeart, FaEnvelope } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
 import { IoMenu, IoClose } from "react-icons/io5";
@@ -8,10 +8,14 @@ import { IUser } from "../../types";
 import { useSignOutAccount } from "../../lib/tanstack/queries";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SearchButton from "../button/SearchButton";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../../lib/firebase/config";
 
 const Navbar = () => {
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [messages, setMessages] = useState<any[]>([]); // State to store messages
+  const navigate = useNavigate();
 
   const { user } = useUserContext();
   const { mutateAsync: signOut, isPending } = useSignOutAccount();
@@ -19,6 +23,17 @@ const Navbar = () => {
   useEffect(() => {
     setCurrentUser(user);
   }, [user]);
+
+  useEffect(() => {
+    if (user?.accountId) {
+      const q = query(collection(db, "chats_metadata"), where("participants", "array-contains", user.accountId));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const msgs = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setMessages(msgs);
+      });
+      return () => unsubscribe();
+    }
+  }, [user?.accountId]);
 
   const isHaveUser = () => (currentUser?.accountId !== "" ? true : false);
 
@@ -31,6 +46,10 @@ const Navbar = () => {
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleChatClick = () => {
+    navigate("/messages", { state: { messages, user } });
   };
 
   return (
@@ -75,9 +94,9 @@ const Navbar = () => {
           <Link to={"/saved"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
             <FaHeart />
           </Link>
-          <Link to={"/messages"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
+          <div className="flex items-center text-lg font-semibold hover:text-[#63a5ea] cursor-pointer" onClick={handleChatClick}>
             <FaEnvelope />
-          </Link>
+          </div>
           <Link
             to={isHaveUser() ? "/profile" : "/login"}
             className="flex items-center text-lg font-semibold hover:text-[#63a5ea]"
@@ -131,9 +150,9 @@ const Navbar = () => {
         <Link to={"/saved"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
           <FaHeart />
         </Link>
-        <Link to={"/messages"} className="flex items-center text-lg font-semibold hover:text-[#63a5ea]">
+        <div className="flex items-center text-lg font-semibold hover:text-[#63a5ea] cursor-pointer" onClick={handleChatClick}>
           <FaEnvelope />
-        </Link>
+        </div>
         <Link
           to={isHaveUser() ? "/profile" : "/login"}
           className="flex items-center text-lg font-semibold hover:text-[#63a5ea]"

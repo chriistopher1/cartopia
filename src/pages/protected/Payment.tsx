@@ -14,7 +14,6 @@ const Payment = () => {
   const selectedProducts = location.state?.selectedProducts as IProductOrderItem[];
   const deliveryMethods = location.state?.deliveryMethods as { [key: string]: string };
 
-  const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const { mutateAsync: addItemToOrder, isPending: isAddingItemToOrder } = useAddItemToOrder();
@@ -41,11 +40,6 @@ const Payment = () => {
   };
 
   const handlePayment = () => {
-    if (!paymentMethod) {
-      setError("Please select a payment method.");
-      return;
-    }
-
     selectedProducts.map(async (product) => {
       await addItemToOrder({
         addressTo: user.address,
@@ -56,11 +50,7 @@ const Payment = () => {
       });
     });
 
-    if (paymentMethod === "credit_card") {
-      navigate("/credit-card", { state: { subtotal, selectedProducts, deliveryMethods } });
-    } else {
-      navigate("/user/order");
-    }
+    navigate("/credit-card", { state: { subtotal, selectedProducts, deliveryMethods } });
   };
 
   console.log(selectedProducts);
@@ -94,29 +84,12 @@ const Payment = () => {
             <span className="font-semibold">{formatCurrency(subtotal)}</span>
           </div>
         </div>
-        <div className="mb-8">
-          <h3 className="font-semibold text-lg mb-4">Select Payment Method:</h3>
-          <select
-            value={paymentMethod}
-            onChange={(e) => {
-              setPaymentMethod(e.target.value);
-              setError(null);
-            }}
-            className="border rounded-md px-3 py-2 w-full"
-          >
-            <option value="" disabled>Select payment method</option>
-            <option value="credit_card">Credit Card</option>
-            <option value="bank_transfer">Bank Transfer</option>
-            <option value="e_wallet">E-Wallet</option>
-          </select>
-        </div>
-        {error && <div className="text-red-600 mb-4">{error}</div>}
         <div className="mt-4">
           <button
             onClick={handlePayment}
             className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-300 w-full"
           >
-            Pay
+            Pay with Credit Card
           </button>
         </div>
       </div>

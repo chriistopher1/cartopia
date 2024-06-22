@@ -32,7 +32,8 @@ import Checkout from './pages/protected/Checkout';
 import Payment from './pages/protected/Payment';
 import CreditCard from './pages/protected/CreditCard';
 import SellerShop from './pages/root/SellerShop';
-import ChatPage from './pages/protected/Chat'; // Import the ChatPage component
+import ChatPage from './pages/protected/ChatPage'; // Import the ChatPage component
+import Chat from './pages/protected/Chat'; // Import the Chat component
 import NotFound from './pages/NotFound'; // Import the NotFound component
 
 function App() {
@@ -67,7 +68,8 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/credit-card" element={<CreditCard />} />
-        <Route path="/chat/:productId/:userId" element={<ChatPage />} /> {/* Correct the chat route */}
+        <Route path="/messages" element={<ChatPage />} />
+        <Route path="/chat/:productId/:userId" element={<Chat />} />
       </Route>
 
       <Route element={<SellerLayout />}>
